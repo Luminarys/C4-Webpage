@@ -2,6 +2,7 @@
 
 <head>
 
+
 <!-- jQuery UI CSS -->
 <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> -->
 
@@ -18,7 +19,8 @@
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
 
 <!-- Local JS file -->
-<script type="text/javascript" charset="utf8" src="js/script.js"></script>
+<script type="text/javascript" charset="utf8" src="js/main.js"></script>
+
 </head>
 <body>
 
@@ -42,8 +44,31 @@ if($query->execute(array($gene, $gene))){
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
 
+	//Prepare the second query for extracting data from Zmays_Metrics
 	$queryT2 = $db->prepare("SELECT * FROM Zmays_Metrics WHERE gene_id = ?");
 
+	//Pre table search forms
+	echo '<table border="0" cellspacing="5" cellpadding="5">';
+        echo '<tbody><tr>';
+        echo '    <td><b>Filtering: </b></td>';
+        echo '    <td>Column: </td>';
+        echo '    <td><select id="filterChoice">';
+        echo '    <option value="1">Adjacency Value</option>';
+        echo '    <option value="2">Mean Exp</option>';
+        echo '    <option value="3">Mean Exp Rank</option>';
+        echo '    <option value="4">K</option>';
+        echo '    <option value="5">K Rank</option>';
+        echo '    <option value="6">Module</option>';
+        echo '    <option value="7">Modular K</option>';
+        echo '    <option value="8">Modular K Rank</option>';
+        echo '    <option value="9">Modular Mean Exp Rank</option>';
+        echo '    </select></td>';
+        echo '    <td>Minimum: </td>';
+        echo '    <td><input type="text" id="min" name="min"></td>';
+        echo '    <td>Maximum: </td>';
+        echo '    <td><input type="text" id="max" name="max"></td>';
+        echo '</tr>';
+    	echo ' </tbody></table>	';
 	//Initialize table
 	echo "<table id='basicQuery' style='width:100%'>";
     		echo "<thead>";
@@ -59,9 +84,13 @@ if($query->execute(array($gene, $gene))){
     		echo "<th>Modular Mean Exp Rank</th>";
     		echo "</tr>";
     		echo "</thead>";
+		echo "<tfoot></tfoot>";
     		echo "<tbody>";
-	//Print the table, doing a query each time
+
+	//Loop through initial results, perform subquery for Metrics and create the table
 	foreach ($results as $row) {
+
+		//Search of gene_id_B if gene_id_A is equal to the queried gene and vice versa
 		if ($row['gene_id_A'] == $gene){
 			$queryT2->execute(array($row['gene_id_B']));
 			$outGene = $row['gene_id_B'];
@@ -69,8 +98,10 @@ if($query->execute(array($gene, $gene))){
 			$queryT2->execute(array($row['gene_id_A']));
 			$outGene = $row['gene_id_A'];
 		}
-    		echo "<tr>";
 		$metrics = $queryT2->fetchAll();
+
+		//Echo the table 
+    		echo "<tr>";
     		echo "<td>" . $outGene . "</td>";
     		echo "<td>" . $row['value'] . "</td>";
     		echo "<td>" . $metrics[0]['mean_exp'] . "</td>";
