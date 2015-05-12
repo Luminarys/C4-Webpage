@@ -22,29 +22,6 @@
 </head>
 <body>
 
-<!-- Filtering Input -->
-<form id='filterForm'>
-<select>
-	<option>Adjacency Value</option>
-	<option>Mean Exp</option>
-	<option>Mean Exp Rank</option>
-	<option>K</option>
-	<option>K Rank</option>
-	<option>Module</option>
-	<option>Modular K</option>
-	<option>Modular K Rank</option>
-	<option>Modular Mean Exp Rank</option>
- </select>
-<select>
-	<option>Greater than</option>
-	<option>Less than</option>
-</select>
-<input type="text">
-<input type="submit" value="Filter">
-
-
-</form>
-
 <?php 
 
 //Set debugging on
@@ -57,9 +34,8 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Process user input
-$gene = $_POST["gene"];
+$gene = $_GET["gene"];
 
-echo "<p>Basic Gene Query:</p>";
 //Prepare and execute query
 $query = $db->prepare("SELECT * FROM Zmays_Adj WHERE gene_id_A = ? OR gene_id_B = ?");
 if($query->execute(array($gene, $gene))){

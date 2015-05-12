@@ -14,6 +14,21 @@ $(document).ready(function() {
 			values[this.name] = $(this).val();
 		});
 	});
+	$('#geneQuery').submit(function(e) {
+		e.preventDefalt();
+		var $inputs = $('#geneQuery :input');
+		//Intialize parameters for filtering
+		var values = { };
+		$inputs.each(function() {
+			console.log($(this).val());
+			values['gene'] = $(this).val();
+		});
+		console.log(values['gene']);
+		$.get('/query_accept.php?gene='+values['gene'], function(data) {
+		console.log(data);
+		$('#qTable').append(data);
+		});
+	});
 
 } );
 
