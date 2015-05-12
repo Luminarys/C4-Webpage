@@ -1,12 +1,49 @@
 <html>
+
+<head>
+
+<!-- jQuery UI CSS -->
+<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> -->
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+  
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+
+<!-- jQuery UI -->  
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
+
+<!-- Local JS file -->
+<script type="text/javascript" charset="utf8" src="js/script.js"></script>
+</head>
 <body>
 
-<style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-</style>
+<!-- Filtering Input -->
+<form id='filterForm'>
+<select>
+	<option>Adjacency Value</option>
+	<option>Mean Exp</option>
+	<option>Mean Exp Rank</option>
+	<option>K</option>
+	<option>K Rank</option>
+	<option>Module</option>
+	<option>Modular K</option>
+	<option>Modular K Rank</option>
+	<option>Modular Mean Exp Rank</option>
+ </select>
+<select>
+	<option>Greater than</option>
+	<option>Less than</option>
+</select>
+<input type="text">
+<input type="submit" value="Filter">
+
+
+</form>
 
 <?php 
 
@@ -23,32 +60,30 @@ $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 $gene = $_POST["gene"];
 
 echo "<p>Basic Gene Query:</p>";
-
-echo $gene . "<br>"; 
-
 //Prepare and execute query
 $query = $db->prepare("SELECT * FROM Zmays_Adj WHERE gene_id_A = ? OR gene_id_B = ?");
 if($query->execute(array($gene, $gene))){
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
-	echo "There are " . $rows . " results<br>";
 
 	$queryT2 = $db->prepare("SELECT * FROM Zmays_Metrics WHERE gene_id = ?");
 
 	//Initialize table
-	echo "<table style='width:100%'>";
-    		echo "<tr>";
-    		echo "<td>Gene</td>";
-    		echo "<td>Adjacency Value</td>";
-    		echo "<td>Mean Exp</td>";
-    		echo "<td>Mean Exp Rank</td>";
-    		echo "<td>K</td>";
-    		echo "<td>K Rank</td>";
-    		echo "<td>Module</td>";
-    		echo "<td>Modular K</td>";
-    		echo "<td>Modular K Rank</td>";
-    		echo "<td>Modular Mean Exp Rank</td>";
+	echo "<table id='basicQuery' style='width:100%'>";
+    		echo "<thead>";
+    		echo "<th>Gene</th>";
+    		echo "<th>Adjacency Value</th>";
+    		echo "<th>Mean Exp</th>";
+    		echo "<th>Mean Exp Rank</th>";
+    		echo "<th>K</th>";
+    		echo "<th>K Rank</th>";
+    		echo "<th>Module</th>";
+    		echo "<th>Modular K</th>";
+    		echo "<th>Modular K Rank</th>";
+    		echo "<th>Modular Mean Exp Rank</th>";
     		echo "</tr>";
+    		echo "</thead>";
+    		echo "<tbody>";
 	//Print the table, doing a query each time
 	foreach ($results as $row) {
 		if ($row['gene_id_A'] == $gene){
@@ -72,6 +107,7 @@ if($query->execute(array($gene, $gene))){
     		echo "<td>" . $metrics[0]['modular_mean_exp_rank'] . "</td>";
     		echo "</tr>";
 		}
+    	echo "</tbody>";
 	echo "</table>";
 }
 
