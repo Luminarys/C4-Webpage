@@ -1,0 +1,48 @@
+#upper-rect {
+	border-radius: 30px 30px 30px 30px;
+	background: #66cd7d;
+	padding: 15px;
+	height: 100px;
+	margin-left: 250px;
+	margin-right: 250px;
+	margin-top: 30px;
+}
+#lower-rect {
+	bottom: 0;
+	border-radius: 30px 30px 30px 30px;
+	background: #66cd7d;
+	padding: 15px;
+	height: 100px;
+	margin-left: 250px;
+	margin-right: 250px;
+}
+#left-rect {
+	top: 200px;
+  	left: 40px;
+  	width: 100px;
+	height: 500px;
+	position: fixed;
+	border-radius: 30px 30px 30px 30px;
+	margin-left: 0px;
+	margin-top: 0px;
+	background: #66cd7d;
+	padding: 15px;
+}
+#footer {
+   bottom:0;
+   width:100%;
+   height:175px;   /* Height of the footer */
+   /*background:#6cf;/**/
+}
+#qTable {
+	height: 500px;
+	margin-left: 200px;
+	margin-right: 200px;
+}
+
+#content {
+	position: relative;
+	text-align:center;
+	margin: 30px 30px; padding:0px;
+}
+

@@ -1,36 +1,57 @@
 <!DOCTYPE HTML>
 <html> 
 <head>
+	  
+	<!-- jQuery -->
+	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+	
+	<!-- jQuery UI -->  
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	
+	<!-- DataTables -->
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
+	
+	<!-- Local JS file -->
+	<script type="text/javascript" charset="utf8" src="js/main.js"></script>
 
-<!-- jQuery UI CSS -->
-<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> -->
-
-<!-- DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
-  
-<!-- jQuery -->
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-
-<!-- jQuery UI -->  
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-<!-- DataTables -->
-<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
-
-<!-- Local JS file -->
-<script type="text/javascript" charset="utf8" src="js/main.js"></script>
-
+	<!-- DataTables CSS -->
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+	
+	<!-- Local CSS -->
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	
 
 </head>
 
 <body>
-<p>Basic Gene Query:</p>
-<form id='geneQuery'>
-Gene: <input type="text" id="gene">
-<input type="submit">
-</form>
-
-<div id="qTable"></div>
+	<div id="wrapper">
+		<div id="header">
+			<p id="upper-rect"></p>
+		</div>
+		<div id="leftside">
+			<p id="left-rect"></p>	
+		</div>
+		<div id="content">
+			<div id="basicQueryForm">
+				<p>Basic Gene Query:</p>
+				<form id='geneQuery'>
+					<input type="text" id="gene" placeholder="Gene ID">
+					<select>
+						<option value="Zmays">Maize</option>
+						<option value="Zset">Setaria</option>
+						<option value="Zsor">Sorghum</option>
+					</select>
+					<input type="submit">
+				</form>
+			</div>
+		
+			<div id="qTable"></div>
+			
+		</div>
+		<div id="footer">
+			<p id="lower-rect"></p>
+		</div>
+	</div>
 
 </body>
 </html>

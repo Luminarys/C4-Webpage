@@ -18,7 +18,7 @@ $.fn.dataTable.ext.search.push(
 
 $(document).ready(function() {
 
-    	var table = $('#basicQuery').DataTable();
+    	var table = $('#basicQueryTable').DataTable();
 	var prev_gene = "";
 	$('#min, #max').keyup( function() {
         table.draw();
@@ -69,7 +69,7 @@ $(document).ready(function() {
 		var gene = $('#gene').val();
 		//console.log(prev_gene + ' ' + gene);
 		if (prev_gene !== gene){
-			$.get('query_accept.php?gene=' + gene, function(data) {
+			$.get('basic_query.php?gene=' + gene, function(data) {
 				$('#qTable').empty();
 				$('#qTable').html(data);
 			});
