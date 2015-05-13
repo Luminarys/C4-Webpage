@@ -17,7 +17,9 @@ $.fn.dataTable.ext.search.push(
 
 
 $(document).ready(function() {
-
+	var c_genes = 0;
+	var max_genes = 5;
+	var wrapper = $("#gene_wrap");
     	var table = $('#basicQueryTable').DataTable();
 	var prev_gene = "";
 	$('#min, #max').keyup( function() {
@@ -62,18 +64,49 @@ $(document).ready(function() {
 		}
 		
 	});
+	
+	$(".add_gene_button").click(function(e){
+		e.preventDefault();
+		if(c_genes < max_genes){
+			c_genes++;
+			$(wrapper).append('<span id=g'+c_genes+ '><input type="text" name="gene[]" placeholder="Gene ID"\></span>');
+		}
+	});
+	$(".remove_gene_button").on("click", function(e){
+		e.preventDefault();
+		console.log("Trying to remove gene field " + c_genes);
+		if(c_genes > 0){
+			$("#g"+c_genes).remove();
+			c_genes--;
+		}
+	});
 
 	$('#geneQuery').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
-		var gene = $('#gene').val();
-		//console.log(prev_gene + ' ' + gene);
-		if (prev_gene !== gene){
-			$.get('basic_query.php?gene=' + gene, function(data) {
-				$('#qTable').empty();
-				$('#qTable').html(data);
-			});
+		var $inputs = $('#geneQuery :input');
+		ind = 0;	
+		var vals = {};
+		$inputs.each(function() {
+			vals[ind] = $(this).val();	
+			ind++;
+		});
+		console.log(vals);
+		req = "basic_query.php?";
+		for(i = 0;i < ind-2;i++){
+			if(i !=  0){
+				req+="&";
+			}
+			req+=("g" + i + "="+vals[i]);	
 		}
+		console.log(req);
+		var gene = $('#gene').val();
+		$.get(req, function(data) {
+			$('#qTable').empty()
+			.html(data);
+		});
+    		table = $('#basicQueryTable').DataTable();
+		table.draw();
 		prev_gene = gene;
 	});
 

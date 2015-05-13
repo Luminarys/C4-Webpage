@@ -35,7 +35,9 @@
 			<div id="basicQueryForm">
 				<p>Basic Gene Query:</p>
 				<form id='geneQuery'>
+					<span id="gene_wrap">
 					<input type="text" id="gene" placeholder="Gene ID">
+					</span>
 					<select>
 						<option value="Zmays">Maize</option>
 						<option value="Zset">Setaria</option>
@@ -43,13 +45,18 @@
 					</select>
 					<input type="submit">
 				</form>
+				<div>
+					<button class="add_gene_button">Add a gene</button>
+					<button class="remove_gene_button">Remove a gene</button>
+				</div>
 			</div>
-		
-			<div id="qTable"></div>
+			<div id="bottomCombo">	
+				<div id="qTable"></div>
 			
-		</div>
-		<div id="footer">
-			<p id="lower-rect"></p>
+				<div id="footer">
+					<p id="lower-rect"></p>
+				</div>
+			</div>
 		</div>
 	</div>
 

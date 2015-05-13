@@ -19,11 +19,10 @@
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
 
 <!-- Local JS file -->
-<script type="text/javascript" charset="utf8" src="js/main.js"></script>
+<script type="text/javascript" charset="utf8" src="js/bquery.js"></script>
 
 </head>
 <body>
-
 <?php 
 
 //Set debugging on
@@ -36,16 +35,20 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Process user input
-$gene = $_GET["gene"];
+$gene = $_GET["g0"];
 
+$pre_query = "SELECT * FROM Zmays_Adj";
+$pre_query_a = "WHERE gene_id_A IN (";
+$pre_query_b = "OR gene_id_B IN (";
+foreach ($_GET as $key => $value) {
+	if($key[0] == "g"){
+		$pre_query_a.=("'" . $value . "',");
+		$pre_query_b.=("'" . $value . "',");
+	}
+}
 //Prepare and execute query
-$query = $db->prepare("SELECT * FROM Zmays_Adj WHERE gene_id_A = ? OR gene_id_B = ?");
-if($query->execute(array($gene, $gene))){
-	$results = $query->fetchAll();
-	$rows = $query->rowCount();
-
-	//Prepare the second query for extracting data from Zmays_Metrics
-	$queryT2 = $db->prepare("SELECT * FROM Zmays_Metrics WHERE gene_id = ?");
+$query = $db->prepare($pre_query . " " . substr($pre_query_a,0,-1) . ") " . substr($pre_query_b,0,-1) . ")");
+if($query->execute()){
 
 	//Pre table search forms
 	echo '<table border="0" cellspacing="5" cellpadding="5">';
@@ -87,11 +90,21 @@ if($query->execute(array($gene, $gene))){
 		echo "<tfoot></tfoot>";
     		echo "<tbody>";
 
+	$results = $query->fetchAll();
+	$rows = $query->rowCount();
+
+	//Prepare the second query for extracting data from Zmays_Metrics
+	$queryT2 = $db->prepare("SELECT * FROM Zmays_Metrics WHERE gene_id = ?");
+
+
 	//Loop through initial results, perform subquery for Metrics and create the table
 	foreach ($results as $row) {
-
+		//In the case of an intersection, just skip the row in the table	
+		if (in_array($row['gene_id_A'],$_GET) && in_array($row['gene_id_B'],$_GET)){
+			continue;	
+		}
 		//Search of gene_id_B if gene_id_A is equal to the queried gene and vice versa
-		if ($row['gene_id_A'] == $gene){
+		if (in_array($row['gene_id_A'],$_GET)){
 			$queryT2->execute(array($row['gene_id_B']));
 			$outGene = $row['gene_id_B'];
 		}else{
