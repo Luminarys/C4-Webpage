@@ -17,62 +17,60 @@ $.fn.dataTable.ext.search.push(
 
 
 $(document).ready(function() {
+
 	var c_genes = 0;
 	var max_genes = 5;
 	var wrapper = $("#gene_wrap");
     	var table = $('#basicQueryTable').DataTable();
 	var prev_gene = "";
-	$('#min, #max').keyup( function() {
-        table.draw();
+	var prev = "";
+	$('#entryForm').children().hide();
+
+	//For some reason the specific fields don't work, but this is fine
+	$('*').keyup( function() {
+		console.log("key released");
+        	table.draw();
     	} );
-	$('#filterForm').submit(function(e) {
-		e.preventDefault();
-		var $inputs = $('#filterForm :input');
-		console.log($inputs);
-		//Intialize parameters for filtering
-		var column = "";	
-		var lessThan = 0;	
-		var val = 0;	
-		var values = [];
-		var i = 0;
-
-		$inputs.each(function() {
-			console.log($(this).val());
-			values[i] = $(this).val();
-			i++;
-		});
-
-		console.log(values);
-		if ( values[1] === "Greater than"){
-			lessThan = 1;	
-		}
-		val = parseInt(values[2]);
-		console.log(val);
-
-		if(!isNaN(values[2])){
-			var filteredData = table
-			.columns( 8 )
-			.data()
-			.filter ( function ( value, index ) {
-				console.log(value)
-				return false;	
-				return value > 120 ? true : false;
-			});	
-			 filteredData.draw();
-		}else{
-			alert("Please use a valid number");
-		}
-		
-	});
 	
-	$(".add_gene_button").click(function(e){
+	$("#singleGeneQuery").click(function() {
+		prev="singleGene";
+		$("#querySelection").hide();
+		$("#singleGeneForm").show();
+	});
+
+	$("#multiGeneQuery").click(function() {
+		prev="multiGene";
+		$("#querySelection").hide();
+		$("#multiGeneForm").show();
+	});
+
+	$("#backToInput").click(function() {
+		$("#goBack").hide();
+		$("#qTable").empty();
+		$("#" + prev + "Form").show();
+		$('#lower-rect').removeAttr('style').css("margin-top", "450px");
+	});
+
+
+	$(".backToQuery").click(function() {
+		$('#qTable').empty()
+		$('#entryForm').children().hide();
+		$("#querySelection").show();
+		//Ensure that the bottom bar stays at the bottom
+		$('#lower-rect').removeAttr('style').css("margin-top", "450px");
+
+	});
+
+	$(".addGeneButton").click(function(e){
+		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
 		if(c_genes < max_genes){
 			c_genes++;
 			$(wrapper).append('<span id=g'+c_genes+ '><input type="text" name="gene[]" placeholder="Gene ID"\></span>');
 		}
 	});
-	$(".remove_gene_button").on("click", function(e){
+
+	$(".removeGeneButton").on("click", function(e){
 		e.preventDefault();
 		console.log("Trying to remove gene field " + c_genes);
 		if(c_genes > 0){
@@ -80,11 +78,33 @@ $(document).ready(function() {
 			c_genes--;
 		}
 	});
-
-	$('#geneQuery').submit(function(e) {
+	
+	//Handle the single gene query
+	$('#singleGeneQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
-		var $inputs = $('#geneQuery :input');
+		var gene = $("#singleGeneInput").val();
+		var species = $(".speciesSelect").val();
+		$.get("basic_query.php?g0=" + gene + "&spec=" + species, function(data) {
+			$('#qTable').empty()
+			.html(data)
+			.ready(function(){
+				$("#singleGeneForm").hide();
+				$("#goBack").show();
+				if($('#basicQueryTable tr').length > 9){
+					$('#lower-rect').removeAttr('style');
+				}
+    				table = $('#basicQueryTable').DataTable();
+			});
+		});
+		table.draw();
+	});
+
+	//Handle the multi-gene query
+	$('#multiGeneQueryForm').submit(function(e) {
+		//Prevents the webpage from directing to the GET url
+		e.preventDefault();
+		var $inputs = $('#multiGeneQueryForm :input');
 		ind = 0;	
 		var vals = {};
 		$inputs.each(function() {
@@ -93,21 +113,29 @@ $(document).ready(function() {
 		});
 		console.log(vals);
 		req = "basic_query.php?";
+		//Build the GET request by looping through the inputs
 		for(i = 0;i < ind-2;i++){
 			if(i !=  0){
 				req+="&";
 			}
 			req+=("g" + i + "="+vals[i]);	
 		}
-		console.log(req);
-		var gene = $('#gene').val();
+		//Append on the species DB to access
+		req+=("&spec=" + vals[ind-2]);
+		//console.log(req);
 		$.get(req, function(data) {
 			$('#qTable').empty()
-			.html(data);
+			.html(data)
+			.ready(function(){
+				$("#multiGeneForm").hide();
+				$("#goBack").show();
+				if($('#basicQueryTable tr').length > 9){
+					$('#lower-rect').removeAttr('style');
+				}
+			});
 		});
     		table = $('#basicQueryTable').DataTable();
 		table.draw();
-		prev_gene = gene;
 	});
 
 } );

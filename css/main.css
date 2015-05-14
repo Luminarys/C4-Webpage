@@ -1,4 +1,5 @@
 #upper-rect {
+	text-align:center;
 	border-radius: 30px 30px 30px 30px;
 	background: #66cd7d;
 	padding: 15px;
@@ -8,9 +9,10 @@
 	margin-top: 30px;
 }
 #lower-rect {
+	position: relative;
 	bottom: 0;
 	border-radius: 30px 30px 30px 30px;
-	background: #66cd7d;
+	background: #66cd7d;/**/
 	padding: 15px;
 	height: 100px;
 	margin-left: 250px;
@@ -35,12 +37,15 @@
    /*background:#6cf;/**/
 }
 #qTable {
-	height: 500px;
+	/*height: 500px;/**/
 	margin-left: 200px;
 	margin-right: 200px;
 }
-#bottomCombo{
-
+#singleGeneForm{
+	height: 156px;/**/
+}
+#multiGeneForm{
+	height: 156px;/**/
 }
 
 #content {
@@ -48,4 +53,3 @@
 	text-align:center;
 	margin: 30px 30px; padding:0px;
 }
-

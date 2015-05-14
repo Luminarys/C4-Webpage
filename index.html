@@ -23,38 +23,69 @@
 
 </head>
 
-<body>
-	<div id="wrapper">
+<body class="Site">
+	<div id="wrapper" class="Site-content">
 		<div id="header">
-			<p id="upper-rect"></p>
+			<p id="upper-rect"> C4 @ the DDPSC</p>
 		</div>
 		<div id="leftside">
-			<p id="left-rect"></p>	
+			<p id="left-rect">Home</p>	
 		</div>
 		<div id="content">
-			<div id="basicQueryForm">
-				<p>Basic Gene Query:</p>
-				<form id='geneQuery'>
-					<span id="gene_wrap">
-					<input type="text" id="gene" placeholder="Gene ID">
-					</span>
-					<select>
-						<option value="Zmays">Maize</option>
-						<option value="Zset">Setaria</option>
-						<option value="Zsor">Sorghum</option>
-					</select>
-					<input type="submit">
-				</form>
-				<div>
-					<button class="add_gene_button">Add a gene</button>
-					<button class="remove_gene_button">Remove a gene</button>
+			<div id="querySelection">
+				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
+				<a href="javascript:void(0)" id="singleGeneQuery">Query a Single Gene</a><br>
+				<a href="javascript:void(0)" id="multiGeneQuery">Query a Gene Set</a><br>
+				<a href="javascript:void(0)" id="modMemberQuery">Identify Genes by Modular Membership</a><br>
+				<a href="javascript:void(0)" id="geneExpressionQuery">Identify Genes by Expression</a><br>
+				<a href="javascript:void(0)" id="functionalTermQuery">Query for Genes by Functional Term</a><br>
+				<a href="javascript:void(0)" id="expressionView">View Modular Expression Profiles and Functional Enrichment</a><br>
+
+			</div>
+			<div id="entryForm">
+				<div id="goBack">
+					<button class="backToQuery">Back to query selection</button>
+					<button id="backToInput">Back to data entry</button>
+				</div>
+				<div id="singleGeneForm">
+					<button class="backToQuery">Back to query selection</button>
+					<p>Basic Gene Query:</p>
+					<form id='singleGeneQueryForm'>
+							<input type="text" id="singleGeneInput" placeholder="Gene ID">
+						<select class="speciesSelect">
+							<option value="Zmays">Maize</option>
+							<option value="TBA">Setaria</option>
+							<option value="Sbicolor">Sorghum</option>
+						</select>
+						<input type="submit">
+					</form>
+				</div>
+				<div id="multiGeneForm">
+					<button class="backToQuery">Back to query selection</button>
+					<p>Multi Gene Query:</p>
+					<form id='multiGeneQueryForm'>
+						<span id="gene_wrap">
+							<input type="text" placeholder="Gene ID">
+						</span>
+						<select>
+							<option value="Zmays">Maize</option>
+							<option value="TBA">Setaria</option>
+							<option value="Sbicolor">Sorghum</option>
+						</select>
+						<input type="submit">
+					</form>
+					<div>
+						<button class="addGeneButton">Add a gene</button>
+						<button class="removeGeneButton">Remove a gene</button>
+					</div>
 				</div>
 			</div>
 			<div id="bottomCombo">	
+				<div id="bottomFiller"></div>
 				<div id="qTable"></div>
 			
-				<div id="footer">
-					<p id="lower-rect"></p>
+				<div id="footer" class="footer">
+					<p id="lower-rect" style="margin-top: 450px;">Copyright ...</p>
 				</div>
 			</div>
 		</div>

@@ -34,19 +34,23 @@ $db = new PDO('mysql:host=racetrack.ddpsc.org;dbname=C4;charset=utf8', 'MocklerW
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-//Process user input
-$gene = $_GET["g0"];
-
-$pre_query = "SELECT * FROM Zmays_Adj";
+//Process user input by looping through the GET fields and appending the values onto the pre-query strings
+$pre_query = "SELECT * FROM ";
 $pre_query_a = "WHERE gene_id_A IN (";
 $pre_query_b = "OR gene_id_B IN (";
+$species;
 foreach ($_GET as $key => $value) {
+
 	if($key[0] == "g"){
 		$pre_query_a.=("'" . $value . "',");
 		$pre_query_b.=("'" . $value . "',");
+	}else if($key == "spec"){
+		$species = $value;	
+		$pre_query.=($value . "_Adj");
 	}
 }
-//Prepare and execute query
+//Prepare and execute query, concatenating the pre-query strings
+//The substr is used to remove the final ','
 $query = $db->prepare($pre_query . " " . substr($pre_query_a,0,-1) . ") " . substr($pre_query_b,0,-1) . ")");
 if($query->execute()){
 
@@ -89,14 +93,17 @@ if($query->execute()){
     		echo "</thead>";
 		echo "<tfoot></tfoot>";
     		echo "<tbody>";
-
+	//Get the results
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
 
 	//Prepare the second query for extracting data from Zmays_Metrics
-	$queryT2 = $db->prepare("SELECT * FROM Zmays_Metrics WHERE gene_id = ?");
+	$queryT2 = $db->prepare("SELECT * FROM " . $species .  "_Metrics WHERE gene_id = ?");
 
-
+	//In the case of the exclusive multigene query, use a seen and seenTwice array
+	//Any gene that is in seen but NOT in seenTwice should be added
+	$seen = array();
+	$seenTwice = array();
 	//Loop through initial results, perform subquery for Metrics and create the table
 	foreach ($results as $row) {
 		//In the case of an intersection, just skip the row in the table	
