@@ -39,6 +39,7 @@ $pre_query = "SELECT * FROM ";
 $pre_query_a = "WHERE gene_id_A IN (";
 $pre_query_b = "OR gene_id_B IN (";
 $species;
+$AND = False;
 foreach ($_GET as $key => $value) {
 
 	if($key[0] == "g"){
@@ -47,6 +48,10 @@ foreach ($_GET as $key => $value) {
 	}else if($key == "spec"){
 		$species = $value;	
 		$pre_query.=($value . "_Adj");
+	}else if($key == "type"){
+		if($value == "AND"){
+			$AND = True;
+		}
 	}
 }
 //Prepare and execute query, concatenating the pre-query strings
@@ -100,10 +105,11 @@ if($query->execute()){
 	//Prepare the second query for extracting data from Zmays_Metrics
 	$queryT2 = $db->prepare("SELECT * FROM " . $species .  "_Metrics WHERE gene_id = ?");
 
-	//In the case of the exclusive multigene query, use a seen and seenTwice array
-	//Any gene that is in seen but NOT in seenTwice should be added
+	//Use these to store values we've seen - they will be used to find
+	//all genes which are connected to at least two of the queried ones
 	$seen = array();
 	$seenTwice = array();
+
 	//Loop through initial results, perform subquery for Metrics and create the table
 	foreach ($results as $row) {
 		//In the case of an intersection, just skip the row in the table	
@@ -112,11 +118,39 @@ if($query->execute()){
 		}
 		//Search of gene_id_B if gene_id_A is equal to the queried gene and vice versa
 		if (in_array($row['gene_id_A'],$_GET)){
-			$queryT2->execute(array($row['gene_id_B']));
-			$outGene = $row['gene_id_B'];
+			//Logic for the exclusive type multigene query
+			if($AND){
+				//If the gene has appeared at least once, but
+				//no more than twice then we will execute the
+				//subquery and add it to seenTwice so it will
+				//not be executed again
+				if(in_array($row['gene_id_B'],$seen) && !in_array($row['gene_id_B'],$seenTwice)){
+					$queryT2->execute(array($row['gene_id_B']));
+					$outGene = $row['gene_id_B'];
+					array_push($seenTwice,$row['gene_id_B']);
+				}else{
+					array_push($seen,$row['gene_id_B']);
+					continue;
+				}
+			}else{
+				$queryT2->execute(array($row['gene_id_B']));
+				$outGene = $row['gene_id_B'];
+			}
 		}else{
-			$queryT2->execute(array($row['gene_id_A']));
-			$outGene = $row['gene_id_A'];
+			//Logic for the exclusive type multigene query
+			if($AND){
+				if(in_array($row['gene_id_A'],$seen) && !in_array($row['gene_id_A'],$seenTwice)){
+					$queryT2->execute(array($row['gene_id_A']));
+					$outGene = $row['gene_id_A'];
+					array_push($seenTwice,$row['gene_id_A']);
+				}else{
+					array_push($seen,$row['gene_id_A']);
+					continue;
+				}
+			}else{
+				$queryT2->execute(array($row['gene_id_A']));
+				$outGene = $row['gene_id_A'];
+			}
 		}
 		$metrics = $queryT2->fetchAll();
 

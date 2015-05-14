@@ -105,24 +105,37 @@ $(document).ready(function() {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
 		var $inputs = $('#multiGeneQueryForm :input');
-		ind = 0;	
 		var vals = {};
+
+		ind = 0;
 		$inputs.each(function() {
 			vals[ind] = $(this).val();	
 			ind++;
 		});
+
+		var lines = $('#multiGeneInputArea').val().split(/\n/);
+		var texts = [];
+
+		for (var i=0; i < lines.length; i++) {
+  			// only push this line if it contains a non whitespace character.
+ 			 if (/\S/.test(lines[i])) {
+  				texts.push($.trim(lines[i]));
+  			 }
+           	}
+		console.log(texts);
 		console.log(vals);
 		req = "basic_query.php?";
 		//Build the GET request by looping through the inputs
-		for(i = 0;i < ind-2;i++){
+		for(i = 0;i < texts.length;i++){
 			if(i !=  0){
 				req+="&";
 			}
-			req+=("g" + i + "="+vals[i]);	
+			req+=("g" + i + "="+texts[i]);	
 		}
+		req+=("&type=" + vals[0]);
 		//Append on the species DB to access
-		req+=("&spec=" + vals[ind-2]);
-		//console.log(req);
+		req+=("&spec=" + vals[1]);
+		console.log(req);
 		$.get(req, function(data) {
 			$('#qTable').empty()
 			.html(data)
@@ -132,9 +145,9 @@ $(document).ready(function() {
 				if($('#basicQueryTable tr').length > 9){
 					$('#lower-rect').removeAttr('style');
 				}
+    				table = $('#basicQueryTable').DataTable();
 			});
 		});
-    		table = $('#basicQueryTable').DataTable();
 		table.draw();
 	});
 

@@ -64,20 +64,21 @@
 					<button class="backToQuery">Back to query selection</button>
 					<p>Multi Gene Query:</p>
 					<form id='multiGeneQueryForm'>
-						<span id="gene_wrap">
-							<input type="text" placeholder="Gene ID">
-						</span>
+						<select>
+							<option value="OR">Include all genes which have at least one adjacent edge</option>
+							<option value="AND">Include only genes with at least two adjacent edges</option>
+						</select>
 						<select>
 							<option value="Zmays">Maize</option>
 							<option value="TBA">Setaria</option>
 							<option value="Sbicolor">Sorghum</option>
 						</select>
+						<div>
+							<textarea id="multiGeneInputArea" rows="4" cols="51">
+							</textarea>
+						</div>
 						<input type="submit">
 					</form>
-					<div>
-						<button class="addGeneButton">Add a gene</button>
-						<button class="removeGeneButton">Remove a gene</button>
-					</div>
 				</div>
 			</div>
 			<div id="bottomCombo">	
