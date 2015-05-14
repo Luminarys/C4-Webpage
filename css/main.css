@@ -41,10 +41,8 @@
 	margin-left: 200px;
 	margin-right: 200px;
 }
-#singleGeneForm{
-	height: 156px;/**/
-}
-#multiGeneForm{
+
+.entryForm{
 	height: 156px;/**/
 }
 
