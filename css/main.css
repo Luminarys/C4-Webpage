@@ -48,6 +48,10 @@
 	height: 156px;/**/
 }
 
+#multiGeneInputArea{
+   resize: none;
+}
+
 #content {
 	position: relative;
 	text-align:center;

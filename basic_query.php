@@ -109,49 +109,58 @@ if($query->execute()){
 	//all genes which are connected to at least two of the queried ones
 	$seen = array();
 	$seenTwice = array();
-
-	//Loop through initial results, perform subquery for Metrics and create the table
-	foreach ($results as $row) {
-		//In the case of an intersection, just skip the row in the table	
-		if (in_array($row['gene_id_A'],$_GET) && in_array($row['gene_id_B'],$_GET)){
-			continue;	
-		}
-		//Search of gene_id_B if gene_id_A is equal to the queried gene and vice versa
-		if (in_array($row['gene_id_A'],$_GET)){
-			//Logic for the exclusive type multigene query
-			if($AND){
+	$indeces = array();
+	$pos = 0;
+	//Generate an index list of valid rows which will be displayed in the table
+	if($AND){
+		foreach ($results as $row){
+			if (in_array($row['gene_id_A'],$_GET)){
 				//If the gene has appeared at least once, but
-				//no more than twice then we will execute the
-				//subquery and add it to seenTwice so it will
-				//not be executed again
+				//no more than twice then we will add it to the indeces table and to the seenTwice table so it isn't readded
 				if(in_array($row['gene_id_B'],$seen) && !in_array($row['gene_id_B'],$seenTwice)){
-					$queryT2->execute(array($row['gene_id_B']));
-					$outGene = $row['gene_id_B'];
+					array_push($indeces,$pos);
 					array_push($seenTwice,$row['gene_id_B']);
 				}else{
 					array_push($seen,$row['gene_id_B']);
 					continue;
 				}
 			}else{
-				$queryT2->execute(array($row['gene_id_B']));
-				$outGene = $row['gene_id_B'];
-			}
-		}else{
-			//Logic for the exclusive type multigene query
-			if($AND){
 				if(in_array($row['gene_id_A'],$seen) && !in_array($row['gene_id_A'],$seenTwice)){
-					$queryT2->execute(array($row['gene_id_A']));
-					$outGene = $row['gene_id_A'];
+					array_push($indeces,$pos);
 					array_push($seenTwice,$row['gene_id_A']);
 				}else{
 					array_push($seen,$row['gene_id_A']);
 					continue;
 				}
-			}else{
-				$queryT2->execute(array($row['gene_id_A']));
-				$outGene = $row['gene_id_A'];
 			}
+			$pos++;
 		}
+	}
+
+	//Loop through initial results, perform subquery for Metrics and create the table
+	$pos = 0;
+	foreach ($results as $row) {
+		if($AND){
+			//Skip anything not in the index
+			if (!in_array($pos,$indeces)){
+				continue;
+			}
+			$pos++;
+		}
+		//In the case of an intersection, just skip the row in the table	
+		if (in_array($row['gene_id_A'],$_GET) && in_array($row['gene_id_B'],$_GET)){
+			continue;	
+		}
+		//Search of gene_id_B if gene_id_A is equal to the queried gene and vice versa
+		if (in_array($row['gene_id_A'],$_GET)){
+			$queryT2->execute(array($row['gene_id_B']));
+			$outGene = $row['gene_id_B'];
+			
+		}else{
+			$queryT2->execute(array($row['gene_id_A']));
+			$outGene = $row['gene_id_A'];
+		}
+
 		$metrics = $queryT2->fetchAll();
 
 		//Echo the table 
