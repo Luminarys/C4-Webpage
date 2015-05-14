@@ -67,31 +67,13 @@ $(document).ready(function() {
 
 	});
 
-	$(".addGeneButton").click(function(e){
-		//Prevents the webpage from directing to the GET url
-		e.preventDefault();
-		if(c_genes < max_genes){
-			c_genes++;
-			$(wrapper).append('<span id=g'+c_genes+ '><input type="text" name="gene[]" placeholder="Gene ID"\></span>');
-		}
-	});
-
-	$(".removeGeneButton").on("click", function(e){
-		e.preventDefault();
-		console.log("Trying to remove gene field " + c_genes);
-		if(c_genes > 0){
-			$("#g"+c_genes).remove();
-			c_genes--;
-		}
-	});
-	
 	//Handle the single gene query
 	$('#singleGeneQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
 		var gene = $("#singleGeneInput").val();
 		var species = $(".speciesSelect").val();
-		$.get("basic_query.php?g0=" + gene + "&spec=" + species, function(data) {
+		$.get("gene_query.php?g0=" + gene + "&spec=" + species, function(data) {
 			$('#qTable').empty()
 			.html(data)
 			.ready(function(){
@@ -130,7 +112,7 @@ $(document).ready(function() {
            	}
 		console.log(texts);
 		console.log(vals);
-		req = "basic_query.php?";
+		req = "gene_query.php?";
 		//Build the GET request by looping through the inputs
 		for(i = 0;i < texts.length;i++){
 			if(i !=  0){
