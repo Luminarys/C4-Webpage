@@ -29,8 +29,12 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
 
-//Initialize Server
-$db = new PDO('mysql:host=racetrack.ddpsc.org;dbname=C4;charset=utf8', 'MocklerWeb', 'MocklerWebPassw0rd');
+//Load the authentication into an array
+$auth = file("DB.auth");
+
+//Initialize Server, loading the file auth
+$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=C4;charset=utf8';
+$db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
