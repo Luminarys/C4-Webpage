@@ -1,0 +1,4 @@
+<Files "DB.auth">
+     Order allow,deny
+     Deny from all
+</Files>

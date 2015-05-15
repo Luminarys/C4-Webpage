@@ -64,10 +64,8 @@
 					<button class="backToQuery">Back to query selection</button>
 					<p>Gene Set Query:</p>
 					<form id='multiGeneQueryForm'>
-						<select>
-							<option value="OR">Include all genes which have at least one adjacent edge</option>
-							<option value="AND">Include only genes with at least two adjacent edges</option>
-						</select>
+							<input type="radio" name="multiGeneOption" checked="checked">Include all genes which have at least one adjacent edge</option><br>
+							<input type="radio" name="multiGeneOption" id="ANDButton">Include only genes with at least two adjacent edges</option><br>
 						<select>
 							<option value="Zmays">Maize</option>
 							<option value="TBA">Setaria</option>

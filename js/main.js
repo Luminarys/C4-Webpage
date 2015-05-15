@@ -123,9 +123,13 @@ $(document).ready(function() {
 			}
 			req+=("g" + i + "="+texts[i]);	
 		}
-		req+=("&type=" + vals[0]);
+		if (document.getElementById('ANDButton').checked){
+			req+=("&type=" + "AND");
+		}else{
+			req+=("&type=" + "OR");
+		}
 		//Append on the species DB to access
-		req+=("&spec=" + vals[1]);
+		req+=("&spec=" + vals[2]);
 		console.log(req);
 		$.get(req, function(data) {
 			$('#qTable').empty()
