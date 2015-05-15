@@ -50,6 +50,10 @@
    resize: none;
 }
 
+#expressionInputArea{
+   resize: none;
+}
+
 #content {
 	position: relative;
 	text-align:center;
