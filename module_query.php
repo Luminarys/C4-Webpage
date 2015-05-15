@@ -38,9 +38,14 @@ $db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+$validSpecies = array("Zmays","Sbicolor");
 //Build and execute query
-$query = $db->prepare("SELECT * from " . $_GET["spec"] . "_Metrics WHERE module = " . $_GET["module"]);
-if($query->execute()){
+if(!in_array($_GET["spec"], $validSpecies)){
+	echo "Invalid SQL query, please try again";	
+	exit();
+}
+$query = $db->prepare("SELECT * FROM " . $_GET["spec"] . "_Metrics WHERE module = ?");
+if($query->execute(array($_GET["module"]))){
 
 	//Pre table search forms
 	echo '<table border="0" cellspacing="5" cellpadding="5">';

@@ -39,18 +39,28 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Process user input by looping through the GET fields and appending the values onto the pre-query strings
+$validSpecies = array("Zmays","Sbicolor");
 $pre_query = "SELECT * FROM ";
 $pre_query_a = "WHERE gene_id_A IN (";
 $pre_query_b = "OR gene_id_B IN (";
 $species;
 $AND = False;
+$validGenes = "((GRMZM\dG\d{6})|(AC\d{6}.\d_FG\d{3})|(Sobic\.\d{3}(G|K)\d{6}))";
 foreach ($_GET as $key => $value) {
 
 	if($key[0] == "g"){
-		$pre_query_a.=("'" . $value . "',");
-		$pre_query_b.=("'" . $value . "',");
+		if(!preg_match($validGenes,$value,$match)){
+			echo "Invalid gene used, please try again";	
+			exit();
+		}
+		$pre_query_a.=("'" . $match[0] . "',");
+		$pre_query_b.=("'" . $match[0] . "',");
 	}else if($key == "spec"){
-		$species = $value;	
+		$species = $value;
+		if(!in_array($species, $validSpecies)){
+			echo "Invalid SQL query, please try again";	
+			exit();
+		}
 		$pre_query.=($value . "_Adj");
 	}else if($key == "type"){
 		if($value == "AND"){

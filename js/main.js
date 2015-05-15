@@ -78,10 +78,13 @@ $(document).ready(function() {
 			.html(data)
 			.ready(function(){
 				$("#singleGeneForm").hide();
-				$("#goBack").show();
+				$("#goBack").removeAttr('style').show();
 				if($('#basicQueryTable tr').length > 9){
 					$('#lower-rect').removeAttr('style');
+				}else{
+					$("#goBack").css("height","136px");	
 				}
+
     				table = $('#basicQueryTable').DataTable();
 			});
 		});
@@ -132,6 +135,8 @@ $(document).ready(function() {
 				$("#goBack").show();
 				if($('#basicQueryTable tr').length > 9){
 					$('#lower-rect').removeAttr('style');
+				}else{
+					$("#goBack").css("height","136px");	
 				}
     				table = $('#basicQueryTable').DataTable();
 			});
@@ -153,7 +158,10 @@ $(document).ready(function() {
 				$("#goBack").show();
 				if($('#basicQueryTable tr').length > 9){
 					$('#lower-rect').removeAttr('style');
+				}else{
+					$("#goBack").css("height","136px");	
 				}
+
     				table = $('#basicQueryTable').DataTable();
 			});
 		});
