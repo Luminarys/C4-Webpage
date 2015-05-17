@@ -182,7 +182,7 @@ $(document).ready(function() {
 	$('#expressionQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
-		var $inputs = $('#multiGeneQueryForm :input');
+		var $inputs = $('#expressionQueryForm :input');
 		var vals = {};
 
 		ind = 0;
@@ -191,7 +191,7 @@ $(document).ready(function() {
 			ind++;
 		});
 
-		var lines = $('#multiGeneInputArea').val().split(/\n/);
+		var lines = $('#expressionInputArea').val().split(/\n/);
 		var texts = [];
 
 		for (var i=0; i < lines.length; i++) {
@@ -210,30 +210,18 @@ $(document).ready(function() {
 			}
 			req+=("g" + i + "="+texts[i]);	
 		}
-		if (document.getElementById('ANDButton').checked){
-			req+=("&type=" + "AND");
-		}else{
-			req+=("&type=" + "OR");
-		}
 		//Append on the species DB to access
-		req+=("&spec=" + vals[2]);
+		req+=("&spec=" + vals[0]);
 		console.log(req);
 		$.get(req, function(data) {
-			$('#qTable').empty()
-			.html(data)
-			.ready(function(){
-				$("#expressionForm").hide();
-				$("#goBack").show();
-				if($('#basicQueryTable tr').length > 9){
-					$('#lower-rect').removeAttr('style');
-				}else{
-					$("#goBack").css("height","136px");	
-				}
-    				table = $('#basicQueryTable').DataTable();
-			});
+			var info = JSON.parse(data);
+			console.log(info);
+			console.log(info[0]);
+			$("#expressionForm").hide();
+			$("#goBack").show();
+			$("#goBack").css("height","136px");	
 		});
 		table.draw();
 	});
 
 });
-
