@@ -44,10 +44,9 @@ if($query->execute()){
 	//Get the results
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
-
+	$data = array();
 	foreach ($results as $row) {
-    		echo json_encode(array(
-			$row["gene_id"],
+		$data[$row["gene_id"]] = array(
 			"MP-1" => array(
 				$row["Zm.MP-1-2"],  $row["Zm.MP-1-3"], $row["Zm.MP-1-4"]
 			),
@@ -78,14 +77,8 @@ if($query->execute()){
 			"LS-4" => array(
 				$row["Zm.leaf.R1-4"], $row["Zm.leaf.R2-4"], $row["Zm.leaf.R3-4"], $row["Zm.leaf.R4-4"], $row["Zm.leaf.R6-4"]
 			),
-			"LS-5" => array(
-
-			),
 			"LS-6" => array(
 				$row["Zm.leaf.R1-6"], $row["Zm.leaf.R2-6"], $row["Zm.leaf.R3-6"], $row["Zm.leaf.R4-6"], $row["Zm.leaf.R6-6"]
-
-			),
-			"LS-7" => array(
 
 			),
 			"LS-8" => array(
@@ -115,8 +108,9 @@ if($query->execute()){
 			"LS-16" => array(
 				$row["Zm.leaf.R1-16"], $row["Zm.leaf.R2-16"], $row["Zm.leaf.R3-16"], $row["Zm.leaf.R4-16"], $row["Zm.leaf.R6-16"]
 			)
-			));
+			);
 	}
+	echo json_encode($data);
 }
 
 
