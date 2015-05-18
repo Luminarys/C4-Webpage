@@ -22,7 +22,7 @@ function average(d) {
 		sum+=parseFloat(d[key]);	
 		counter+=1;
 	}
-	return Math.round(sum/counter);
+	return sum/counter;
 }
 
 
@@ -231,61 +231,70 @@ $(document).ready(function() {
 				var gData = [];
 				//console.log(cArr);
 				//Generate an associative array based on averages
+				var i = 0;
+				var samples = [];
 				for (var key in cArr){
 					var subArr = cArr[key];
 					var av = average(subArr);
 					//console.log(av);
-					gData.push({Sample:key, val:av});
+					gData.push({Sample:i++, val:av});
+					samples.push(key);
 				}
-				console.log(gData);
-				//Generate the graph
-				var barWidth = 40;
-				var width = (barWidth + 10) * gData.length;
-				var height = 400;
-				var x = d3.scale.linear().domain([0, gData.length]).range([0, width]);
-				var y = d3.scale.linear().domain([0, d3.max(gData, function(datum) { return datum.val; })]).rangeRound([0,height]);
 
-				//Add canvas to the DOM
-				var barDemo = d3.select("#qTable")
+				console.log(gData);
+
+				var width = (60) * gData.length;
+				var height = 400;
+				var vis = d3.select("#qTable")
 					.append("svg:svg")
 					.attr("width", width)
 					.attr("height", height);
+				var MARGINS = {
+					top: 20,
+        				right: 20,
+        				bottom: 20,
+        				left: 50
+				};
+
+				var y = d3.scale.linear()
+				.domain([d3.min(gData, function(datum) { return datum.val; }), d3.max(gData, function(datum) { return datum.val; })])
+				.range([height - MARGINS.top, MARGINS.bottom]);
+
+				var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+	
+				var x = d3.scale.linear()
+				.domain([0,21])
+				.range([MARGINS.left, width - MARGINS.right]);
+
+				var xAxis = d3.svg.axis()
+				.scale(x)
+				.tickValues(ra)
+				.tickFormat(function(d) { return samples[d];});
+
+				var yAxis = d3.svg.axis().scale(y).orient("left");
+
+				vis.append("svg:g")
+    				.attr("transform", "translate(0," + (height - MARGINS.bottom) + ")")
+    				.call(xAxis);	
+
+				vis.append("svg:g")
+				.attr("transform", "translate(" + (MARGINS.left) + ",0)")
+				.call(yAxis);
+
+				var lineGen = d3.svg.line()
+  				.x(function(d) {
+    					return x(d.Sample);
+  				})
+ 				.y(function(d) {
+    					return y(d.val);
+  				});
 				
-				barDemo.selectAll("rect")
-					.data(gData)
-					.enter()
-					.append("svg:rect")
-					.attr("x", function(datum, index) {return x(index); })
-					.attr("y", function(datum) {return height - y(datum.val); })
-					.attr("height", function(datum) {return y(datum.val); })
-					.attr("width", barWidth)
-					.attr("fill", "#2d578b");
-					
-
-				barDemo.selectAll("text")
-  					.data(gData)
-  					.enter()
-  					.append("svg:text")
-  					.attr("x", function(datum, index) { return x(index) + barWidth; })
-  					.attr("y", function(datum) { return height - y(datum.val); })
-  					.attr("dx", -barWidth/2)
-  					.attr("dy", "1.2em")
-  					.attr("text-anchor", "middle")
-  					.text(function(datum) { return datum.val;})
-  					.attr("fill", "white");
-
-				barDemo.selectAll("text.yAxis")
-  					.data(gData)
-  					.enter().append("svg:text")
-  					.attr("x", function(datum, index) { return x(index) + barWidth; })
-  					.attr("y", height - 5)
-  					.attr("dx", -barWidth/2)
-  					.attr("text-anchor", "middle")
-  					.attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-  					.text(function(datum) { return datum.Sample;})
-  					.attr("class", "yAxis");
-
-					
+				vis.append('svg:path')
+  				.attr('d', lineGen(gData))
+  				.attr('stroke', 'green')
+  				.attr('stroke-width', 2)
+  				.attr('fill', 'none');
+				
 			}
 			$("#expressionForm").hide();
 			$("#goBack").show();
