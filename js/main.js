@@ -231,13 +231,13 @@ $(document).ready(function() {
 				var gData = [];
 				//console.log(cArr);
 				//Generate an associative array based on averages
-				var i = 0;
+				var co = 0;
 				var samples = [];
 				for (var key in cArr){
 					var subArr = cArr[key];
 					var av = average(subArr);
 					//console.log(av);
-					gData.push({Sample:i++, val:av});
+					gData.push({Sample:co++, val:av});
 					samples.push(key);
 				}
 
@@ -260,10 +260,10 @@ $(document).ready(function() {
 				.domain([d3.min(gData, function(datum) { return datum.val; }), d3.max(gData, function(datum) { return datum.val; })])
 				.range([height - MARGINS.top, MARGINS.bottom]);
 
-				var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+				var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
 	
 				var x = d3.scale.linear()
-				.domain([0,21])
+				.domain([0,19])
 				.range([MARGINS.left, width - MARGINS.right]);
 
 				var xAxis = d3.svg.axis()
