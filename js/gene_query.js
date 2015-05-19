@@ -1,4 +1,28 @@
+$.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        var min = parseFloat( $('#min').val(), 10 );
+        var max = parseFloat( $('#max').val(), 10 );
+        var age = parseFloat( data[parseInt($("#filterChoice").val())] ) || 0; // Get column number based on values in the pre-table
+ 
+        if ( ( isNaN( min ) && isNaN( max ) ) ||
+             ( isNaN( min ) && age <= max ) ||
+             ( min <= age   && isNaN( max ) ) ||
+             ( min <= age   && age <= max ) )
+        {
+            return true;
+        }
+        return false;
+    }
+);
+
 $(document).ready(function() {
+
+    	var table = $('#basicQueryTable').DataTable();
+
+	$('*').keyup( function() {
+		console.log("key released");
+        	table.draw();
+    	} );
 
 	$('#singleGeneQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
@@ -47,7 +71,7 @@ $(document).ready(function() {
            	}
 		console.log(texts);
 		console.log(vals);
-		req = "gene_query.php?";
+		req = "php/gene_query.php?";
 		//Build the GET request by looping through the inputs
 		for(i = 0;i < texts.length;i++){
 			if(i !=  0){

@@ -1,0 +1,16 @@
+$(document).ready(function() {
+
+	$("#goBack").hide();
+
+	$(".backToQuery").click(function() {
+		window.location.href='index.html';
+	});
+
+	$("#backToInput").click(function() {
+		$("#goBack").hide();
+		$("#qTable").empty();
+		$(".entryForm").show();
+		$('#lower-rect').removeAttr('style').css("margin-top", "450px");
+	});
+	console.log("Shared functions are ready");
+});

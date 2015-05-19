@@ -9,10 +9,19 @@ function average(d) {
 }
 
 $(document).ready(function() {
+	
+	console.log("document is ready");
+
 	//Handle the expression query
 	$('#expressionQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
+
+		$("#expressionForm").hide();
+		$("#goBack").show();
+		$("#goBack").css("height","136px");	
+		$('#lower-rect').removeAttr('style');
+
 		var $inputs = $('#expressionQueryForm :input');
 		var vals = {};
 
@@ -117,10 +126,6 @@ $(document).ready(function() {
   				.attr('fill', 'none');
 				
 			}
-			$("#expressionForm").hide();
-			$("#goBack").show();
-			$("#goBack").css("height","136px");	
-			$('#lower-rect').removeAttr('style');
 		});
 	});
 });

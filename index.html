@@ -4,33 +4,9 @@
 	  
 	<!-- jQuery -->
 	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-	
-	<!-- jQuery UI -->  
-	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-	
-	<!-- DataTables -->
-	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
 
-	<!-- D3JS -->
-	<script type="text/javascript" charset="utf8" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
-
-	<!-- D3JS Min -->
-	<script type="text/javascript" charset="utf8" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-	
 	<!-- Index JS file -->
 	<script type="text/javascript" charset="utf8" src="js/main.js"></script>
-
-	<!-- Gene Query JS file -->
-	<script type="text/javascript" charset="utf8" src="js/gene_query.js"></script>
-
-	<!-- Module Query JS file -->
-	<script type="text/javascript" charset="utf8" src="js/module_query.js"></script>
-
-	<!-- Expression Query JS file -->
-	<script type="text/javascript" charset="utf8" src="js/expression_query.js"></script>
-
-	<!-- DataTables CSS -->
-	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
 	
 	<!-- Local CSS -->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -43,85 +19,21 @@
 		<div id="header">
 			<p id="upper-rect"> C4 @ the DDPSC</p>
 		</div>
+		<form id="issue" action="https://github.com/Luminarys/C4-Webpage/issues">
+    			<input type="submit" value="Report issue/Make Suggestion">
+		</form>
 		<div id="leftside">
 			<p id="left-rect">Home</p>	
 		</div>
 		<div id="content">
 			<div id="querySelection">
 				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
-				<a href="javascript:void(0)" id="singleGeneQuery">Query a Single Gene</a><br>
-				<a href="javascript:void(0)" id="multiGeneQuery">Query a Gene Set</a><br>
-				<a href="javascript:void(0)" id="modMemberQuery">Identify Genes by Modular Membership</a><br>
-				<a href="javascript:void(0)" id="expressionQuery">Identify Genes by Expression</a><br>
+				<a href="gene_query.html" id="singleGeneQuery">Query a Single Gene</a><br>
+				<a href="gene_set_query.html" id="multiGeneQuery">Query a Gene Set</a><br>
+				<a href="module_query.html" id="modMemberQuery">Identify Genes by Modular Membership</a><br>
+				<a href="expression_query.html" id="expressionQuery">Identify Genes by Expression</a><br>
 				<a href="javascript:void(0)" id="functionalTermQuery">Query for Genes by Functional Term</a><br>
 				<a href="javascript:void(0)" id="expressionView">View Modular Expression Profiles and Functional Enrichment</a><br>
-
-			</div>
-			<div id="entryForm">
-				<div id="goBack">
-					<button class="backToQuery">Back to query selection</button>
-					<button id="backToInput">Back to data entry</button>
-				</div>
-				<div id="singleGeneForm" class="entryForm">
-					<button class="backToQuery">Back to query selection</button>
-					<p>Basic Gene Query:</p>
-					<form id='singleGeneQueryForm'>
-							<input type="text" id="singleGeneInput" placeholder="Gene ID">
-						<select class="speciesSelect">
-							<option value="Zmays">Maize</option>
-							<option value="Sitalica">Setaria</option>
-							<option value="Sbicolor">Sorghum</option>
-						</select>
-						<input type="submit">
-					</form>
-				</div>
-				<div id="multiGeneForm" class="entryForm">
-					<button class="backToQuery">Back to query selection</button>
-					<p>Gene Set Query:</p>
-					<form id='multiGeneQueryForm'>
-							<input type="radio" name="multiGeneOption" checked="checked">Include all genes which have at least one adjacent edge</option><br>
-							<input type="radio" name="multiGeneOption" id="ANDButton">Include only genes with at least two adjacent edges</option><br>
-						<select>
-							<option value="Zmays">Maize</option>
-							<option value="Sitalica">Setaria</option>
-							<option value="Sbicolor">Sorghum</option>
-						</select>
-						<br>
-						<div>
-							<textarea id="multiGeneInputArea" rows="4" cols="51"></textarea>
-						</div>
-						<input type="submit">
-					</form>
-				</div>
-				<div id="modMemberForm" class="entryForm">
-					<button class="backToQuery">Back to query selection</button>
-					<p>Module Member Query:</p>
-					<form id='modMemberQueryForm'>
-							<input type="text" id="modMemberInput" placeholder="Module #">
-						<select class="speciesSelect">
-							<option value="Zmays">Maize</option>
-							<option value="Sitalica">Setaria</option>
-							<option value="Sbicolor">Sorghum</option>
-						</select>
-						<input type="submit">
-					</form>
-				</div>
-				<div id="expressionForm" class="entryForm">
-					<button class="backToQuery">Back to query selection</button>
-					<p>Gene Expression Query:</p>
-					<form id='expressionQueryForm'>
-						<select>
-							<option value="Zmays">Maize</option>
-							<option value="Sitalica">Setaria</option>
-							<option value="Sbicolor">Sorghum</option>
-						</select>
-						<br>
-						<div>
-							<textarea id="expressionInputArea" rows="4" cols="51"></textarea>
-						</div>
-						<input type="submit">
-					</form>
-				</div>
 			</div>
 			<div id="bottomCombo">	
 				<div id="bottomFiller"></div>
@@ -130,7 +42,6 @@
 				<div id="footer" class="footer">
 					<p id="lower-rect" style="margin-top: 450px;">
 						Copyright ...<br>
-						<a href="https://github.com/Luminarys/C4-Webpage/issues">Report Issue</a>
 					</p>
 				</div>
 			</div>

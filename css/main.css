@@ -30,6 +30,9 @@
 	background: #66cd7d;
 	padding: 15px;
 }
+#issue{
+	text-align:center;
+}
 #footer {
    bottom:0;
    width:100%;
