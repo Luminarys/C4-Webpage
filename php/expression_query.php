@@ -8,7 +8,7 @@ error_reporting(E_ALL | E_STRICT);
 $auth = file("DB.auth");
 
 //Initialize Server, loading the file auth
-$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=C4;charset=utf8';
+$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=C4_redesign;charset=utf8';
 $db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -17,7 +17,10 @@ $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 $validSpecies = array("Zmays","Sbicolor", "Sitalica");
 $speciesPrefix = array("Zm","","");
 $pre_query = "SELECT * FROM ";
-$pre_query_a = "WHERE gene_id IN (";
+$pre_query_a = " INNER JOIN ";
+$pre_query_b = " ON ";
+$pre_query_c = " WHERE "; 
+$pre_query_d = " IN (";
 $species;
 $AND = False;
 $validGenes = "((GRMZM\dG\d{6})|(AC\d{6}.\d_FG\d{3})|(Sobic\.\d{3}(G|K)\d{6})|(Si[0-9]{6}m))";
@@ -28,26 +31,30 @@ foreach ($_GET as $key => $value) {
 			echo "Invalid gene used, please try again";	
 			exit();
 		}
-		$pre_query_a.=("'" . $match[0] . "',");
+		$pre_query_d.=("'" . $match[0] . "',");
 	}else if($key == "spec"){
 		$species = $value;
 		if(!in_array($species, $validSpecies)){
 			echo "Invalid SQL query, please try again";	
 			exit();
 		}
-		$pre_query.=($value . "_Expression");
+		$pre_query.=($value . "_Genes");
+		$pre_query_a.=($value . "_Expression");
+		$pre_query_b.=($value . "_Expression.id = " . $value . "_Genes.id");
+		$pre_query_c.=($value . "_Genes.name");
 	}
 }
 //Prepare and execute query, concatenating the pre-query strings
 //The substr is used to remove the final ','
-$query = $db->prepare($pre_query . " " . substr($pre_query_a,0,-1) . ")");
+//echo $pre_query . $pre_query_a . $pre_query_b . $pre_query_c . substr($pre_query_d,0,-1) . ")";
+$query = $db->prepare($pre_query . $pre_query_a . $pre_query_b . $pre_query_c . substr($pre_query_d,0,-1) . ")");
 if($query->execute()){
 	//Get the results
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
 	$data = array();
 	foreach ($results as $row) {
-		$data[$row["gene_id"]] = array(
+		$data[$row["name"]] = array(
 			"MP-1" => array(
 				$row["Zm.MP-1-2"],  $row["Zm.MP-1-3"], $row["Zm.MP-1-4"]
 			),

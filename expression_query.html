@@ -13,6 +13,7 @@
 	
 	<!-- Expression Query JS file -->
 	<script type="text/javascript" charset="utf8" src="js/expression_query.js"></script>
+	<script src="js/box.js"></script>	
 
 	<!-- Shared Query Functions JS file -->
 	<script type="text/javascript" charset="utf8" src="js/query_shared.js"></script>
@@ -44,6 +45,8 @@
 					<button class="backToQuery">Back to query selection</button>
 					<p>Gene Expression Query:</p>
 					<form id='expressionQueryForm'>
+						<input type="radio" name="plotType" checked="checked">Use a line graph</option><br>
+						<input type="radio" name="plotType" id="boxPlot">Use a mean normalized box plot</option><br>
 						<select>
 							<option value="Zmays">Maize</option>
 							<option value="Sitalica">Setaria</option>
