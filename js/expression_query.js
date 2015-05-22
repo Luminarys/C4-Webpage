@@ -8,8 +8,26 @@ function average(d) {
 	return sum/counter;
 }
 
-function meanNormalize(d) {
-	av = average(d);
+function cMax(d) {
+	var max = 0;
+	for (var key in d){
+		val = parseFloat(d[key]);
+		if (val > max){
+			max = val;
+		}
+	}
+	return max;
+}
+
+function std(d,av){
+	var error = 0;
+	for (var key in d){
+		error+= ((parseFloat(d[key]) - av) * (parseFloat(d[key]) - av));	
+	}
+	return error;
+}
+
+function meanNormalize(d, av) {
 	for (var key in d){
 		d[key] = d[key]/av;
 	}
@@ -37,16 +55,55 @@ function iqr(k) {
   };
 }
 
-function processBPData(info, genes){
+function getRandomColor() {
+    var letters = '012345'.split('');
+    var color = '#';        
+    color += letters[Math.round(Math.random() * 5)];
+    letters = '0123456789ABCDEF'.split('');
+    for (var i = 0; i < 5; i++) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+}
+
+function getMax(info, genes){
 	var max = 0;
+	for (var i = 0;i < genes.length;i++) {
+		var cArr = info[genes[i]];
+		for (var key in cArr){
+			var subArr = cArr[key];
+			var cmax = cMax(subArr);
+			if (cmax > max){
+				max = cmax;
+			}
+		}
+	}
+	return max;
+}
+
+function meanNormalizeBPData(info, genes){
+	max = 0;
 	var samples = []
 	for(var i = 0;i < genes.length;i++) {
 		var cArr = info[genes[i]];
 		//Generate an associative array based on averages
 		var co = 0;
+		var sum = 0;
+		var count = 0;
 		for (var key in cArr){
 			var subArr = cArr[key];
-			var av = meanNormalize(subArr);
+			for (var k in subArr) {
+				sum+=parseFloat(subArr[k]);
+				count+=1;
+			} 		
+		}
+		console.log(sum);
+		console.log(count);
+		var average = sum/count;
+		console.log(average);
+		for (var key in cArr){
+			var subArr = cArr[key];
+			var av = meanNormalize(subArr,average);
 			//console.log(av);
 			console.log(i);
 			if (i < 1) {
@@ -67,14 +124,14 @@ function processBPData(info, genes){
 }
 
 function boxPlot(info, genes){
-	var labels = true; // show the text labels beside individual boxplots?
+	var labels = false; // show the text labels beside individual boxplots?
 
 	var margin = {top: 30, right: 50, bottom: 90, left: 50};
 	var  width = 1350 - margin.left - margin.right;
 	var height = 500 - margin.top - margin.bottom;
 	var min = 0;
 	//process the data
-	var r = processBPData(info, genes);	
+	var r = meanNormalizeBPData(info, genes);	
 	var data = r[0];
 	var max = r[1];
 	console.log(data);
@@ -115,7 +172,7 @@ function boxPlot(info, genes){
 
 	svg.append("text")
         .attr("x", (width / 2))             
-        .attr("y", 0 + (margin.top / 2))
+        .attr("y",-20 + (margin.top / 2))
         .attr("text-anchor", "middle")  
         .style("font-size", "18px") 
         //.style("text-decoration", "underline")  
@@ -148,7 +205,12 @@ function boxPlot(info, genes){
 }
 
 function linePlot(info, texts){
-	t2 = info;
+	if (false){
+		var info = meanNormalizeLPData(info, texts);
+	}else{
+
+	}
+	var max = getMax(info, texts);
 	for (var i = 0;i < texts.length;i++) {
 		var cArr = info[texts[i]];
 		var gData = [];
@@ -159,13 +221,14 @@ function linePlot(info, texts){
 		for (var key in cArr){
 			var subArr = cArr[key];
 			var av = average(subArr);
+			var sd = std(subArr, av);
 			//console.log(av);
-			gData.push({Sample:co++, val:av});
+			gData.push({Sample:co++, val:av, dev:sd});
 			samples.push(key);
 		}
 
 		console.log(gData);
-
+		if(i == 0){
 		var width = (60) * gData.length;
 		var height = 400;
 		var vis = d3.select("#qTable")
@@ -179,7 +242,7 @@ function linePlot(info, texts){
         		left: 50
 		}
 		var y = d3.scale.linear()
-		.domain([d3.min(gData, function(datum) { return datum.val; }), d3.max(gData, function(datum) { return datum.val; })])
+		.domain([0, max])
 		.range([height - MARGINS.top, MARGINS.bottom])
 		var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
 	
@@ -195,10 +258,12 @@ function linePlot(info, texts){
 		var yAxis = d3.svg.axis().scale(y).orient("left");
 
 		vis.append("svg:g")
+		.attr("class","axis")
     		.attr("transform", "translate(0," + (height - MARGINS.bottom) + ")")
     		.call(xAxis);	
 
 		vis.append("svg:g")
+		.attr("class","axis")
 		.attr("transform", "translate(" + (MARGINS.left) + ",0)")
 		.call(yAxis);
 
@@ -208,13 +273,21 @@ function linePlot(info, texts){
   		})
  		.y(function(d) {
     			return y(d.val);
-  		});
+  		})
+		.interpolate("basis");
 				
 		vis.append('svg:path')
   		.attr('d', lineGen(gData))
   		.attr('stroke', 'green')
   		.attr('stroke-width', 2)
   		.attr('fill', 'none');
+		}else{
+			vis.append('svg:path')
+			.attr('d', lineGen(gData))
+  .attr('stroke', getRandomColor())
+  .attr('stroke-width', 2)
+  .attr('fill', 'none');
+		}
 	}
 
 }
@@ -247,7 +320,6 @@ $(document).ready(function() {
 		$("#expressionForm").hide();
 		$("#goBack").show();
 		$("#goBack").css("height","136px");	
-		$('#lower-rect').removeAttr('style');
 
 		var $inputs = $('#expressionQueryForm :input');
 		var vals = {};
@@ -284,6 +356,7 @@ $(document).ready(function() {
 		//$.get(req, handleData(data));
 		$.get(req, function (data) {
 			handleData(data,texts);
+			$('#lower-rect').removeAttr('style');
 		});
 		console.log(test);
 	});

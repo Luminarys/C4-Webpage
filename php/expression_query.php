@@ -87,7 +87,6 @@ if($query->execute()){
 			),
 			"LS-6" => array(
 				$row["Zm.leaf.R1-6"], $row["Zm.leaf.R2-6"], $row["Zm.leaf.R3-6"], $row["Zm.leaf.R4-6"], $row["Zm.leaf.R6-6"]
-
 			),
 			"LS-8" => array(
 				$row["Zm.leaf.R1-8"], $row["Zm.leaf.R2-8"], $row["Zm.leaf.R3-8"], $row["Zm.leaf.R4-8"]
