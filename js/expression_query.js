@@ -211,7 +211,19 @@ function linePlot(info, texts){
 
 	}
 	var max = getMax(info, texts);
+	var vis;
+	var width = 1000;
+	var height = 400;
+	var MARGINS = {
+		top: 50,
+       		right: 20,
+       		bottom: 50,
+       		left: 50
+	}
+	var colors = ["green"];
+	var inactiveLines = {};
 	for (var i = 0;i < texts.length;i++) {
+		inactiveLines[texts[i]] = false;
 		var cArr = info[texts[i]];
 		var gData = [];
 		//console.log(cArr);
@@ -229,18 +241,12 @@ function linePlot(info, texts){
 
 		console.log(gData);
 		if(i == 0 || !combine){
-		var width = (60) * gData.length;
+		var width = 1000;
 		var height = 400;
-		var vis = d3.select("#qTable")
+		vis = d3.select("#qTable")
 			.append("svg:svg")
 			.attr("width", width)
 			.attr("height", height);
-		var MARGINS = {
-			top: 20,
-        		right: 20,
-        		bottom: 20,
-        		left: 50
-		}
 		if(combine){
 		var y = d3.scale.linear()
 		.domain([0, max])
@@ -287,26 +293,64 @@ function linePlot(info, texts){
   		.attr('d', lineGen(gData))
   		.attr('stroke', 'green')
   		.attr('stroke-width', 2)
+		.attr("id", "tag" + texts[i].replace(/\s+/g, ""))
   		.attr('fill', 'none');
+		if(!combine){
+			vis.append("text")
+        		.attr("x", (width / 2))             
+        		.attr("y",(MARGINS.top / 2))
+        		.attr("text-anchor", "middle")  
+        		.style("font-size", "18px") 
+        		//.style("text-decoration", "underline")  
+                		.text(texts[i]);
+		}
 		}else{
+			if (multiColor == "multi"){
+				var col = getRandomColor();
+			}else{
+				var col = "green";
+			}
+			colors.push(col);
 			vis.append('svg:path')
 			.attr('d', lineGen(gData))
-  			.attr('stroke', getRandomColor())
+  			.attr('stroke', col)
   			.attr('stroke-width', 2)
+			.attr("id", "tag" + texts[i].replace(/\s+/g, ""))
   			.attr('fill', 'none');
+		}
+	}
+	if(combine){
+		var lspace = width/texts.length;
+		for(var i = 0;i < texts.length;i++){
+			vis.append("text")
+			.attr("x", (lspace/2 + i*lspace))
+			.attr("y", height - (MARGINS.bottom/2) + 15)
+			.attr("class", "legend")
+			.style("fill", function() { return colors[i]; })
+			.on("click", function() {
+				var active = inactiveLines[$(this).text()] ? false : true,
+				newOpacity = active ? 0 : 1;
+				console.log($(this).text());
+				d3.select("#tag" + $(this).text().replace(/\s+/g, ''))
+					.transition().duration(100)
+					.style("opacity", newOpacity);
+				inactiveLines[$(this).text()] = active;
+			})
+			.text(texts[i]);
 		}
 	}
 
 }
 var test = "";
-
 var combine = false;
+var multiColor = "uni";
+
 function handleInitData(data, texts){
 	$("#qTable").empty();
 	console.log(data);
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
-	
+	multiColor = $("#geneColor-in").val();
 	if(plot == "box"){
 		$("#qTable").empty();
 		boxPlot(info, texts);
@@ -320,15 +364,17 @@ function handleInitData(data, texts){
 			combine = true;
 			$("#combinePlots-in").val("combine");
 		}else{
-			comboine = false;
+			combine = false;
 			$("#combinePlots-in").val("noCombine");
 		}
 		linePlot(info, texts);
 		$("#inGraphOpts").show();
 		$("#normalizationPlotsDiv-in").hide();
 		$("#combinePlotsDiv-in").show();
+		$("#geneColorDiv-in").show();
 		$("#plotType-in").val("line");
 	}
+	console.log(multiColor);
 
 }
 //Handles changes within the graph
@@ -337,12 +383,13 @@ function handleReData(data, texts){
 	console.log(data);
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
-	
+	multiColor = $("#geneColor-in").val();
 	if(plot == "box"){
 		boxPlot(info, texts);
 		$("#inGraphOpts").show();
 		$("#combinePlotsDiv-in").hide();
 		$("#normalizationPlotsDiv-in").show();
+		$("#geneColorDiv-in").hide();
 	}else if(plot == "line"){
 		if ($("#combinePlots-in").val() == "combine"){
 			combine = true;
@@ -353,7 +400,9 @@ function handleReData(data, texts){
 		$("#inGraphOpts").show();
 		$("#normalizationPlotsDiv-in").hide();
 		$("#combinePlotsDiv-in").show();
+		$("#geneColorDiv-in").show();
 	}
+	console.log(multiColor);
 
 }
 
@@ -387,7 +436,7 @@ function genReq(){
 		req+=("g" + i + "="+texts[i]);	
 	}
 	//Append on the species DB to access
-	req+=("&spec=" + vals[3]);
+	req+=("&spec=" + vals[4]);
 	console.log(req);
 	return [req, texts];
 }
@@ -399,18 +448,22 @@ $(document).ready(function() {
 	plot = $("#plotType").val();
 	if(plot == "box"){
 		$('#combinePlotsDiv').hide();
+		$("#geneColorDiv").hide();
 		$('#normalizationDiv').show();	
 	}else if(plot == "line"){
 		$('#combinePlotsDiv').show();
+		$("#geneColorDiv").show();
 		$('#normalizationDiv').hide();	
 	}
 	$('#plotType').change(function(){
 		if(plot == "box"){
 			$('#combinePlotsDiv').show();
+			$("#geneColorDiv").show();
 			$('#normalizationDiv').hide();	
 			plot = "line"
 		}else if(plot == "line"){
 			$('#combinePlotsDiv').hide();
+			$("#geneColorDiv").hide();
 			$('#normalizationDiv').show();	
 			plot = "box";
 		}
@@ -419,6 +472,16 @@ $(document).ready(function() {
 	//$("#normalizationPlotsDiv-in").hide();
 	//$("#combinePlotsDiv-in").show();
 	$("#combinePlotsDiv-in").change(function() {
+		qRes = genReq();
+		req = qRes[0];
+		texts = qRes[1];
+		$.get(req, function (data) {
+			plot = $("#plotType-in").val();
+			handleReData(data,texts);
+		});
+		
+	});
+	$("#geneColorDiv-in").change(function() {
 		qRes = genReq();
 		req = qRes[0];
 		texts = qRes[1];
