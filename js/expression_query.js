@@ -201,7 +201,7 @@ function boxPlot(info, genes){
 		.style("font-size", "16px") 
         	.text("Sample"); 
 
-	
+		$("normalizationDiv").show();	
 }
 
 function linePlot(info, texts){
@@ -228,7 +228,7 @@ function linePlot(info, texts){
 		}
 
 		console.log(gData);
-		if(i == 0){
+		if(i == 0 || !combine){
 		var width = (60) * gData.length;
 		var height = 400;
 		var vis = d3.select("#qTable")
@@ -241,9 +241,16 @@ function linePlot(info, texts){
         		bottom: 20,
         		left: 50
 		}
+		if(combine){
 		var y = d3.scale.linear()
 		.domain([0, max])
 		.range([height - MARGINS.top, MARGINS.bottom])
+		}else{
+		var y = d3.scale.linear()
+		.domain([0, d3.max(gData, function(datum) { return datum.val; })])
+		.range([height - MARGINS.top, MARGINS.bottom])
+
+		}
 		var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
 	
 		var x = d3.scale.linear()
@@ -284,34 +291,154 @@ function linePlot(info, texts){
 		}else{
 			vis.append('svg:path')
 			.attr('d', lineGen(gData))
-  .attr('stroke', getRandomColor())
-  .attr('stroke-width', 2)
-  .attr('fill', 'none');
+  			.attr('stroke', getRandomColor())
+  			.attr('stroke-width', 2)
+  			.attr('fill', 'none');
 		}
 	}
 
 }
 var test = "";
 
-function handleData(data, texts){
+var combine = false;
+function handleInitData(data, texts){
 	$("#qTable").empty();
 	console.log(data);
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
 	
-	if (document.getElementById('boxPlot').checked){
+	if(plot == "box"){
+		$("#qTable").empty();
 		boxPlot(info, texts);
-	}else{
+		$("#inGraphOpts").show();
+		$("#combinePlotsDiv-in").hide();
+		$("#normalizationPlotsDiv-in").show();
+		$("#plotType-in").val("box");
+	}else if(plot == "line"){
+		$("#qTable").empty();
+		if ($("#combinePlots").val() == "combine"){
+			combine = true;
+			$("#combinePlots-in").val("combine");
+		}else{
+			comboine = false;
+			$("#combinePlots-in").val("noCombine");
+		}
 		linePlot(info, texts);
+		$("#inGraphOpts").show();
+		$("#normalizationPlotsDiv-in").hide();
+		$("#combinePlotsDiv-in").show();
+		$("#plotType-in").val("line");
+	}
+
+}
+//Handles changes within the graph
+function handleReData(data, texts){
+	$("#qTable").empty();
+	console.log(data);
+	var info = JSON.parse(data);
+	test = JSON.stringify(info);
+	
+	if(plot == "box"){
+		boxPlot(info, texts);
+		$("#inGraphOpts").show();
+		$("#combinePlotsDiv-in").hide();
+		$("#normalizationPlotsDiv-in").show();
+	}else if(plot == "line"){
+		if ($("#combinePlots-in").val() == "combine"){
+			combine = true;
+		}else{
+			combine = false;
+		}
+		linePlot(info, texts);
+		$("#inGraphOpts").show();
+		$("#normalizationPlotsDiv-in").hide();
+		$("#combinePlotsDiv-in").show();
 	}
 
 }
 
-var t2 = "";
-$(document).ready(function() {
-	
-	console.log("document is ready");
+function genReq(){
+	var $inputs = $('#expressionQueryForm :input');
+	var vals = {};
 
+	ind = 0;
+	$inputs.each(function() {
+		vals[ind] = $(this).val();	
+		ind++;
+	});
+
+	var lines = $('#expressionInputArea').val().split(/\n/);
+	var texts = [];
+
+	for (var i=0; i < lines.length; i++) {
+  		// only push this line if it contains a non whitespace character.
+ 		if (/\S/.test(lines[i])) {
+  			texts.push($.trim(lines[i]));
+  		}
+           }
+	console.log(texts);
+	console.log(vals);
+	req = "php/expression_query.php?";
+	//Build the GET request by looping through the inputs
+	for(i = 0;i < texts.length;i++){
+		if(i !=  0){
+			req+="&";
+		}
+		req+=("g" + i + "="+texts[i]);	
+	}
+	//Append on the species DB to access
+	req+=("&spec=" + vals[3]);
+	console.log(req);
+	return [req, texts];
+}
+
+var t2 = "";
+var plot = "";
+var norm = "";
+$(document).ready(function() {
+	plot = $("#plotType").val();
+	if(plot == "box"){
+		$('#combinePlotsDiv').hide();
+		$('#normalizationDiv').show();	
+	}else if(plot == "line"){
+		$('#combinePlotsDiv').show();
+		$('#normalizationDiv').hide();	
+	}
+	$('#plotType').change(function(){
+		if(plot == "box"){
+			$('#combinePlotsDiv').show();
+			$('#normalizationDiv').hide();	
+			plot = "line"
+		}else if(plot == "line"){
+			$('#combinePlotsDiv').hide();
+			$('#normalizationDiv').show();	
+			plot = "box";
+		}
+    	});
+	console.log("document is ready");
+	//$("#normalizationPlotsDiv-in").hide();
+	//$("#combinePlotsDiv-in").show();
+	$("#combinePlotsDiv-in").change(function() {
+		qRes = genReq();
+		req = qRes[0];
+		texts = qRes[1];
+		$.get(req, function (data) {
+			plot = $("#plotType-in").val();
+			handleReData(data,texts);
+		});
+		
+	});
+	$("#plotTypeDiv-in").change(function() {
+		qRes = genReq();
+		req = qRes[0];
+		texts = qRes[1];
+		$.get(req, function (data) {
+			plot = $("#plotType-in").val();
+			handleReData(data,texts);
+		});
+		
+	});
+	$("#inGraphOpts").hide();
 	//Handle the expression query
 	$('#expressionQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
@@ -321,41 +448,13 @@ $(document).ready(function() {
 		$("#goBack").show();
 		$("#goBack").css("height","136px");	
 
-		var $inputs = $('#expressionQueryForm :input');
-		var vals = {};
-
-		ind = 0;
-		$inputs.each(function() {
-			vals[ind] = $(this).val();	
-			ind++;
-		});
-
-		var lines = $('#expressionInputArea').val().split(/\n/);
-		var texts = [];
-
-		for (var i=0; i < lines.length; i++) {
-  			// only push this line if it contains a non whitespace character.
- 			 if (/\S/.test(lines[i])) {
-  				texts.push($.trim(lines[i]));
-  			 }
-           	}
-		console.log(texts);
-		console.log(vals);
-		req = "php/expression_query.php?";
-		//Build the GET request by looping through the inputs
-		for(i = 0;i < texts.length;i++){
-			if(i !=  0){
-				req+="&";
-			}
-			req+=("g" + i + "="+texts[i]);	
-		}
-		//Append on the species DB to access
-		req+=("&spec=" + vals[2]);
-		console.log(req);
 		//Handle the GET request
 		//$.get(req, handleData(data));
+		qRes = genReq();
+		req = qRes[0];
+		texts = qRes[1];
 		$.get(req, function (data) {
-			handleData(data,texts);
+			handleInitData(data,texts);
 			$('#lower-rect').removeAttr('style');
 		});
 		console.log(test);

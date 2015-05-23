@@ -41,13 +41,56 @@
 					<button class="backToQuery">back to query selection</button>
 					<button id="backToInput">back to data entry</button>
 				</div>
+				<div id="inGraphOpts">
+					<span id="plotTypeDiv-in">
+						Plot combination:
+						<select id="plotType-in">
+						<option value="box">Box Plot</option>
+						<option value="line">Line Graph</option>
+						</select>
+					</span>
+					<span id="combinePlotsDiv-in">
+						Plot combination:
+						<select id="combinePlots-in">
+						<option value="combine">Yes</option>
+						<option value="noCombine">No</option>
+						</select>
+					</span>
+					<span id="normalizationPlotsDiv-in">
+						Plot combination:
+						<select id="normalization-in">
+						<option value="combine">Mean Normalize</option>
+						</select>
+					</span>
+				</div>
 				<div id="expressionForm" class="entryForm">
 					<button class="backToQuery">Back to query selection</button>
 					<p>Gene Expression Query:</p>
 					<form id='expressionQueryForm'>
-						<input type="radio" name="plotType" checked="checked">Use a line graph</option><br>
-						<input type="radio" name="plotType" id="boxPlot">Use a mean normalized box plot</option><br>
-						<select>
+						Select plot type: <select id="plotType">
+							<option value="box">Box Plot</option>
+							<option value="line">Line Graph</option>
+						</select><br><br>
+						<div id="combinePlotsDiv">
+							Plot combination:
+							<select id="combinePlots">
+							<option value="combine">Yes</option>
+							<option value="noCombine">No</option>
+							</select>
+							<br><br>
+						</div>
+						<div id="normalizationDiv">
+							Normalization method:
+							<select id="normalization">
+							<option value="avNorm">Mean Normalize</option>
+							</select>
+							<br><br>
+						</div>
+						<div id="plotOpt3">
+						</div>
+						<div id="plotOpt4">
+						</div>
+						Select species: <select>
 							<option value="Zmays">Maize</option>
 							<option value="Sitalica">Setaria</option>
 							<option value="Sbicolor">Sorghum</option>

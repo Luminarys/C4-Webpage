@@ -14,7 +14,7 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Process user input by looping through the GET fields and appending the values onto the pre-query strings
-$validSpecies = array("Zmays","Sbicolor", "Sitalica");
+$validSpecies = "/[A-Za-z0-9]+/";
 $speciesPrefix = array("Zm","","");
 $pre_query = "SELECT * FROM ";
 $pre_query_a = " INNER JOIN ";
@@ -33,15 +33,20 @@ foreach ($_GET as $key => $value) {
 		}
 		$pre_query_d.=("'" . $match[0] . "',");
 	}else if($key == "spec"){
-		$species = $value;
-		if(!in_array($species, $validSpecies)){
-			echo "Invalid SQL query, please try again";	
+		//Ensure that there is a match and that the match is equal to the whole prefix - Hopefully this will prevent injections
+		if(!preg_match($validSpecies,$value,$match)){
+			echo "Invalid SQL Query used, please try again";
 			exit();
+		}else if($match[0] !== $value){
+			echo "Invalid SQL Query used, please try again";
+			exit();
+		}else{
+			$species = $value;
+			$pre_query.=($value . "_Genes");
+			$pre_query_a.=($value . "_Expression");
+			$pre_query_b.=($value . "_Expression.id = " . $value . "_Genes.id");
+			$pre_query_c.=($value . "_Genes.name");
 		}
-		$pre_query.=($value . "_Genes");
-		$pre_query_a.=($value . "_Expression");
-		$pre_query_b.=($value . "_Expression.id = " . $value . "_Genes.id");
-		$pre_query_c.=($value . "_Genes.name");
 	}
 }
 //Prepare and execute query, concatenating the pre-query strings
