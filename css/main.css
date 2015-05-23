@@ -108,3 +108,7 @@
     font-family: Lato;
     font-size: 13px;
 }
+.dot {
+  stroke: #000;
+}
+

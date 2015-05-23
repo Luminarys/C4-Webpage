@@ -204,6 +204,98 @@ function boxPlot(info, genes){
 		$("normalizationDiv").show();	
 }
 
+function dotPlot(info, texts){
+	if (false){
+		var info = meanNormalizeLPData(info, texts);
+	}else{
+
+	}
+	var vis;
+	var width = 1000;
+	var height = 400;
+	var MARGINS = {
+		top: 50,
+       		right: 20,
+       		bottom: 50,
+       		left: 50
+	}
+	var colors = ["green"];
+	var inactiveLines = {};
+	for (var i = 0;i < texts.length;i++) {
+		var cArr = info[texts[i]];
+		var max = 0;
+		for (var key in cArr){
+			var subArr = cArr[key];
+			var cmax = cMax(subArr);
+			if (cmax > max){
+				max = cmax;
+			}
+		}
+		inactiveLines[texts[i]] = false;
+		var gData = [];
+		//console.log(cArr);
+		//Generate an associative array based on averages
+		var co = 0;
+		var samples = [];
+		for (var key in cArr){
+			var subArr = cArr[key];
+			gData.push({Sample:co++, val:subArr});
+			samples.push(key);
+		}
+		console.log(gData);
+
+		vis = d3.select("#qTable")
+			.append("svg:svg")
+			.attr("width", width)
+			.attr("height", height);
+
+		var y = d3.scale.linear()
+		.domain([0, max])
+		.range([height - MARGINS.top, MARGINS.bottom])
+
+		var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+	
+		var x = d3.scale.linear()
+		.domain([0,19])
+		.range([MARGINS.left, width - MARGINS.right]);
+
+		var xAxis = d3.svg.axis()
+		.scale(x)
+		.tickValues(ra)
+		.tickFormat(function(d) { return samples[d];});
+
+		var yAxis = d3.svg.axis().scale(y).orient("left");
+
+		vis.append("svg:g")
+		.attr("class","axis")
+    		.attr("transform", "translate(0," + (height - MARGINS.bottom) + ")")
+    		.call(xAxis);	
+
+		vis.append("svg:g")
+		.attr("class","axis")
+		.attr("transform", "translate(" + (MARGINS.left) + ",0)")
+		.call(yAxis);
+		
+		//Make the dotplot	
+		var cpos = 0;
+		for (var key in cArr){
+			var subArr = cArr[key];
+			for(var k = 0;k < subArr.length;k++) {
+				var cdot = subArr[k];
+				vis.append("circle")
+				.attr("class","dot")
+				.attr("cx",x(cpos))
+				.attr("cy",y(cdot))
+				.attr("r", 3.5)
+				.style("fill","green");
+			}
+			cpos++;
+		}
+	}
+
+
+}
+
 function linePlot(info, texts){
 	if (false){
 		var info = meanNormalizeLPData(info, texts);
@@ -248,53 +340,53 @@ function linePlot(info, texts){
 			.attr("width", width)
 			.attr("height", height);
 		if(combine){
-		var y = d3.scale.linear()
-		.domain([0, max])
-		.range([height - MARGINS.top, MARGINS.bottom])
-		}else{
-		var y = d3.scale.linear()
-		.domain([0, d3.max(gData, function(datum) { return datum.val; })])
-		.range([height - MARGINS.top, MARGINS.bottom])
-
-		}
-		var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-	
-		var x = d3.scale.linear()
-		.domain([0,19])
-		.range([MARGINS.left, width - MARGINS.right]);
-
-		var xAxis = d3.svg.axis()
-		.scale(x)
-		.tickValues(ra)
-		.tickFormat(function(d) { return samples[d];});
-
-		var yAxis = d3.svg.axis().scale(y).orient("left");
-
-		vis.append("svg:g")
-		.attr("class","axis")
-    		.attr("transform", "translate(0," + (height - MARGINS.bottom) + ")")
-    		.call(xAxis);	
-
-		vis.append("svg:g")
-		.attr("class","axis")
-		.attr("transform", "translate(" + (MARGINS.left) + ",0)")
-		.call(yAxis);
-
-		var lineGen = d3.svg.line()
-  		.x(function(d) {
-    			return x(d.Sample);
-  		})
- 		.y(function(d) {
-    			return y(d.val);
-  		})
-		.interpolate("basis");
-				
-		vis.append('svg:path')
-  		.attr('d', lineGen(gData))
-  		.attr('stroke', 'green')
-  		.attr('stroke-width', 2)
-		.attr("id", "tag" + texts[i].replace(/\s+/g, ""))
-  		.attr('fill', 'none');
+			var y = d3.scale.linear()
+			.domain([0, max])
+			.range([height - MARGINS.top, MARGINS.bottom])
+			}else{
+			var y = d3.scale.linear()
+			.domain([0, d3.max(gData, function(datum) { return datum.val; })])
+			.range([height - MARGINS.top, MARGINS.bottom])
+                	
+			}
+			var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+	        	
+			var x = d3.scale.linear()
+			.domain([0,19])
+			.range([MARGINS.left, width - MARGINS.right]);
+                	
+			var xAxis = d3.svg.axis()
+			.scale(x)
+			.tickValues(ra)
+			.tickFormat(function(d) { return samples[d];});
+                	
+			var yAxis = d3.svg.axis().scale(y).orient("left");
+                	
+			vis.append("svg:g")
+			.attr("class","axis")
+    			.attr("transform", "translate(0," + (height - MARGINS.bottom) + ")")
+    			.call(xAxis);	
+                	
+			vis.append("svg:g")
+			.attr("class","axis")
+			.attr("transform", "translate(" + (MARGINS.left) + ",0)")
+			.call(yAxis);
+                	
+			var lineGen = d3.svg.line()
+  			.x(function(d) {
+    				return x(d.Sample);
+  			})
+ 			.y(function(d) {
+    				return y(d.val);
+  			})
+			.interpolate("basis");
+					
+			vis.append('svg:path')
+  			.attr('d', lineGen(gData))
+  			.attr('stroke', 'green')
+  			.attr('stroke-width', 2)
+			.attr("id", "tag" + texts[i].replace(/\s+/g, ""))
+  			.attr('fill', 'none');
 		if(!combine){
 			vis.append("text")
         		.attr("x", (width / 2))             
@@ -373,6 +465,14 @@ function handleInitData(data, texts){
 		$("#combinePlotsDiv-in").show();
 		$("#geneColorDiv-in").show();
 		$("#plotType-in").val("line");
+	}else if(plot == "dot"){
+		$("#qTable").empty();
+		dotPlot(info, texts);
+		$("#inGraphOpts").show();
+		$('#combinePlotsDiv-in').hide();
+		$("#geneColorDiv-in").hide();
+		$("#normalizationPlotsDiv-in").hide();
+		$("#plotType-in").val("dot");
 	}
 	console.log(multiColor);
 
@@ -401,6 +501,12 @@ function handleReData(data, texts){
 		$("#normalizationPlotsDiv-in").hide();
 		$("#combinePlotsDiv-in").show();
 		$("#geneColorDiv-in").show();
+	}else if(plot == "dot"){
+		$("#inGraphOpts").show();
+		dotPlot(info, texts);
+		$('#combinePlotsDiv-in').hide();
+		$("#geneColorDiv-in").hide();
+		$('#normalizationDiv-in').hide();	
 	}
 	console.log(multiColor);
 
@@ -454,19 +560,26 @@ $(document).ready(function() {
 		$('#combinePlotsDiv').show();
 		$("#geneColorDiv").show();
 		$('#normalizationDiv').hide();	
+	}else if(plot == "dot"){
+		$('#combinePlotsDiv').hide();
+		$("#geneColorDiv").hide();
+		$('#normalizationDiv').hide();	
 	}
 	$('#plotType').change(function(){
+		plot = $("#plotType").val();
 		if(plot == "box"){
-			$('#combinePlotsDiv').show();
-			$("#geneColorDiv").show();
-			$('#normalizationDiv').hide();	
-			plot = "line"
-		}else if(plot == "line"){
 			$('#combinePlotsDiv').hide();
 			$("#geneColorDiv").hide();
 			$('#normalizationDiv').show();	
-			plot = "box";
-		}
+		}else if(plot == "line"){
+			$('#combinePlotsDiv').show();
+			$("#geneColorDiv").show();
+			$('#normalizationDiv').hide();	
+		}else if(plot == "dot"){
+			$('#combinePlotsDiv').hide();
+			$("#geneColorDiv").hide();
+			$('#normalizationDiv').hide();	
+	}
     	});
 	console.log("document is ready");
 	//$("#normalizationPlotsDiv-in").hide();
