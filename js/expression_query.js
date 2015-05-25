@@ -34,6 +34,24 @@ function meanNormalize(d, av) {
 	return d;
 }
 
+function maxNormalize(d, max) {
+	for (var key in d) {
+		d[key] = d[key]/av;	
+	}
+	return d;
+}
+
+function logNormalize(d) {
+	for (var key in d) {
+		//This ain't gonna work properly for anything equal to 0
+		if(d[key] != 0){
+			d[key] = Math.log2(d[key]);	
+		}
+		
+	}
+	return d;
+}
+
 Object.size = function(obj) {
     var size = 0, key;
     for (key in obj) {
@@ -43,16 +61,16 @@ Object.size = function(obj) {
 };
 
 function iqr(k) {
-  return function(d, i) {
-    var q1 = d.quartiles[0],
-        q3 = d.quartiles[2],
-        iqr = (q3 - q1) * k,
-        i = -1,
-        j = d.length;
-    while (d[++i] < q1 - iqr);
-    while (d[--j] > q3 + iqr);
-    return [i, j];
-  };
+	return function(d, i) {
+		var q1 = d.quartiles[0],
+			q3 = d.quartiles[2],
+			iqr = (q3 - q1) * k,
+			i = -1,
+			j = d.length;
+		while (d[++i] < q1 - iqr);
+		while (d[--j] > q3 + iqr);
+		return [i, j];
+	};
 }
 
 function getRandomColor() {
@@ -81,9 +99,77 @@ function getMax(info, genes){
 	return max;
 }
 
-function meanNormalizeBPData(info, genes){
-	max = 0;
+//DOES NOT WORK - NEED TO FIGURE OUT HOW TO DEAL WITH EXPRESSION VALUES EQUAL TO 0
+function logNormalizeBPData(info, genes){
 	var samples = []
+	var max = 0;
+	var min = 99999;
+	for(var i = 0;i < genes.length;i++) {
+		var cArr = info[genes[i]];
+		//Generate an associative array based on averages
+		var co = 0;
+		for (var key in cArr){
+			var subArr = cArr[key];
+			var av = logNormalize(subArr);
+			//console.log(av);
+			console.log(i);
+			if (i < 1) {
+				samples[co] = [key,[]];
+			}
+				for(var j = 0;j < av.length;j++){
+					if(av[j] > max) max = av[j];
+					if(av[j] < min) min = av[j];
+					//console.log("pushing new val");
+					//console.log(samples);
+					samples[co][1].push(av[j]);
+				}
+			co++;
+		}
+
+	}	
+	//console.log(samples);
+	return [samples,max,min];
+
+}
+
+function maxNormalizeBPData(info, genes){
+	var samples = []
+	for(var i = 0;i < genes.length;i++) {
+		var cArr = info[genes[i]];
+		//Generate an associative array based on averages
+		var max = 0;
+		var co = 0;
+		for (var key in cArr){
+			var subArr = cArr[key];
+			for (var k in subArr) {
+				if (max < parseFloat(subArr[k])) {
+					max = parseFloat(subArr[k]);
+				}
+			} 		
+		}
+		for (var key in cArr){
+			var subArr = cArr[key];
+			var norm = meanNormalize(subArr,max);
+			console.log(norm);
+			//console.log(av);
+			if (i < 1) {
+				samples[co] = [key,[]];
+			
+				for(var j = 0;j < norm.length;j++){
+					samples[co][1].push(norm[j]);
+				}
+			co++;
+			}
+		}
+
+	}	
+	return samples;
+
+}
+
+function meanNormalizeBPData(info, genes){
+	var samples = []
+	var max = 0;
 	for(var i = 0;i < genes.length;i++) {
 		var cArr = info[genes[i]];
 		//Generate an associative array based on averages
@@ -131,9 +217,20 @@ function boxPlot(info, genes){
 	var height = 500 - margin.top - margin.bottom;
 	var min = 0;
 	//process the data
-	var r = meanNormalizeBPData(info, genes);	
-	var data = r[0];
-	var max = r[1];
+	var r, data, max;
+	console.log(normMeth);
+	//LOG NORM. DOES NOT WORK
+	if (normMeth == "mean") {
+		//r = logNormalizeBPData(info, genes);	
+		r = meanNormalizeBPData(info, genes);	
+		data = r[0];
+		max = r[1];
+	}else if (normMeth == "max") {
+		//r = meanNormalizeBPData(info, genes);	
+		data = maxNormalizeBPData(info, genes);	
+		max = 1;
+	}
+
 	console.log(data);
 	var chart = d3.box()
 		.whiskers(iqr(1.5))
@@ -176,7 +273,7 @@ function boxPlot(info, genes){
         .attr("text-anchor", "middle")  
         .style("font-size", "18px") 
         //.style("text-decoration", "underline")  
-                .text("Mean Normalized Expression Across Samples");
+                .text("Normalized Expression Across Samples");
 
 	svg.append("g")
         .attr("class", "y axis")
@@ -187,7 +284,6 @@ function boxPlot(info, genes){
 		  .attr("dy", ".71em")
 		  .style("text-anchor", "end")
 		  .style("font-size", "16px") 
-		  .text("Mean Normalized Expression");		
 
 	svg.append("g")
       		.attr("class", "x axis")
@@ -436,13 +532,17 @@ function linePlot(info, texts){
 var test = "";
 var combine = false;
 var multiColor = "uni";
+var normMeth = "max";
 
 function handleInitData(data, texts){
 	$("#qTable").empty();
 	console.log(data);
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
-	multiColor = $("#geneColor-in").val();
+	multiColor = $("#geneColor").val();
+	normMeth = $("#normalization").val();
+	console.log(normMeth);
+	$("#normalization-in").val(normMeth);
 	if(plot == "box"){
 		$("#qTable").empty();
 		boxPlot(info, texts);
@@ -450,6 +550,7 @@ function handleInitData(data, texts){
 		$("#combinePlotsDiv-in").hide();
 		$("#normalizationPlotsDiv-in").show();
 		$("#plotType-in").val("box");
+		$("#geneColorDiv-in").hide();
 	}else if(plot == "line"){
 		$("#qTable").empty();
 		if ($("#combinePlots").val() == "combine"){
@@ -484,6 +585,7 @@ function handleReData(data, texts){
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
 	multiColor = $("#geneColor-in").val();
+	normMeth = $("#normalization-in").val();
 	if(plot == "box"){
 		boxPlot(info, texts);
 		$("#inGraphOpts").show();
@@ -547,6 +649,16 @@ function genReq(){
 	return [req, texts];
 }
 
+function rePlot(){
+	qRes = genReq();
+	req = qRes[0];
+	texts = qRes[1];
+	$.get(req, function (data) {
+		plot = $("#plotType-in").val();
+		handleReData(data,texts);
+	});
+}
+
 var t2 = "";
 var plot = "";
 var norm = "";
@@ -585,34 +697,16 @@ $(document).ready(function() {
 	//$("#normalizationPlotsDiv-in").hide();
 	//$("#combinePlotsDiv-in").show();
 	$("#combinePlotsDiv-in").change(function() {
-		qRes = genReq();
-		req = qRes[0];
-		texts = qRes[1];
-		$.get(req, function (data) {
-			plot = $("#plotType-in").val();
-			handleReData(data,texts);
-		});
-		
+		rePlot();
 	});
 	$("#geneColorDiv-in").change(function() {
-		qRes = genReq();
-		req = qRes[0];
-		texts = qRes[1];
-		$.get(req, function (data) {
-			plot = $("#plotType-in").val();
-			handleReData(data,texts);
-		});
-		
+		rePlot();
 	});
 	$("#plotTypeDiv-in").change(function() {
-		qRes = genReq();
-		req = qRes[0];
-		texts = qRes[1];
-		$.get(req, function (data) {
-			plot = $("#plotType-in").val();
-			handleReData(data,texts);
-		});
-		
+		rePlot();
+	});
+	$("#normalizationPlotsDiv-in").change(function() {
+		rePlot();
 	});
 	$("#inGraphOpts").hide();
 	//Handle the expression query
