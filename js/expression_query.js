@@ -221,10 +221,11 @@ function boxPlot(info, genes){
 	console.log(normMeth);
 	//LOG NORM. DOES NOT WORK
 	if (normMeth == "mean") {
-		//r = logNormalizeBPData(info, genes);	
-		r = meanNormalizeBPData(info, genes);	
+		r = logNormalizeBPData(info, genes);	
+		//r = meanNormalizeBPData(info, genes);	
 		data = r[0];
 		max = r[1];
+		min = r[2];
 	}else if (normMeth == "max") {
 		//r = meanNormalizeBPData(info, genes);	
 		data = maxNormalizeBPData(info, genes);	
@@ -401,11 +402,11 @@ function linePlot(info, texts){
 	var max = getMax(info, texts);
 	var vis;
 	var width = 1000;
-	var height = 400;
+	var height = 400 + 60 * Math.floor(texts.length/5);
 	var MARGINS = {
-		top: 50,
+		top: 50 + 30 * Math.floor(texts.length/5),
        		right: 20,
-       		bottom: 50,
+       		bottom: 50 + 30 * Math.floor(texts.length/5),
        		left: 50
 	}
 	var colors = ["green"];
@@ -429,21 +430,18 @@ function linePlot(info, texts){
 
 		console.log(gData);
 		if(i == 0 || !combine){
-		var width = 1000;
-		var height = 400;
 		vis = d3.select("#qTable")
 			.append("svg:svg")
 			.attr("width", width)
 			.attr("height", height);
-		if(combine){
-			var y = d3.scale.linear()
-			.domain([0, max])
-			.range([height - MARGINS.top, MARGINS.bottom])
+			if(combine){
+				var y = d3.scale.linear()
+				.domain([0, max])
+				.range([height - MARGINS.top, MARGINS.bottom])
 			}else{
-			var y = d3.scale.linear()
-			.domain([0, d3.max(gData, function(datum) { return datum.val; })])
-			.range([height - MARGINS.top, MARGINS.bottom])
-                	
+				var y = d3.scale.linear()
+				.domain([0, d3.max(gData, function(datum) { return datum.val; })])
+				.range([height - MARGINS.top, MARGINS.bottom])
 			}
 			var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
 	        	
@@ -489,8 +487,7 @@ function linePlot(info, texts){
         		.attr("y",(MARGINS.top / 2))
         		.attr("text-anchor", "middle")  
         		.style("font-size", "18px") 
-        		//.style("text-decoration", "underline")  
-                		.text(texts[i]);
+                	.text(texts[i]);
 		}
 		}else{
 			if (multiColor == "multi"){
@@ -508,11 +505,18 @@ function linePlot(info, texts){
 		}
 	}
 	if(combine){
-		var lspace = width/texts.length;
+		if(texts.length < 5){
+			var lspace = width/texts.length;
+		}else{
+			var lspace = width/5;
+		}
+		var crow = 0;
 		for(var i = 0;i < texts.length;i++){
+			if(i%5 == 0 && i != 0) crow++;
+			console.log((lspace/2 + (i % 5)*lspace) - 40);
 			vis.append("text")
-			.attr("x", (lspace/2 + i*lspace))
-			.attr("y", height - (MARGINS.bottom/2) + 15)
+			.attr("x", (lspace/2 + (i % 5)*lspace) - 40)
+			.attr("y", height - (MARGINS.bottom/2) + 15 + (25 * crow))
 			.attr("class", "legend")
 			.style("fill", function() { return colors[i]; })
 			.on("click", function() {
