@@ -52,6 +52,15 @@ function logNormalize(d) {
 	return d;
 }
 
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 Object.size = function(obj) {
     var size = 0, key;
     for (key in obj) {
@@ -164,6 +173,29 @@ function maxNormalizeBPData(info, genes){
 
 	}	
 	return samples;
+}
+
+function maxNormalizeLPData(info, genes){
+	var samples = []
+	for(var i = 0;i < genes.length;i++) {
+		var cArr = info[genes[i]];
+		var max = 0;
+		var co = 0;
+		for (var key in cArr){
+			var subArr = cArr[key];
+			for (var k in subArr) {
+				if (max < parseFloat(subArr[k])) {
+					max = parseFloat(subArr[k]);
+				}
+			} 		
+		}
+		for (var key in cArr){
+			var subArr = cArr[key];
+			cArr[key] = meanNormalize(subArr,max);
+		}
+		info[genes[i]] = cArr;
+	}
+	return info;
 
 }
 
@@ -206,14 +238,42 @@ function meanNormalizeBPData(info, genes){
 
 	}	
 	return [samples,max];
+}
 
+function meanNormalizeLPData(info, genes){
+	var samples = []
+	var max = 0;
+	for(var i = 0;i < genes.length;i++) {
+		var cArr = info[genes[i]];
+		//Generate an associative array based on averages
+		var co = 0;
+		var sum = 0;
+		var count = 0;
+		for (var key in cArr){
+			var subArr = cArr[key];
+			for (var k in subArr) {
+				sum+=parseFloat(subArr[k]);
+				count+=1;
+			} 		
+		}
+		console.log(sum);
+		console.log(count);
+		var average = sum/count;
+		console.log(average);
+		for (var key in cArr){
+			var subArr = cArr[key];
+			cArr[key] = meanNormalize(subArr,average);
+		}
+		info[genes[i]] = cArr;
+	}	
+	return info; 
 }
 
 function boxPlot(info, genes){
 	var labels = false; // show the text labels beside individual boxplots?
 
 	var margin = {top: 30, right: 50, bottom: 90, left: 50};
-	var  width = 1350 - margin.left - margin.right;
+	var  width = 1000 - margin.left - margin.right;
 	var height = 500 - margin.top - margin.bottom;
 	var min = 0;
 	//process the data
@@ -302,8 +362,7 @@ function boxPlot(info, genes){
 }
 
 function dotPlot(info, texts){
-	if (false){
-		var info = meanNormalizeLPData(info, texts);
+	if (true){
 	}else{
 
 	}
@@ -394,10 +453,10 @@ function dotPlot(info, texts){
 }
 
 function linePlot(info, texts){
-	if (false){
+	if (normMethLP == "max"){
+		var info = maxNormalizeLPData(info, texts);
+	}else if(normMethLP == "mean"){
 		var info = meanNormalizeLPData(info, texts);
-	}else{
-
 	}
 	var max = getMax(info, texts);
 	var vis;
@@ -405,12 +464,16 @@ function linePlot(info, texts){
 	var height = 400 + 60 * Math.floor(texts.length/5);
 	var MARGINS = {
 		top: 50 + 30 * Math.floor(texts.length/5),
-       		right: 20,
+       		right: 50,
        		bottom: 50 + 30 * Math.floor(texts.length/5),
        		left: 50
 	}
-	var colors = ["green"];
+	var colors = ["grey"];
 	var inactiveLines = {};
+	//Store genes which are invalid
+	var badGenes = [];
+	//Use this to skip initial graph creation if th first gene is invalid
+	var flag = false;
 	for (var i = 0;i < texts.length;i++) {
 		inactiveLines[texts[i]] = false;
 		var cArr = info[texts[i]];
@@ -429,8 +492,19 @@ function linePlot(info, texts){
 		}
 
 		console.log(gData);
-		if(i == 0 || !combine){
-		vis = d3.select("#qTable")
+		//If it's null, remove from array, add to a badGenes array which we will use to inform the user about later
+		if(gData.length == 0){
+			badGenes.push(texts[i]);
+			if (i == 0) {
+				flag = true;
+			}
+			texts.splice(i, 1);
+			i--;
+			continue;
+		}
+		if(i == 0 || !combine || flag){
+			flag = false;
+			vis = d3.select("#qTable")
 			.append("svg:svg")
 			.attr("width", width)
 			.attr("height", height);
@@ -473,11 +547,10 @@ function linePlot(info, texts){
  			.y(function(d) {
     				return y(d.val);
   			})
-			.interpolate("basis");
 					
 			vis.append('svg:path')
   			.attr('d', lineGen(gData))
-  			.attr('stroke', 'green')
+  			.attr('stroke', 'grey')
   			.attr('stroke-width', 2)
 			.attr("id", "tag" + texts[i].replace(/\s+/g, ""))
   			.attr('fill', 'none');
@@ -493,7 +566,7 @@ function linePlot(info, texts){
 			if (multiColor == "multi"){
 				var col = getRandomColor();
 			}else{
-				var col = "green";
+				var col = "grey";
 			}
 			colors.push(col);
 			vis.append('svg:path')
@@ -503,6 +576,10 @@ function linePlot(info, texts){
 			.attr("id", "tag" + texts[i].replace(/\s+/g, ""))
   			.attr('fill', 'none');
 		}
+	}
+	if (badGenes.length > 0) {
+		console.log("Bad Genes:" + badGenes);
+		$("#qTable").append("<p>Invalid/Missing Genes: " + badGenes + "</p>");
 	}
 	if(combine){
 		if(texts.length < 5){
@@ -537,22 +614,31 @@ var test = "";
 var combine = false;
 var multiColor = "uni";
 var normMeth = "max";
+var normMethLP = "raw";
 
 function handleInitData(data, texts){
 	$("#qTable").empty();
 	console.log(data);
+	if (!isJson(data)){
+		alert(data);
+		return 1;
+	}
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
 	multiColor = $("#geneColor").val();
 	normMeth = $("#normalization").val();
+	normMethLP = $("#normalizationLP").val();
 	console.log(normMeth);
 	$("#normalization-in").val(normMeth);
+	$("#geneColor-in").val(multiColor);
+	$("#normalizationLP-in").val(normMethLP);
 	if(plot == "box"){
 		$("#qTable").empty();
 		boxPlot(info, texts);
 		$("#inGraphOpts").show();
 		$("#combinePlotsDiv-in").hide();
 		$("#normalizationPlotsDiv-in").show();
+		$("#normalizationLPDiv-in").hide();
 		$("#plotType-in").val("box");
 		$("#geneColorDiv-in").hide();
 	}else if(plot == "line"){
@@ -567,12 +653,14 @@ function handleInitData(data, texts){
 		linePlot(info, texts);
 		$("#inGraphOpts").show();
 		$("#normalizationPlotsDiv-in").hide();
+		$("#normalizationLPDiv-in").show();
 		$("#combinePlotsDiv-in").show();
 		$("#geneColorDiv-in").show();
 		$("#plotType-in").val("line");
 	}else if(plot == "dot"){
 		$("#qTable").empty();
 		dotPlot(info, texts);
+		$("#normalizationLPDiv-in").hide();
 		$("#inGraphOpts").show();
 		$('#combinePlotsDiv-in').hide();
 		$("#geneColorDiv-in").hide();
@@ -586,10 +674,15 @@ function handleInitData(data, texts){
 function handleReData(data, texts){
 	$("#qTable").empty();
 	console.log(data);
+	if (!isJson(data)){
+		alert(data);
+		return 1;
+	}
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
 	multiColor = $("#geneColor-in").val();
 	normMeth = $("#normalization-in").val();
+	normMethLP = $("#normalizationLP-in").val();
 	if(plot == "box"){
 		boxPlot(info, texts);
 		$("#inGraphOpts").show();
@@ -648,7 +741,7 @@ function genReq(){
 		req+=("g" + i + "="+texts[i]);	
 	}
 	//Append on the species DB to access
-	req+=("&spec=" + vals[4]);
+	req+=("&spec=" + vals[5]);
 	console.log(req);
 	return [req, texts];
 }
@@ -672,14 +765,17 @@ $(document).ready(function() {
 		$('#combinePlotsDiv').hide();
 		$("#geneColorDiv").hide();
 		$('#normalizationDiv').show();	
+		$('#normalizationDivLP').hide();	
 	}else if(plot == "line"){
 		$('#combinePlotsDiv').show();
 		$("#geneColorDiv").show();
+		$('#normalizationDivLP').show();	
 		$('#normalizationDiv').hide();	
 	}else if(plot == "dot"){
 		$('#combinePlotsDiv').hide();
 		$("#geneColorDiv").hide();
 		$('#normalizationDiv').hide();	
+		$('#normalizationDivLP').hide();	
 	}
 	$('#plotType').change(function(){
 		plot = $("#plotType").val();
@@ -687,14 +783,17 @@ $(document).ready(function() {
 			$('#combinePlotsDiv').hide();
 			$("#geneColorDiv").hide();
 			$('#normalizationDiv').show();	
+			$('#normalizationDivLP').hide();	
 		}else if(plot == "line"){
 			$('#combinePlotsDiv').show();
 			$("#geneColorDiv").show();
 			$('#normalizationDiv').hide();	
+			$('#normalizationDivLP').show();	
 		}else if(plot == "dot"){
 			$('#combinePlotsDiv').hide();
 			$("#geneColorDiv").hide();
 			$('#normalizationDiv').hide();	
+			$('#normalizationDivLP').hide();	
 	}
     	});
 	console.log("document is ready");
@@ -710,6 +809,9 @@ $(document).ready(function() {
 		rePlot();
 	});
 	$("#normalizationPlotsDiv-in").change(function() {
+		rePlot();
+	});
+	$("#normalizationLPDiv-in").change(function() {
 		rePlot();
 	});
 	$("#inGraphOpts").hide();
