@@ -108,7 +108,29 @@ function getMax(info, genes){
 	return max;
 }
 
-//DOES NOT WORK - NEED TO FIGURE OUT HOW TO DEAL WITH EXPRESSION VALUES EQUAL TO 0
+function logNormalizeLPData(info, genes){
+	var min = 99999;
+	for(var i = 0;i < genes.length;i++) {
+		var cArr = info[genes[i]];
+		//Generate an associative array based on averages
+		var co = 0;
+		for (var key in cArr){
+			var subArr = cArr[key];
+			cArr[key] = logNormalize(subArr);
+			var av = cArr[key];
+			var csum = 0;
+			var cav = 0;
+			for(var j = 0;j < av.length;j++){
+				csum+=av[j];
+			}
+			cav = csum/av.length;	
+			if(cav < min) min = cav;
+		}
+		info[genes[i]] = cArr;
+	}
+	console.log("Min = " + min);
+	return [info,min];
+}
 function logNormalizeBPData(info, genes){
 	var samples = []
 	var max = 0;
@@ -281,15 +303,19 @@ function boxPlot(info, genes){
 	console.log(normMeth);
 	//LOG NORM. DOES NOT WORK
 	if (normMeth == "mean") {
+		r = meanNormalizeBPData(info, genes);	
+		data = r[0];
+		max = r[1];
+	}else if (normMeth == "max") {
+		//r = meanNormalizeBPData(info, genes);	
+		data = maxNormalizeBPData(info, genes);	
+		max = 1;
+	}else if (normMeth == "log") {
 		r = logNormalizeBPData(info, genes);	
 		//r = meanNormalizeBPData(info, genes);	
 		data = r[0];
 		max = r[1];
 		min = r[2];
-	}else if (normMeth == "max") {
-		//r = meanNormalizeBPData(info, genes);	
-		data = maxNormalizeBPData(info, genes);	
-		max = 1;
 	}
 
 	console.log(data);
@@ -453,12 +479,8 @@ function dotPlot(info, texts){
 }
 
 function linePlot(info, texts){
-	if (normMethLP == "max"){
-		var info = maxNormalizeLPData(info, texts);
-	}else if(normMethLP == "mean"){
-		var info = meanNormalizeLPData(info, texts);
-	}
-	var max = getMax(info, texts);
+
+	var min = 0;
 	var vis;
 	var width = 1000;
 	var height = 400 + 60 * Math.floor(texts.length/5);
@@ -474,6 +496,18 @@ function linePlot(info, texts){
 	var badGenes = [];
 	//Use this to skip initial graph creation if th first gene is invalid
 	var flag = false;
+
+	if (normMethLP == "max"){
+		var info = maxNormalizeLPData(info, texts);
+	}else if(normMethLP == "mean"){
+		var info = meanNormalizeLPData(info, texts);
+	}else if(normMethLP == "log"){
+		var res = logNormalizeLPData(info, texts);
+		var info = res[0];
+		min = res[1];
+	}
+
+	var max = getMax(info, texts);
 	for (var i = 0;i < texts.length;i++) {
 		inactiveLines[texts[i]] = false;
 		var cArr = info[texts[i]];
@@ -510,11 +544,11 @@ function linePlot(info, texts){
 			.attr("height", height);
 			if(combine){
 				var y = d3.scale.linear()
-				.domain([0, max])
+				.domain([min, max])
 				.range([height - MARGINS.top, MARGINS.bottom])
 			}else{
 				var y = d3.scale.linear()
-				.domain([0, d3.max(gData, function(datum) { return datum.val; })])
+				.domain([min, d3.max(gData, function(datum) { return datum.val; })])
 				.range([height - MARGINS.top, MARGINS.bottom])
 			}
 			var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
