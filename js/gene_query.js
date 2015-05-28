@@ -15,9 +15,60 @@ $.fn.dataTable.ext.search.push(
     }
 );
 
+function getQueryVar(variable){
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+
 $(document).ready(function() {
 
     	var table = $('#basicQueryTable').DataTable();
+	if (getQueryVar("link")){
+		req = "php/gene_query.php?";
+       		var query = window.location.search.substring(1);
+       		var vars = query.split("&");
+		var first = true;
+       		for (var i = 0;i < vars.length;i++) {
+               		var pair = vars[i].split("=");
+			if(i != 0){
+				req+="&";
+			}
+			if(pair[0].charAt(0) == "g"){
+				req+=("g" + i + "=" + pair[1]);	
+				if (first){
+					$('#multiGeneInputArea').val($('#multiGeneInputArea').val() + pair[1])
+					first = false;
+				}else{
+					$('#multiGeneInputArea').val($('#multiGeneInputArea').val() + '\n' + pair[1])
+				}
+			}else if(pair[0] == "spec"){
+				req += ("spec=" + pair[1]);
+				$(".speciesSelect").val(pair[1]);
+			}
+       		}
+		req+=("&type=" + "OR");
+		console.log(req);
+		$.get(req, function(data) {
+			$('#qTable').empty()
+			.html(data)
+			.ready(function(){
+				$("#multiGeneForm").hide();
+				$("#goBack").show();
+				if($('#basicQueryTable tr').length > 9){
+					$('#lower-rect').removeAttr('style');
+				}else{
+					$("#goBack").css("height","136px");	
+				}
+    				table = $('#basicQueryTable').DataTable();
+			});
+		});
+		table.draw();
+	}
 
 	$('*').keyup( function() {
 		console.log("key released");

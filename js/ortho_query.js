@@ -15,12 +15,12 @@ $.fn.dataTable.ext.search.push(
     }
 );
 
-var table;
 $(document).ready(function() {
 	$('*').keyup( function() {
 		console.log("key released");
         	table.draw();
     	} );
+    	var table = $('#basicQueryTable').DataTable();
 
 	$('#orthoQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url

@@ -18,9 +18,6 @@
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
 
-<!-- Local JS file -->
-<script type="text/javascript" charset="utf8" src="js/bquery.js"></script>
-
 </head>
 <body>
 <?php 
@@ -100,6 +97,7 @@ if($query->execute()){
     		echo "<thead>";
     		echo "<th>Gene</th>";
     		echo "<th>Ortholog</th>";
+    		echo "<th>Network Query</th>";
     		echo "</tr>";
     		echo "</thead>";
 		echo "<tfoot></tfoot>";
@@ -115,6 +113,7 @@ if($query->execute()){
     		echo "<tr>";
     		echo "<td>" . $row['gene'] . "</td>";
     		echo "<td>" . $row['ortho'] . "</td>";
+		echo "<td><a href='gene_set_query.html?link=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
     		echo "</tr>";
 		}
     	echo "</tbody>";

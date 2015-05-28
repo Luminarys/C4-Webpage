@@ -18,9 +18,6 @@
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
 
-<!-- Local JS file -->
-<script type="text/javascript" charset="utf8" src="js/bquery.js"></script>
-
 </head>
 <body>
 <?php 
