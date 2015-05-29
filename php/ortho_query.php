@@ -93,11 +93,13 @@ if($query->execute()){
     	echo ' </tbody></table>	';
 	*/
 	//Initialize table
+	echo "<form id='geneSelections'>";
 	echo "<table id='basicQueryTable' style='width:100%'>";
     		echo "<thead>";
     		echo "<th>Gene</th>";
     		echo "<th>Ortholog</th>";
     		echo "<th>Network Query</th>";
+    		echo "<th>Multigene Query Selection</th>";
     		echo "</tr>";
     		echo "</thead>";
 		echo "<tfoot></tfoot>";
@@ -114,10 +116,12 @@ if($query->execute()){
     		echo "<td>" . $row['gene'] . "</td>";
     		echo "<td>" . $row['ortho'] . "</td>";
 		echo "<td><a href='gene_set_query.html?link=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
+		echo "<td><input type='checkbox' value=" . $row['ortho'] . "></td>";
     		echo "</tr>";
 		}
     	echo "</tbody>";
 	echo "</table>";
+	echo "</form>";
 }
 
 

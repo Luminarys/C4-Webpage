@@ -21,7 +21,28 @@ $(document).ready(function() {
         	table.draw();
     	} );
     	var table = $('#basicQueryTable').DataTable();
+	$("#MultiGeneQuery").hide();
 
+	$("#MultiGeneQuery" ).click(function() {
+		var genes = $("#geneSelections input:checkbox:checked").map(function(){
+      			return $(this).val();
+    		}).get(); // <----
+    		console.log(genes);
+		req = "gene_set_query.html?link=true";
+		if (!genes.length > 0){
+			return false;
+		}
+		//Build the GET request by looping through the inputs
+		for(i = 0;i < genes.length;i++){
+			req+="&";
+			req+=("g" + i + "="+genes[i]);	
+		}
+		req+=("&spec=" + $("#orthoSpec").val());
+		window.location.href = req;
+	});
+	$("#backToInput" ).click(function() {
+		$("#MultiGeneQuery").hide();
+	});
 	$('#orthoQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
@@ -63,6 +84,7 @@ $(document).ready(function() {
 			.ready(function(){
 				$("#orthoForm").hide();
 				$("#goBack").show();
+				$("#MultiGeneQuery").show();
 				if($('#basicQueryTable tr').length > 9){
 					$('#lower-rect').removeAttr('style');
 				}else{
