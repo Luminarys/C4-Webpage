@@ -61,6 +61,16 @@ function isJson(str) {
     return true;
 }
 
+function getQueryVar(variable){
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+
 Object.size = function(obj) {
     var size = 0, key;
     for (key in obj) {
@@ -849,6 +859,26 @@ $(document).ready(function() {
 		rePlot();
 	});
 	$("#inGraphOpts").hide();
+
+	if (getQueryVar("link")){
+		console.log("Linked in");
+       		var query = window.location.search.substring(1);
+       		var vars = query.split("&");
+		var first = true;
+       		for (var i = 0;i < vars.length;i++) {
+               		var pair = vars[i].split("=");
+			if(pair[0].charAt(0) == "g"){
+				if (first){
+					$('#expressionInputArea').val($('#expressionInputArea').val() + pair[1])
+					first = false;
+				}else{
+					$('#expressionInputArea').val($('#expressionInputArea').val() + '\n' + pair[1])
+				}
+			}else if(pair[0] == "spec"){
+				$(".speciesSelect").val(pair[1]);
+			}
+       		}
+	}
 	//Handle the expression query
 	$('#expressionQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url

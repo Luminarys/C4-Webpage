@@ -47,7 +47,6 @@ $(document).ready(function() {
 					$('#multiGeneInputArea').val($('#multiGeneInputArea').val() + '\n' + pair[1])
 				}
 			}else if(pair[0] == "spec"){
-				req += ("spec=" + pair[1]);
 				$(".speciesSelect").val(pair[1]);
 			}
        		}
