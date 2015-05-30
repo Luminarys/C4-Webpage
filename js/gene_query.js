@@ -33,13 +33,18 @@ $(document).ready(function() {
        		var query = window.location.search.substring(1);
        		var vars = query.split("&");
 		var first = true;
+		var cont = 0
        		for (var i = 0;i < vars.length;i++) {
                		var pair = vars[i].split("=");
 			if(i != 0){
 				req+="&";
 			}
 			if(pair[0].charAt(0) == "g"){
-				req+=("g" + i + "=" + pair[1]);	
+				if(i != 0){
+					req+="&";
+				}
+				req+=("g" + cont + "=" + pair[1]);	
+				cont++;
 				if (first){
 					$('#multiGeneInputArea').val($('#multiGeneInputArea').val() + pair[1])
 					first = false;
@@ -47,6 +52,10 @@ $(document).ready(function() {
 					$('#multiGeneInputArea').val($('#multiGeneInputArea').val() + '\n' + pair[1])
 				}
 			}else if(pair[0] == "spec"){
+				if(i != 0){
+					req+="&";
+				}
+				req+=("spec="+pair[1]);
 				$(".speciesSelect").val(pair[1]);
 			}
        		}

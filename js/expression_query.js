@@ -742,6 +742,7 @@ function handleReData(data, texts){
 		linePlot(info, texts);
 		$("#inGraphOpts").show();
 		$("#normalizationPlotsDiv-in").hide();
+		$("#normalizationLPDiv-in").show();
 		$("#combinePlotsDiv-in").show();
 		$("#geneColorDiv-in").show();
 	}else if(plot == "dot"){
