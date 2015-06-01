@@ -44,7 +44,11 @@ if(!in_array($_GET["spec"], $validSpecies)){
 	echo "Invalid SQL query, please try again";	
 	exit();
 }
-$query = $db->prepare("SELECT * FROM " . $_GET["spec"] . "_Metrics WHERE module = ?");
+//Example query
+//SELECT * FROM Zmays_Clusters_Genes LEFT JOIN Zmays_Metrics ON Zmays_Metrics.id = Zmays_Clusters_Genes.id LEFT JOIN Zmays_Genes ON Zmays_Genes.id = Zmays_Clusters_Genes.id WHERE Cluster="5";
+$species = $_GET["spec"];
+$cluster = $species . "_Clusters_Genes";
+$query = $db->prepare("SELECT * FROM " . $cluster . " LEFT JOIN " . $species . "_Metrics ON " . $species . "_Metrics.id = " . $cluster . ".id LEFT JOIN " . $species . "_Genes ON " . $species . "_Genes.id = " . $cluster . ".id WHERE Cluster = ?");
 if($query->execute(array($_GET["module"]))){
 
 	//Pre table search forms
@@ -91,7 +95,7 @@ if($query->execute(array($_GET["module"]))){
 	foreach ($results as $row) {
 		//Echo the table 
     		echo "<tr>";
-    		echo "<td>" . $row['gene_id'] . "</td>";
+    		echo "<td>" . $row['name'] . "</td>";
     		echo "<td>" . $row['mean_exp'] . "</td>";
     		echo "<td>" . $row['mean_exp_rank'] . "</td>";
     		echo "<td>" . $row['k'] . "</td>";
