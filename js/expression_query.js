@@ -805,6 +805,7 @@ var t2 = "";
 var plot = "";
 var norm = "";
 $(document).ready(function() {
+	console.log("Expression Plotting JS Ready");
 	plot = $("#plotType").val();
 	if(plot == "box"){
 		$('#combinePlotsDiv').hide();

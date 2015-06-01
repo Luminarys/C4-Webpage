@@ -94,7 +94,7 @@ if($query->execute()){
 	*/
 	//Initialize table
 	echo "<form id='geneSelections'>";
-	echo "<table id='basicQueryTable' style='width:100%'>";
+	echo "<table id='orthoQueryTable' style='width:100%'>";
     		echo "<thead>";
     		echo "<th>Gene</th>";
     		echo "<th>Ortholog</th>";

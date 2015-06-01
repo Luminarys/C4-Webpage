@@ -20,7 +20,7 @@ $(document).ready(function() {
 		console.log("key released");
         	table.draw();
     	} );
-    	var table = $('#basicQueryTable').DataTable();
+    	var table = $('#orthoQueryTable').DataTable();
 	$("#MultiGeneQueryExpression").hide();
 	$("#MultiGeneQueryNetwork").hide();
 
@@ -106,12 +106,12 @@ $(document).ready(function() {
 				$("#goBack").show();
 				$("#MultiGeneQueryExpression").show();
 				$("#MultiGeneQueryNetwork").show();
-				if($('#basicQueryTable tr').length > 9){
+				if($('#orthoQueryTable tr').length > 9){
 					$('#lower-rect').removeAttr('style');
 				}else{
 					$("#goBack").css("height","136px");	
 				}
-    				table = $('#basicQueryTable').DataTable();
+    				table = $('#orthoQueryTable').DataTable();
 			});
 		});
 		table.draw();

@@ -1,4 +1,4 @@
 $(document).ready(function() {
-    	var table = $('#basicQueryTable').DataTable();
+    	//var table = $('#basicQueryTable').DataTable();
 } );
 
