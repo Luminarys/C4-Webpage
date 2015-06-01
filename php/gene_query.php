@@ -43,6 +43,29 @@ $pre_query_b = "OR gene_id_B IN (";
 $species;
 $AND = False;
 $validGenes = "((GRMZM\dG\d{6})|(AC\d{6}.\d_FG\d{3})|(Sobic\.\d{3}(G|K)\d{6})|(Si[0-9]{6}m))";
+
+$species = $_GET['spec'];
+
+if(in_array($species,$validSpecies)){
+	//This is pretty complex - Basically the query utilizes a UNION and a lot of LEFT JOINs to jam a bunch of tables together and select proper value.
+	//Most important is the () res section which essentially finds the gene id and adjacency value for all edges attached to the input gene
+	//The UNION is used because there are cases in which node1 = input gene and others where node2 = input gene. We need those instances to be filtered
+	//so a UNION of situations where Zmays_Edges.node1 != Zmays_Adjacency.id and likewise with node2 is necessary.
+	//Res is then used to join the metrics and gene name tables
+	$inp = array($species."_Genes",$species."_Adjacency",$species."_Adjacency.id",$species."_Genes.id",$species."_Edges",$species."_Edges.edgeId",$species."_Adjacency.edgeId",$species."_Edges.node1",$species."_Adjacency.id",$species."_Genes.name",$species."_Genes",$species."_Adjacency",$species."_Adjacency.id",$species."_Genes.id",$species."_Edges",$species."_Edges.edgeId",$species."_Adjacency.edgeId",$species."_Edges.node2",$species."_Adjacency.id",$species."_Genes.name", $species."_Genes", $species."_Genes.id", $species."_Metrics", $species."_Metrics.id");
+
+	$pre_query_a = "SELECT * FROM (SELECT node1 as gene, adjacency FROM " . $inp[0] . " LEFT JOIN " . $inp[1] . " ON " . $inp[2] . " = " . $inp[3] . " LEFT JOIN " . $inp[4] . " ON " . $inp[5] . " = " . $inp[6] . " WHERE " . $inp[7] . " != " . $inp[8] . " AND " . $inp[9] . " IN (";
+
+	$pre_query_b = ") UNION ALL SELECT node2 as gene, adjacency FROM " . $inp[10] . " LEFT JOIN " . $inp[11] . " ON " . $inp[12] . " = " . $inp[13] . " LEFT JOIN " . $inp[14] . " ON " . $inp[15] . " = " . $inp[16] . " WHERE " . $inp[17] . " != " . $inp[18] . " AND " . $inp[19] . " IN (";
+
+	$pre_query_c = ")) res LEFT JOIN " . $inp[20] . " ON " . $inp[21] . " = res.gene LEFT JOIN " . $inp[22] . " ON " . $inp[23] . " = res.gene";
+
+
+}else{
+	echo "Invalid species used, please try again";	
+	exit();
+}
+
 foreach ($_GET as $key => $value) {
 
 	if($key[0] == "g"){
@@ -52,13 +75,6 @@ foreach ($_GET as $key => $value) {
 		}
 		$pre_query_a.=("'" . $match[0] . "',");
 		$pre_query_b.=("'" . $match[0] . "',");
-	}else if($key == "spec"){
-		$species = $value;
-		if(!in_array($species, $validSpecies)){
-			echo "Invalid SQL query, please try again";	
-			exit();
-		}
-		$pre_query.=($value . "_Adj");
 	}else if($key == "type"){
 		if($value == "AND"){
 			$AND = True;
@@ -67,9 +83,37 @@ foreach ($_GET as $key => $value) {
 }
 //Prepare and execute query, concatenating the pre-query strings
 //The substr is used to remove the final ','
-$query = $db->prepare($pre_query . " " . substr($pre_query_a,0,-1) . ") " . substr($pre_query_b,0,-1) . ")");
+$query = $db->prepare(substr($pre_query_a,0,-1) . substr($pre_query_b,0,-1) . $pre_query_c);
 if($query->execute()){
 
+	//Get the results
+	$results = $query->fetchAll();
+	$rows = $query->rowCount();
+
+	//Use these to store values we've seen - they will be used to find
+	//all genes which are connected to at least two of the queried ones
+	$seen = array();
+	$seenTwice = array();
+	$indeces = array();
+	$pos = 0;
+	//Generate an index list of valid rows which will be displayed in the table
+	if($AND){
+		foreach ($results as $row){
+			//If the gene has appeared at least once, but
+			//no more than twice then we will add it to the indeces table and to the seenTwice table so it isn't readded
+			if(in_array($row['id'],$seen) && !in_array($row['id'],$seenTwice)){
+				array_push($indeces,$pos);
+				array_push($seenTwice,$row['id']);
+			}else if (!in_array($row['id'],$seenTwice)){
+				array_push($seen,$row['id']);
+			}
+			$pos++;
+		}
+	}
+	if(count($indeces) < 1 && $AND){
+		echo "No genes which were adjacent to at least two of the queried genes are present";
+		exit();
+	}
 	//Pre table search forms
 	echo '<table border="0" cellspacing="5" cellpadding="5">';
         echo '<tbody><tr>';
@@ -109,44 +153,6 @@ if($query->execute()){
     		echo "</thead>";
 		echo "<tfoot></tfoot>";
     		echo "<tbody>";
-	//Get the results
-	$results = $query->fetchAll();
-	$rows = $query->rowCount();
-
-	//Prepare the second query for extracting data from Zmays_Metrics
-	$queryT2 = $db->prepare("SELECT * FROM " . $species .  "_Metrics WHERE gene_id = ?");
-
-	//Use these to store values we've seen - they will be used to find
-	//all genes which are connected to at least two of the queried ones
-	$seen = array();
-	$seenTwice = array();
-	$indeces = array();
-	$pos = 0;
-	//Generate an index list of valid rows which will be displayed in the table
-	if($AND){
-		foreach ($results as $row){
-			if (in_array($row['gene_id_A'],$_GET)){
-				//If the gene has appeared at least once, but
-				//no more than twice then we will add it to the indeces table and to the seenTwice table so it isn't readded
-				if(in_array($row['gene_id_B'],$seen) && !in_array($row['gene_id_B'],$seenTwice)){
-					array_push($indeces,$pos);
-					array_push($seenTwice,$row['gene_id_B']);
-				}else{
-					array_push($seen,$row['gene_id_B']);
-					continue;
-				}
-			}else{
-				if(in_array($row['gene_id_A'],$seen) && !in_array($row['gene_id_A'],$seenTwice)){
-					array_push($indeces,$pos);
-					array_push($seenTwice,$row['gene_id_A']);
-				}else{
-					array_push($seen,$row['gene_id_A']);
-					continue;
-				}
-			}
-			$pos++;
-		}
-	}
 
 	//Loop through initial results, perform subquery for Metrics and create the table
 	$pos = 0;
@@ -154,38 +160,23 @@ if($query->execute()){
 		if($AND){
 			//Skip anything not in the index
 			if (!in_array($pos,$indeces)){
+				$pos++;
 				continue;
 			}
 			$pos++;
 		}
-		//In the case of an intersection, just skip the row in the table	
-		if (in_array($row['gene_id_A'],$_GET) && in_array($row['gene_id_B'],$_GET)){
-			continue;	
-		}
-		//Search of gene_id_B if gene_id_A is equal to the queried gene and vice versa
-		if (in_array($row['gene_id_A'],$_GET)){
-			$queryT2->execute(array($row['gene_id_B']));
-			$outGene = $row['gene_id_B'];
-			
-		}else{
-			$queryT2->execute(array($row['gene_id_A']));
-			$outGene = $row['gene_id_A'];
-		}
-
-		$metrics = $queryT2->fetchAll();
-
 		//Echo the table 
     		echo "<tr>";
-    		echo "<td>" . $outGene . "</td>";
-    		echo "<td>" . $row['value'] . "</td>";
-    		echo "<td>" . $metrics[0]['mean_exp'] . "</td>";
-    		echo "<td>" . $metrics[0]['mean_exp_rank'] . "</td>";
-    		echo "<td>" . $metrics[0]['k'] . "</td>";
-    		echo "<td>" . $metrics[0]['k_rank'] . "</td>";
-    		echo "<td>" . $metrics[0]['module'] . "</td>";
-    		echo "<td>" . $metrics[0]['modular_k'] . "</td>";
-    		echo "<td>" . $metrics[0]['modular_k_rank'] . "</td>";
-    		echo "<td>" . $metrics[0]['modular_mean_exp_rank'] . "</td>";
+    		echo "<td>" . $row['name'] . "</td>";
+    		echo "<td>" . $row['adjacency'] . "</td>";
+    		echo "<td>" . $row['mean_exp'] . "</td>";
+    		echo "<td>" . $row['mean_exp_rank'] . "</td>";
+    		echo "<td>" . $row['k'] . "</td>";
+    		echo "<td>" . $row['k_rank'] . "</td>";
+    		echo "<td>" . $row['module'] . "</td>";
+    		echo "<td>" . $row['modular_k'] . "</td>";
+    		echo "<td>" . $row['modular_k_rank'] . "</td>";
+    		echo "<td>" . $row['modular_mean_exp_rank'] . "</td>";
     		echo "</tr>";
 		}
     	echo "</tbody>";

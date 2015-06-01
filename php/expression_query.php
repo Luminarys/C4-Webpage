@@ -24,6 +24,9 @@ $pre_query_d = " IN (";
 $species;
 $AND = False;
 $validGenes = "((GRMZM\dG\d{6})|(AC\d{6}.\d_FG\d{3})|(Sobic\.\d{3}(G|K)\d{6})|(Si[0-9]{6}m))";
+
+$species = $_GET['spec'];
+
 foreach ($_GET as $key => $value) {
 
 	if($key[0] == "g"){

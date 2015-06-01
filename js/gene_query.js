@@ -3,7 +3,6 @@ $.fn.dataTable.ext.search.push(
         var min = parseFloat( $('#min').val(), 10 );
         var max = parseFloat( $('#max').val(), 10 );
         var age = parseFloat( data[parseInt($("#filterChoice").val())] ) || 0; // Get column number based on values in the pre-table
- 
         if ( ( isNaN( min ) && isNaN( max ) ) ||
              ( isNaN( min ) && age <= max ) ||
              ( min <= age   && isNaN( max ) ) ||
