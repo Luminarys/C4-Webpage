@@ -40,6 +40,14 @@
    /*background:#6cf;/**/
 }
 #qTable {
+	text-align:center;
+	/*height: 500px;/**/
+	margin-left: 200px;
+	margin-right: 200px;
+}
+
+#info {
+	text-align:center;
 	/*height: 500px;/**/
 	margin-left: 200px;
 	margin-right: 200px;
