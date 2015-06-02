@@ -8,7 +8,7 @@ error_reporting(E_ALL | E_STRICT);
 $auth = file("DB.auth");
 
 //Initialize Server, loading the file auth
-$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=C4_redesign;charset=utf8';
+$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=C4;charset=utf8';
 $db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -56,76 +56,39 @@ foreach ($_GET as $key => $value) {
 //The substr is used to remove the final ','
 //echo $pre_query . $pre_query_a . $pre_query_b . $pre_query_c . substr($pre_query_d,0,-1) . ")";
 $query = $db->prepare($pre_query . $pre_query_a . $pre_query_b . $pre_query_c . substr($pre_query_d,0,-1) . ")");
-if($query->execute()){
+$sample_query = $db->prepare("Select * FROM " . $species . "_Expression_Map ORDER BY biosample_id");
+if($query->execute() && $sample_query->execute()){
 	//Get the results
+	$layout = $sample_query->fetchAll();
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
 	$data = array();
+	$bio_id = $layout[0]['biosample_id'];
+	$name = $layout[0]['display_name'];
+	$res = array();
+	$carray = array();
 	foreach ($results as $row) {
-		$data[$row["name"]] = array(
-			"MP-1" => array(
-				$row["Zm.MP-1-2"],  $row["Zm.MP-1-3"], $row["Zm.MP-1-4"]
-			),
-			"MP-4" => array(
-				$row["Zm.MP-4-2"],  $row["Zm.MP-4-3"], $row["Zm.MP-4-4"]
-			),
-			"MP-T" => array(
-				$row["Zm.MP-T-2"],  $row["Zm.MP-T-3"], $row["Zm.MP-T-4"]
-			),
-			"BS-1" => array(
-				$row["Zm.BS-1-1"],  $row["Zm.BS-1-2"], $row["Zm.BS-1-4"]
-			),
-			"BS-4" => array(
-				$row["Zm.BS-4-1"],  $row["Zm.BS-4-2"], $row["Zm.BS-4-4"]
-			),
-			"BS-T" => array(
-				$row["Zm.BS-T-1"],  $row["Zm.BS-T-2"], $row["Zm.BS-T-4"]
-			),
-			"LS-1" => array(
-				$row["Zm.leaf.R1-1"], $row["Zm.leaf.R3-1"], $row["Zm.leaf.R4-1"], $row["Zm.leaf.R6-1"]
-			),
-			"LS-2" => array(
-				$row["Zm.leaf.R1-2"], $row["Zm.leaf.R2-2"], $row["Zm.leaf.R3-2"], $row["Zm.leaf.R4-2"], $row["Zm.leaf.R6-2"]
-			),
-			"LS-3" => array(
-				$row["Zm.leaf.R1-3"], $row["Zm.leaf.R2-3"], $row["Zm.leaf.R3-3"], $row["Zm.leaf.R4-3"]
-			),
-			"LS-4" => array(
-				$row["Zm.leaf.R1-4"], $row["Zm.leaf.R2-4"], $row["Zm.leaf.R3-4"], $row["Zm.leaf.R4-4"], $row["Zm.leaf.R6-4"]
-			),
-			"LS-6" => array(
-				$row["Zm.leaf.R1-6"], $row["Zm.leaf.R2-6"], $row["Zm.leaf.R3-6"], $row["Zm.leaf.R4-6"], $row["Zm.leaf.R6-6"]
-			),
-			"LS-8" => array(
-				$row["Zm.leaf.R1-8"], $row["Zm.leaf.R2-8"], $row["Zm.leaf.R3-8"], $row["Zm.leaf.R4-8"]
-			),
-			"LS-9" => array(
-				$row["Zm.leaf.R1-9"], $row["Zm.leaf.R2-9"], $row["Zm.leaf.R3-9"], $row["Zm.leaf.R4-9"], $row["Zm.leaf.R6-9"]
-			),
-			"LS-10" => array(
-				$row["Zm.leaf.R1-10"], $row["Zm.leaf.R2-10"], $row["Zm.leaf.R3-10"], $row["Zm.leaf.R4-10"], $row["Zm.leaf.R6-10"]
-			),
-			"LS-11" => array(
-				$row["Zm.leaf.R1-11"], $row["Zm.leaf.R2-11"], $row["Zm.leaf.R3-11"], $row["Zm.leaf.R4-11"], $row["Zm.leaf.R6-11"]
-			),
-			"LS-12" => array(
-				$row["Zm.leaf.R1-12"], $row["Zm.leaf.R2-12"], $row["Zm.leaf.R3-12"], $row["Zm.leaf.R4-12"], $row["Zm.leaf.R6-12"]
-			),
-			"LS-13" => array(
-				$row["Zm.leaf.R1-13"], $row["Zm.leaf.R2-13"], $row["Zm.leaf.R3-13"], $row["Zm.leaf.R4-13"], $row["Zm.leaf.R6-13"]
-			),
-			"LS-14" => array(
-				$row["Zm.leaf.R1-14"], $row["Zm.leaf.R2-14"], $row["Zm.leaf.R3-14"], $row["Zm.leaf.R4-14"], $row["Zm.leaf.R6-14"]
-			),
-			"LS-15" => array(
-				$row["Zm.leaf.R1-15"], $row["Zm.leaf.R2-15"], $row["Zm.leaf.R3-15"], $row["Zm.leaf.R4-15"], $row["Zm.leaf.R6-15"]
-			),
-			"LS-16" => array(
-				$row["Zm.leaf.R1-16"], $row["Zm.leaf.R2-16"], $row["Zm.leaf.R3-16"], $row["Zm.leaf.R4-16"], $row["Zm.leaf.R6-16"]
-			)
-			);
+		//Dynamically construct the JSON return by looping through the $layout table.
+		//Because we've sorted in the query(ORDER BY), we know that rows are grouped by bioID
+		//We can exploit this and simply build a sample array until there is a new bioID, in which case
+		//we append the resulting array to the final result and start building a new array for the next sample.
+		//This intermediate array is $carray
+		$res[$row["name"]] = array();
+		foreach ($layout as $sample) {
+			//If there's a different bioID then prev, set the array within the JSON for the sample equal to cArray
+			//then clear $carray and update bio_id and name(the prev. sample name)
+			if ($sample['biosample_id'] != $bio_id){
+				$res[$row["name"]][$name] = $carray; 
+				$bio_id = $sample['biosample_id'];
+				$name = $sample['display_name'];
+				$carray = array();
+			}
+			array_push($carray, $row[$sample["field_name"]]);
+		}
+		$res[$row["name"]][$name] = $carray; 
 	}
-	echo json_encode($data);
+	//echo json_encode($data);
+	echo json_encode($res);
 }
 
 
