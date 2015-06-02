@@ -32,19 +32,33 @@ error_reporting(E_ALL | E_STRICT);
 $auth = file("DB.auth");
 
 //Initialize Server, loading the file auth
-$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=C4;charset=utf8';
+$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=' . substr($auth[3],0,-1) .';charset=utf8';
 $db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 //Process user input by looping through the GET fields and appending the values onto the pre-query strings
-$validSpecies = array("Zmays","Sbicolor", "Sitalica");
 $pre_query = "SELECT * FROM ";
 $pre_query_a = "WHERE gene_id_A IN (";
 $pre_query_b = "OR gene_id_B IN (";
 $species;
 $AND = False;
-$validGenes = "((GRMZM\dG\d{6})|(AC\d{6}.\d_FG\d{3})|(Sobic\.\d{3}(G|K)\d{6})|(Si[0-9]{6}m))";
+
+//Build valid species and genes from MapReference table
+$query = $db->prepare("SELECT * FROM MapReference");
+$validSpecies = array();
+$validGenes = "";
+if($query->execute()){
+	$result = $query->fetchAll();
+	foreach ($result as $spec){
+		array_push($validSpecies, $spec["prefix"]);
+		$validGenes .= $spec["regex"] . "|";
+	}
+}else{
+	echo "Warning, no MapReference table defined, exiting";
+	exit();
+}
+$validGenes = "/" . substr($validGenes, 0, -1) . "/";
 
 $species = $_GET['spec'];
 
