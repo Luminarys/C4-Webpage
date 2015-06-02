@@ -51,6 +51,11 @@ if($query->execute()){
 }
 $validGenes = "/" . substr($validGenes, 0, -1) . "/";
 
+$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=' . substr($auth[4],0,-1) .';charset=utf8';
+$db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
 $gene = $_GET['orig'];
 $ortho = $_GET['ortho'];
 if(in_array($gene,$validSpecies) && in_array($ortho,$validSpecies)){
@@ -129,7 +134,7 @@ if($query->execute()){
     		echo "<tr>";
     		echo "<td>" . $row['gene'] . "</td>";
     		echo "<td>" . $row['ortho'] . "</td>";
-		echo "<td><a href='gene_set_query.html?link=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
+		echo "<td><a href='gene_set_query.php?link=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
 		echo "<td><input type='checkbox' value=" . $row['ortho'] . "></td>";
     		echo "</tr>";
 		}

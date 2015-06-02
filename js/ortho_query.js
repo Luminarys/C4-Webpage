@@ -29,7 +29,7 @@ $(document).ready(function() {
       			return $(this).val();
     		}).get(); // <----
     		console.log(genes);
-		req = "gene_set_query.html?link=true";
+		req = "gene_set_query.php?link=true";
 		if (!genes.length > 0){
 			return false;
 		}
@@ -47,7 +47,7 @@ $(document).ready(function() {
       			return $(this).val();
     		}).get(); // <----
     		console.log(genes);
-		req = "expression_query.html?link=true";
+		req = "expression_query.php?link=true";
 		if (!genes.length > 0){
 			return false;
 		}
