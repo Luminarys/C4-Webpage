@@ -99,14 +99,7 @@ $(document).ready(function() {
 					$("#goBack").css("height","136px");	
 				}
 
-    				table = $('#basicQueryTable').DataTable( {
-					"sDom ": 'T<"clear ">lfrtip',
-        				"oTableTools ": {
-            				"aButtons ": [
-                			"csv "
-            				]
-        				}
-				});
+    				table = $('#basicQueryTable').DataTable();
 			});
 		});
 		table.draw();
