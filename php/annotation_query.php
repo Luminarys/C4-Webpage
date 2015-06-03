@@ -1,18 +1,3 @@
-<html>
-
-<head>
-
-<!-- jQuery -->
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-
-<!-- jQuery UI -->  
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-<!-- Local JS file -->
-<script type="text/javascript" charset="utf8" src="js/bquery.js"></script>
-
-</head>
-<body>
 <?php 
 
 //Set debugging on
@@ -101,6 +86,3 @@ if($query->execute(array($_GET["gene"]))){
 //Close connection
 $db=null;
 ?>
-
-</body>
-</html>

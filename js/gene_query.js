@@ -26,7 +26,7 @@ function getQueryVar(variable){
 
 $(document).ready(function() {
 
-    	var table = $('#basicQueryTable').DataTable();
+    	var table;
 	if (getQueryVar("link")){
 		req = "php/gene_query.php?";
        		var query = window.location.search.substring(1);
@@ -99,7 +99,14 @@ $(document).ready(function() {
 					$("#goBack").css("height","136px");	
 				}
 
-    				table = $('#basicQueryTable').DataTable();
+    				table = $('#basicQueryTable').DataTable( {
+					"sDom ": 'T<"clear ">lfrtip',
+        				"oTableTools ": {
+            				"aButtons ": [
+                			"csv "
+            				]
+        				}
+				});
 			});
 		});
 		table.draw();

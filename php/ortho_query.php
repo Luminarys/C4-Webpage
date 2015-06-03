@@ -1,25 +1,3 @@
-<html>
-
-<head>
-
-
-<!-- jQuery UI CSS -->
-<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> -->
-
-<!-- DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
-  
-<!-- jQuery -->
-<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-
-<!-- jQuery UI -->  
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-<!-- DataTables -->
-<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
-
-</head>
-<body>
 <?php 
 
 //Set debugging on
@@ -147,7 +125,3 @@ if($query->execute()){
 //Close connection
 $db=null;
 ?>
-
-</body>
-</html>
-

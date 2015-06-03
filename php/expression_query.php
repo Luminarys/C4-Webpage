@@ -51,10 +51,7 @@ foreach ($_GET as $key => $value) {
 		$pre_query_d.=("'" . $match[0] . "',");
 	}else if($key == "spec"){
 		//Ensure that there is a match and that the match is equal to the whole prefix - Hopefully this will prevent injections
-		if(!preg_match($validSpecies,$value,$match)){
-			echo "Invalid SQL Query used, please try again";
-			exit();
-		}else if($match[0] !== $value){
+		if(!in_array($value,$validSpecies)){
 			echo "Invalid SQL Query used, please try again";
 			exit();
 		}else{

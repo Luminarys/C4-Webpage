@@ -7,6 +7,7 @@
 	
 	<!-- DataTables -->
 	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" charset="utf8" src="js/tableTools.js"></script>
 	
 	<!-- Gene Query JS file -->
 	<script type="text/javascript" charset="utf8" src="js/gene_query.js"></script>
