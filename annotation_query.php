@@ -54,7 +54,7 @@
 					<p>Gene Annotation Query:</p>
 					<form id='annotationQueryForm'>
 							<input type="text" id="annotationInput" placeholder="Gene ID">
-							<select class="speciesSelect">
+							<select class="speciesSelect" id="species">
 							<?php
 
 							//Set debugging on

@@ -119,4 +119,13 @@
 .dot {
   stroke: #000;
 }
-
+.description {
+	position: absolute;
+	text-align:center;
+	/*height: 500px;/**/
+	margin-left: 425px;
+	margin-right: 425px;
+    	display:none;
+    	border:1px solid #000;
+	background: white;
+}

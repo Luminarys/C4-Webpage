@@ -36,6 +36,13 @@ $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 $gene = $_GET['orig'];
 $ortho = $_GET['ortho'];
+
+//Check if we're returning results for an annotation query
+$annotation = false;
+if(array_key_exists("annot", $_GET)){
+	$annotation = true;	
+}
+
 if(in_array($gene,$validSpecies) && in_array($ortho,$validSpecies)){
 
 	$inp = array($gene."_Genes.name",$ortho."_Genes.name",$gene."_Genes",$gene."_Ortho",$gene."_Ortho.id",$gene."_Genes.id",$ortho."_Ortho",$ortho."_Ortho.orth_id",$gene."_Ortho.orth_id",$ortho."_Genes",$ortho."_Genes.id",$ortho."_Ortho.id",$gene."_Genes.name");
@@ -64,61 +71,41 @@ foreach ($_GET as $key => $value) {
 $c_pq = substr($pre_query,0,-1) . ")";
 $query = $db->prepare($c_pq);
 if($query->execute()){
-//if($query->execute()){
-	/*
-	//Pre table search forms
-	echo '<table border="0" cellspacing="5" cellpadding="5">';
-        echo '<tbody><tr>';
-        echo '    <td><b>Filtering: </b></td>';
-        echo '    <td>Column: </td>';
-        echo '    <td><select id="filterChoice">';
-        echo '    <option value="1">Adjacency Value</option>';
-        echo '    <option value="2">Mean Exp</option>';
-        echo '    <option value="3">Mean Exp Rank</option>';
-        echo '    <option value="4">K</option>';
-        echo '    <option value="5">K Rank</option>';
-        echo '    <option value="6">Module</option>';
-        echo '    <option value="7">Modular K</option>';
-        echo '    <option value="8">Modular K Rank</option>';
-        echo '    <option value="9">Modular Mean Exp Rank</option>';
-        echo '    </select></td>';
-        echo '    <td>Minimum: </td>';
-        echo '    <td><input type="text" id="min" name="min"></td>';
-        echo '    <td>Maximum: </td>';
-        echo '    <td><input type="text" id="max" name="max"></td>';
-        echo '</tr>';
-    	echo ' </tbody></table>	';
-	*/
-	//Initialize table
-	echo "<form id='geneSelections'>";
-	echo "<table id='orthoQueryTable' style='width:100%'>";
-    		echo "<thead>";
-    		echo "<th>Gene</th>";
-    		echo "<th>Ortholog</th>";
-    		echo "<th>Network Query</th>";
-    		echo "<th>Multigene Query Selection</th>";
-    		echo "</tr>";
-    		echo "</thead>";
-		echo "<tfoot></tfoot>";
-    		echo "<tbody>";
-	//Get the results
-	$results = $query->fetchAll();
-	$rows = $query->rowCount();
-
-	//Prepare the second query for extracting data from Zmays_Metrics
-	foreach ($results as $row) {
-		//In the case of an intersection, just skip the row in the table	
-		//Echo the table 
-    		echo "<tr>";
-    		echo "<td>" . $row['gene'] . "</td>";
-    		echo "<td>" . $row['ortho'] . "</td>";
-		echo "<td><a href='gene_set_query.php?link=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
-		echo "<td><input type='checkbox' value=" . $row['ortho'] . "></td>";
-    		echo "</tr>";
-		}
-    	echo "</tbody>";
-	echo "</table>";
-	echo "</form>";
+	if(!$annotation){
+		//Initialize table
+		echo "<form id='geneSelections'>";
+		echo "<table id='orthoQueryTable' style='width:100%'>";
+	    		echo "<thead>";
+	    		echo "<th>Gene</th>";
+	    		echo "<th>Ortholog</th>";
+	    		echo "<th>Network Query</th>";
+	    		echo "<th>Multigene Query Selection</th>";
+	    		echo "</tr>";
+	    		echo "</thead>";
+			echo "<tfoot></tfoot>";
+	    		echo "<tbody>";
+		//Get the results
+		$results = $query->fetchAll();
+		$rows = $query->rowCount();
+	
+		//Prepare the second query for extracting data from Zmays_Metrics
+		foreach ($results as $row) {
+			//In the case of an intersection, just skip the row in the table	
+			//Echo the table 
+	    		echo "<tr>";
+	    		echo "<td>" . $row['gene'] . "</td>";
+	    		echo "<td>" . $row['ortho'] . "</td>";
+			echo "<td><a href='gene_set_query.php?link=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
+			echo "<td><input type='checkbox' value=" . $row['ortho'] . "></td>";
+	    		echo "</tr>";
+			}
+	    	echo "</tbody>";
+		echo "</table>";
+		echo "</form>";
+	}else{
+		$results = $query->fetchAll();
+		echo "<p> Ortholog for species " . $ortho . ": " . $results[0]['ortho'] . "</p>";
+	}
 }
 
 

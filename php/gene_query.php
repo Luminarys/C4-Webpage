@@ -59,15 +59,15 @@ if(in_array($species,$validSpecies)){
 }
 //Should this be loaded as a CSV or not?
 $csv = false;
-
+$gn = 0;
 foreach ($_GET as $key => $value) {
-
 	if($key[0] == "g"){
 		if(!preg_match($validGenes,$value,$match)){
 			echo "Invalid gene used, please try again";	
 			exit();
 		}
 		$pre_query.=("'" . $match[0] . "',");
+		$gn++;		
 	}else if($key == "type"){
 		if($value == "AND"){
 			$AND = True;
@@ -131,7 +131,9 @@ if($query->execute()){
 		echo "<table id='basicQueryTable' style='width:100%'>";
 	    		echo "<thead>";
 	    		echo "<th>Gene</th>";
+			if ($gn > 1){
 	    		echo "<th>Source</th>";
+			}
 	    		echo "<th>Adjacency Value</th>";
 	    		echo "<th>Mean Exp</th>";
 	    		echo "<th>Mean Exp Rank</th>";
@@ -141,7 +143,9 @@ if($query->execute()){
 	    		echo "<th>Modular K</th>";
 	    		echo "<th>Modular K Rank</th>";
 	    		echo "<th>Modular Mean Exp Rank</th>";
+			if ($gn > 1){
 	    		echo "<th>Connections</th>";
+			}
 	    		echo "</tr>";
 	    		echo "</thead>";
 			echo "<tfoot></tfoot>";
@@ -159,7 +163,9 @@ if($query->execute()){
 			//Echo the table 
 	    		echo "<tr>";
 	    		echo "<td>" . $row['name'] . "</td>";
+			if ($gn > 1){
 	    		echo "<td>" . $row['source'] . "</td>";
+			}
 	    		echo "<td>" . $row['adjacency'] . "</td>";
 	    		echo "<td>" . $row['mean_exp'] . "</td>";
 	    		echo "<td>" . $row['mean_exp_rank'] . "</td>";
@@ -169,16 +175,19 @@ if($query->execute()){
 	    		echo "<td>" . $row['modular_k'] . "</td>";
 	    		echo "<td>" . $row['modular_k_rank'] . "</td>";
 	    		echo "<td>" . $row['modular_mean_exp_rank'] . "</td>";
+			if ($gn > 1){
 	    		echo "<td>" . $seen[$row['id']] . "</td>";
+			}
 	    		echo "</tr>";
 			}
 	    	echo "</tbody>";
 		echo "</table>";
 	}else{
+		//Generate a CSV file
 		header( 'Content-Type: text/csv' );
            	header( 'Content-Disposition: attachment;filename=result.csv');
             	$fp = fopen('php://output', 'w');
-		//fwrite($fp,"name,source");
+		//Write the header column
 		fputcsv($fp, array("target","source","adjacency","mean_exp","mean_exp_rank","k","k_rank","module","modular_k","modular_k_rank","modular_mean_exp_rank","connections","name","description"));
 		foreach ($results as $row) {
 			if($AND){
@@ -187,7 +196,8 @@ if($query->execute()){
 					continue;
 				}
 			}
-			fputcsv($fp, array($row['name'],$row['source'],$row['adjacency'],$row['mean_exp'],$row['mean_exp_rank'],$row['k'],$row['k_rank'],$row['module'],$row['modular_k'],$row['modular_k_rank'],$row['modular_mean_exp_rank'],$seen[$row['id']],$row["aname"],$row["description"]));
+			//Write the actual info for each line
+			fputcsv($fp, array($row['name'],$row['source'],$row['adjacency'],$row['mean_exp'],$row['mean_exp_rank'],$row['k'],$row['k_rank'],$row['module'],$row['modular_k'],$row['modular_k_rank'],$row['modular_mean_exp_rank'],$seen[$row['id']],$row["name"],$row["description"]));
 		
 		}
 		fclose($fp);

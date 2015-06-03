@@ -73,8 +73,8 @@ $(document).ready(function() {
 				}
     				table = $('#basicQueryTable').DataTable();
 			});
+			table.draw();
 		});
-		table.draw();
 	}
 
 	$('*').keyup( function() {

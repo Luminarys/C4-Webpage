@@ -8,6 +8,7 @@ $(document).ready(function() {
 
 	$("#backToInput").click(function() {
 		$("#goBack").hide();
+		$("#info").hide();
 		$("#qTable").empty();
 		$(".entryForm").show();
 		$('#lower-rect').removeAttr('style').css("margin-top", "450px");

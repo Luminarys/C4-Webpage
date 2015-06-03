@@ -5,25 +5,20 @@ function deselect(e) {
 }
 
 $(function() {
-  $('#contact').on('click', function() {
-      $.get("annotation_query.html?link=true&spec=Zmays&gene=GRMZM2G001272",function(data){
-          $('#contact').append(data);
+	$("#contact").mouseover(function() {
+	$("<div class='description'> Here is the big fat description box</div>").insertAfter(this);
+      	$.get("php/annotation_popup.php?link=true&spec=Zmays&gene=GRMZM2G001272",function(data){
+          $('.description').empty().append(data).show();
       });
-    if($(this).hasClass('selected')) {
-      deselect($(this));               
-    } else {
-      $(this).addClass('selected');
-      $('.pop').slideFadeToggle();
-    }
-    return false;
-  });
-
-  $('.close').on('click', function() {
-    deselect($('#contact'));
-    return false;
-  });
+	$("#contact").click(function() {
+		document.location.href ="annotation_query.php?link=true&spec=Zmays&gene=GRMZM2G001272";
+	});
+}).mouseout(function() {
+    $(".description").hide();
+    $(".description").remove();
 });
 
-$.fn.slideFadeToggle = function(easing, callback) {
-  return this.animate({ opacity: 'toggle', height: 'toggle' }, 'fast', easing, callback);
-};
+  $('#contact').on('click', function() {
+      });
+});
+

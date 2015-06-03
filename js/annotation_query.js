@@ -49,22 +49,6 @@ function insertData(gene, species) {
 		});
 	});
 	table.draw();
-	/*
-	$.get("php/ortho_query", function(data) {
-		$('#qTable').empty()
-		.append(data)
-		.ready(function(){
-			if($('#orthoQueryTable tr').length > 9){
-				$('#lower-rect').removeAttr('style');
-			}else{
-				$("#goBack").css("height","136px");	
-			}
-    			table2 = $('#orthoQueryTable').DataTable();
-		});
-	});
-	table2.draw();
-	/**/
-
 }
 
 function getQueryVar(variable){
@@ -78,17 +62,19 @@ function getQueryVar(variable){
 }
 
 var table = $('#basicQueryTable').DataTable();
-
+var alt_specs = [];
+var specs = 0;
 $(document).ready(function() {
 
+	$("#species > option").each(function() {
+		alt_specs.push(this.value);
+		specs++;
+	});
     	table = $('#basicQueryTable').DataTable();
 	//What to do when we do an AJAX query to load a popup
 	if (getQueryVar("link")){
 		var gene = getQueryVar("gene");
 		var species = getQueryVar("spec");
-		$('.Site').empty();
-		$('.Site').append("<div id='info'></div>");
-		$('.Site').append("<div id='qTable'></div>");
 		insertData(gene, species);
 	}
 

@@ -60,49 +60,25 @@ $query = $db->prepare("SELECT * FROM " . $species . "_Annotation WHERE locus = ?
 if($query->execute(array($_GET["gene"]))){
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
-	echo "<p> Gene ID: " . $results[0]['locus'] . "</p>";
-	echo "<p> Gene Name: " . $results[0]['name'] . "</p>";
-	echo "<p> Gene Description: " . $results[0]['description'] . "</p>"; 
+	echo "<p>ID: " . $results[0]['locus'] . ", ";
+	echo "Name: " . $results[0]['name'] . "</p>";
+	echo "<p>Description: " . $results[0]['description'] . "</p>"; 
 }
 //SELECT * FROM (SELECT * FROM Zmays_Genes WHERE Zmays_Genes.name='GRMZM2G001272') res LEFT JOIN Zmays_Metrics ON Zmays_Metrics.id = res.id;
 $query = $db->prepare("SELECT * FROM (SELECT * FROM " . $species . "_Genes WHERE " . $species . "_Genes.name  = ? ) res LEFT JOIN " . $species . "_Metrics ON " . $species . "_Metrics.id = res.id");
 if($query->execute(array($_GET["gene"]))){
 	if(!$annotation){
-		//Initialize table
-		echo "<p> Metrics Table: </p>"; 
-		echo "<table id='metricQueryTable' style='width:100%'>";
-	    		echo "<thead>";
-	    		echo "<th>Gene</th>";
-	    		echo "<th>Mean Exp</th>";
-	    		echo "<th>Mean Exp Rank</th>";
-	    		echo "<th>K</th>";
-	    		echo "<th>K Rank</th>";
-	    		echo "<th>Module</th>";
-	    		echo "<th>Modular K</th>";
-	    		echo "<th>Modular K Rank</th>";
-	    		echo "<th>Modular Mean Exp Rank</th>";
-	    		echo "</tr>";
-	    		echo "</thead>";
-			echo "<tfoot></tfoot>";
-	    		echo "<tbody>";
-	
 		$results = $query->fetchAll();
 		foreach ($results as $row) {
-			//Echo the table 
-	    		echo "<tr>";
-	    		echo "<td>" . $row['name'] . "</td>";
-	    		echo "<td>" . $row['mean_exp'] . "</td>";
-	    		echo "<td>" . $row['mean_exp_rank'] . "</td>";
-	    		echo "<td>" . $row['k'] . "</td>";
-	    		echo "<td>" . $row['k_rank'] . "</td>";
-	    		echo "<td>" . $row['module'] . "</td>";
-	    		echo "<td>" . $row['modular_k'] . "</td>";
-	    		echo "<td>" . $row['modular_k_rank'] . "</td>";
-	    		echo "<td>" . $row['modular_mean_exp_rank'] . "</td>";
-	    		echo "</tr>";
-			}
-	    	echo "</tbody>";
-		echo "</table>";
+	    		echo "<p>Mean Exp: " . $row['mean_exp'] . ", ";
+	    		echo "Mean Exp Rank:" . $row['mean_exp_rank'] . ", ";
+	    		echo "K: " . $row['k'] . ", ";
+	    		echo "K Rank:" . $row['k_rank'] . "</p>";
+	    		echo "<p>Module: " . $row['module'] . ", ";
+	    		echo "Modular K:" . $row['modular_k'] . ", ";
+	    		echo "Modular K Rank:" . $row['modular_k_rank'] . ", ";
+	    		echo "Modular Mean Exp rank:" . $row['modular_mean_exp_rank'] . "</p> ";
+		}
 	}else{
 
 	}
@@ -112,6 +88,7 @@ $dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=' . substr($auth[4],0
 $db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
 foreach ($alt_specs as $ortho){
 	$gene = $species;
 	$inp = array($gene."_Genes.name",$ortho."_Genes.name",$gene."_Genes",$gene."_Ortho",$gene."_Ortho.id",$gene."_Genes.id",$ortho."_Ortho",$ortho."_Ortho.orth_id",$gene."_Ortho.orth_id",$ortho."_Genes",$ortho."_Genes.id",$ortho."_Ortho.id",$gene."_Genes.name");
