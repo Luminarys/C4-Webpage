@@ -8,6 +8,7 @@ $(document).ready(function() {
 
 	$("#backToInput").click(function() {
 		$("#goBack").hide();
+		$("#MultiGeneQueryExpression").hide();
 		$("#info").hide();
 		$("#qTable").empty();
 		$(".entryForm").show();

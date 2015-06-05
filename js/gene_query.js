@@ -27,6 +27,7 @@ function getQueryVar(variable){
 $(document).ready(function() {
 
     	var table;
+	$("#MultiGeneQueryExpression").hide();
 	if (getQueryVar("link")){
 		req = "php/gene_query.php?";
        		var query = window.location.search.substring(1);
@@ -72,19 +73,37 @@ $(document).ready(function() {
 					$("#goBack").css("height","136px");	
 				}
     				table = $('#basicQueryTable').DataTable();
+				$("#MultiGeneQueryExpression").show();
 			});
 			table.draw();
 			addPopups();
 		});
 	}
 
+	$("#MultiGeneQueryExpression").click(function() {
+		var genes = $("#geneSelections input:checkbox:checked").map(function(){
+      			return $(this).val();
+    		}).get(); // <----
+    		console.log(genes);
+		req = "expression_query.php?link=true";
+		if (!genes.length > 0){
+			return false;
+		}
+		//Build the GET request by looping through the inputs
+		for(i = 0;i < genes.length;i++){
+			req+="&";
+			req+=("g" + i + "="+genes[i]);	
+		}
+		req+=("&spec=" + $(".speciesSelect").val());
+		window.location.href = req;
+	});
+
+	//Handles the filtering
 	$('*').keyup( function() {
-		console.log("key released");
         	table.draw();
-    		//addPopups();
     	} );
+	//Handles readding in popups whenever the table is adjusted
 	$(document).click(function() {
-  		//do something
     		addPopups();
   	});
 
@@ -107,6 +126,7 @@ $(document).ready(function() {
 
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
+				$("#MultiGeneQueryExpression").show();
 			});
 		});
 		table.draw();
@@ -165,6 +185,7 @@ $(document).ready(function() {
 				}
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
+				$("#MultiGeneQueryExpression").show();
 			});
 		});
 		table.draw();

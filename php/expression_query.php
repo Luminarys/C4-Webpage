@@ -75,7 +75,6 @@ if($query->execute() && $sample_query->execute()){
 	$rows = $query->rowCount();
 	$data = array();
 	$bio_id = $layout[0]['biosample_id'];
-	$name = $layout[0]['display_name'];
 	$res = array();
 	$carray = array();
 	foreach ($results as $row) {
@@ -85,6 +84,7 @@ if($query->execute() && $sample_query->execute()){
 		//we append the resulting array to the final result and start building a new array for the next sample.
 		//This intermediate array is $carray
 		$res[$row["name"]] = array();
+		$name = $layout[0]['display_name'];
 		foreach ($layout as $sample) {
 			//If there's a different bioID then prev, set the array within the JSON for the sample equal to cArray
 			//then clear $carray and update bio_id and name(the prev. sample name)

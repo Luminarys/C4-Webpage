@@ -419,13 +419,20 @@ function dotPlot(info, texts){
 	for (var i = 0;i < texts.length;i++) {
 		var cArr = info[texts[i]];
 		var max = 0;
+		//size
+		var sz = 0;
+		//range
+		var ra = [];
 		for (var key in cArr){
+			ra.push(sz);
+			sz++;
 			var subArr = cArr[key];
 			var cmax = cMax(subArr);
 			if (cmax > max){
 				max = cmax;
 			}
 		}
+		sz--;
 		inactiveLines[texts[i]] = false;
 		var gData = [];
 		//console.log(cArr);
@@ -448,10 +455,8 @@ function dotPlot(info, texts){
 		.domain([0, max])
 		.range([height - MARGINS.top, MARGINS.bottom])
 
-		var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-	
 		var x = d3.scale.linear()
-		.domain([0,19])
+		.domain([0,sz])
 		.range([MARGINS.left, width - MARGINS.right]);
 
 		var xAxis = d3.svg.axis()
@@ -529,7 +534,11 @@ function linePlot(info, texts){
 		//Generate an associative array based on averages
 		var co = 0;
 		var samples = [];
+		var sz = 0;
+		var ra = [];
 		for (var key in cArr){
+			ra.push(sz);
+			sz++;
 			var subArr = cArr[key];
 			var av = average(subArr);
 			var sd = std(subArr, av);
@@ -537,7 +546,9 @@ function linePlot(info, texts){
 			gData.push({Sample:co++, val:av, dev:sd});
 			samples.push(key);
 		}
-
+		sz--;
+		console.log(ra);
+		console.log(sz);
 		console.log(gData);
 		//If it's null, remove from array, add to a badGenes array which we will use to inform the user about later
 		if(gData.length == 0){
@@ -565,10 +576,9 @@ function linePlot(info, texts){
 				.domain([min, d3.max(gData, function(datum) { return datum.val; })])
 				.range([height - MARGINS.top, MARGINS.bottom])
 			}
-			var ra = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
 	        	
 			var x = d3.scale.linear()
-			.domain([0,19])
+			.domain([0,sz])
 			.range([MARGINS.left, width - MARGINS.right]);
                 	
 			var xAxis = d3.svg.axis()

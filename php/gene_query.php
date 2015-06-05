@@ -101,6 +101,7 @@ if($query->execute()){
 			}
 		}
 	if(!$csv){
+		echo "<form id='geneSelections'>";
 		//Pre table search forms
 		echo '<table border="0" cellspacing="5" cellpadding="5">';
 	        echo '<tbody><tr>';
@@ -158,6 +159,7 @@ if($query->execute()){
 			if ($gn > 1){
 	    		echo "<th>Connections</th>";
 			}
+	    		echo "<th>Expression Selection</th>";
 	    		echo "</tr>";
 	    		echo "</thead>";
 			echo "<tfoot></tfoot>";
@@ -190,10 +192,12 @@ if($query->execute()){
 			if ($gn > 1){
 	    		echo "<td>" . $seen[$row['id']] . "</td>";
 			}
+			echo "<td><input type='checkbox' value=" . $row['name'] . "></td>";
 	    		echo "</tr>";
 			}
 	    	echo "</tbody>";
 		echo "</table>";
+		echo "</form>";
 	}else{
 		//Generate a CSV file
 		header( 'Content-Type: text/csv' );

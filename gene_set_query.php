@@ -87,6 +87,10 @@
 					</form>
 				</div>
 			</div>
+			<div>
+				<p></p>
+				<button id="MultiGeneQueryExpression">Expression Query using selected Genes</button>
+			</div>
 			<div id="bottomCombo">	
 				<div id="bottomFiller"></div>
 				<div id="qTable"></div>
