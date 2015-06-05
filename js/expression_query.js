@@ -7,6 +7,9 @@ function average(d) {
 	}
 	return sum/counter;
 }
+$(
+function() {
+});
 
 function cMax(d) {
 	var max = 0;
@@ -551,7 +554,8 @@ function linePlot(info, texts){
 			vis = d3.select("#qTable")
 			.append("svg:svg")
 			.attr("width", width)
-			.attr("height", height);
+			.attr("height", height)
+			.attr("id", texts[i] + "svg");
 			if(combine){
 				var y = d3.scale.linear()
 				.domain([min, max])
@@ -604,6 +608,11 @@ function linePlot(info, texts){
         		.attr("y",(MARGINS.top / 2))
         		.attr("text-anchor", "middle")  
         		.style("font-size", "18px") 
+			.attr("class", "popup")
+			.on("click", function() {
+				document.location.href = "/annotation_query.php" + $(this).attr("value");
+			})
+			.attr("value", "?link=true&spec=" + spec + "&gene=" + texts[i])
                 	.text(texts[i]);
 		}
 		}else{
@@ -638,7 +647,8 @@ function linePlot(info, texts){
 			vis.append("text")
 			.attr("x", (lspace/2 + (i % 5)*lspace) - 40)
 			.attr("y", height - (MARGINS.bottom/2) + 15 + (25 * crow))
-			.attr("class", "legend")
+			.attr("class", "legend popup")
+			.attr("value", "?link=true&spec="+spec + "&gene=" + texts[i])
 			.style("fill", function() { return colors[i]; })
 			.on("click", function() {
 				var active = inactiveLines[$(this).text()] ? false : true,
@@ -712,6 +722,7 @@ function handleInitData(data, texts){
 		$("#plotType-in").val("dot");
 	}
 	console.log(multiColor);
+	addPopups();
 
 }
 //Handles changes within the graph
@@ -753,6 +764,7 @@ function handleReData(data, texts){
 		$('#normalizationDiv-in').hide();	
 	}
 	console.log(multiColor);
+	addPopups();
 
 }
 
@@ -787,6 +799,7 @@ function genReq(){
 	}
 	//Append on the species DB to access
 	req+=("&spec=" + vals[5]);
+	spec = vals[5];
 	console.log(req);
 	return [req, texts];
 }
@@ -804,6 +817,7 @@ function rePlot(){
 var t2 = "";
 var plot = "";
 var norm = "";
+var spec = "";
 $(document).ready(function() {
 	console.log("Expression Plotting JS Ready");
 	plot = $("#plotType").val();

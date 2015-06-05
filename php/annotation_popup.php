@@ -97,7 +97,11 @@ foreach ($alt_specs as $ortho){
 	$query = $db->prepare($oquery);
 	if($query->execute(array($_GET["gene"]))){
 		$results = $query->fetchAll();
-		echo "<p> Ortholog for species " . $ortho . ": " . $results[0]['ortho'] . "</p>";
+		if(array_key_exists(0, $results)){
+			echo "<p> Ortholog for species " . $ortho . ": " . $results[0]['ortho'] . "</p>";
+		}else{
+			echo "<p> Ortholog for species " . $ortho . ": Not available</p>";
+		}
 	}
 }
 

@@ -1,24 +1,28 @@
-function deselect(e) {
-  $('.pop').slideFadeToggle(function() {
-    e.removeClass('selected');
-  });    
+$(
+function() {
+		$(".popup").click(function() {
+			document.location.href = "/annotation_query.php" + $(this).attr("value");
+		});
+});
+$(document).ready( function() {
+	addPopups();
+});
+
+function addPopups(){
+$(".popup").qtip({
+	content: {
+		text: function(event, api){
+			$.ajax({
+				url: "php/annotation_popup.php" + $(this).attr("value")
+			})
+			.then(function(content){
+				api.set('content.text', content);
+			}, function(xhr, status, error) {
+				api.set('content.text', status + ': ' + error);	
+			});
+			return 'Loading...';
+		}
+	}	
+});
+
 }
-
-$(function() {
-	$("#contact").mouseover(function() {
-	$("<div class='description'> Here is the big fat description box</div>").insertAfter(this);
-      	$.get("php/annotation_popup.php?link=true&spec=Zmays&gene=GRMZM2G001272",function(data){
-          $('.description').empty().append(data).show();
-      });
-	$("#contact").click(function() {
-		document.location.href ="annotation_query.php?link=true&spec=Zmays&gene=GRMZM2G001272";
-	});
-}).mouseout(function() {
-    $(".description").hide();
-    $(".description").remove();
-});
-
-  $('#contact').on('click', function() {
-      });
-});
-

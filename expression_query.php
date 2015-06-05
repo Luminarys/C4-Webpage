@@ -4,6 +4,7 @@
 	  
 	<!-- jQuery -->
 	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
 
 	<!-- D3JS -->
 	<script type="text/javascript" charset="utf8" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
@@ -17,9 +18,11 @@
 
 	<!-- Shared Query Functions JS file -->
 	<script type="text/javascript" charset="utf8" src="js/query_shared.js"></script>
+	<script type="text/javascript" charset="utf8" src="js/popup.js"></script>
 
 	<!-- Local CSS -->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css">
 	
 
 </head>
