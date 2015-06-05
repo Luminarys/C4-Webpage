@@ -17,7 +17,6 @@ $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 $pre_query = "SELECT * FROM ";
 $pre_query_a = "WHERE gene_id_A IN (";
 $pre_query_b = "OR gene_id_B IN (";
-$species;
 $AND = False;
 
 //Build valid species and genes from MapReference table
@@ -162,9 +161,9 @@ if($query->execute()){
 			}
 			//Echo the table 
 	    		echo "<tr>";
-	    		echo "<td>" . $row['name'] . "</td>";
+	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
 			if ($gn > 1){
-	    		echo "<td>" . $row['source'] . "</td>";
+	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['source'] . ">" . $row['source'] . "</td>";
 			}
 	    		echo "<td>" . $row['adjacency'] . "</td>";
 	    		echo "<td>" . $row['mean_exp'] . "</td>";

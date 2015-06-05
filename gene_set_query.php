@@ -14,6 +14,11 @@
 	<!-- Shared Query Functions JS file -->
 	<script type="text/javascript" charset="utf8" src="js/query_shared.js"></script>
 
+	<!--qTip-->
+	<script type="text/javascript" charset="utf8" src="js/popup.js"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css">
+
 	<!-- DataTables CSS -->
 	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
 	

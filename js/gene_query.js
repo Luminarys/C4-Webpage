@@ -74,6 +74,7 @@ $(document).ready(function() {
     				table = $('#basicQueryTable').DataTable();
 			});
 			table.draw();
+			addPopups();
 		});
 	}
 
@@ -100,6 +101,7 @@ $(document).ready(function() {
 				}
 
     				table = $('#basicQueryTable').DataTable();
+				addPopups();
 			});
 		});
 		table.draw();
@@ -157,6 +159,7 @@ $(document).ready(function() {
 					$("#goBack").css("height","136px");	
 				}
     				table = $('#basicQueryTable').DataTable();
+				addPopups();
 			});
 		});
 		table.draw();
