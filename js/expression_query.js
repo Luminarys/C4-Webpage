@@ -475,6 +475,18 @@ function dotPlot(info, texts){
 		.attr("class","axis")
 		.attr("transform", "translate(" + (MARGINS.left) + ",0)")
 		.call(yAxis);
+		//Aply titles
+		vis.append("text")
+        	.attr("x", (width / 2))             
+        	.attr("y",(MARGINS.top / 2))
+        	.attr("text-anchor", "middle")  
+        	.style("font-size", "18px") 
+		.attr("class", "popup")
+		.on("click", function() {
+			document.location.href = "/annotation_query.php" + $(this).attr("value");
+		})
+		.attr("value", "?link=true&spec=" + spec + "&gene=" + texts[i])
+                .text(texts[i]);
 		
 		//Make the dotplot	
 		var cpos = 0;

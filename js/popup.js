@@ -22,7 +22,16 @@ $(".popup").qtip({
 			});
 			return 'Loading...';
 		}
-	}	
+	},	
+	hide: {
+		fixed: true,
+		//event: false,
+		//inactive: 3000,
+		delay: 500
+	},
+	show: {
+		solo: true
+	}
 });
 
 }
