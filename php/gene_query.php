@@ -107,6 +107,7 @@ if($query->execute()){
 	        echo '    <td><b>Filtering: </b></td>';
 	        echo '    <td>Column: </td>';
 	        echo '    <td><select id="filterChoice">';
+		if ($gn > 1){
 	        echo '    <option value="2">Adjacency Value</option>';
 	        echo '    <option value="3">Mean Exp</option>';
 	        echo '    <option value="4">Mean Exp Rank</option>';
@@ -117,6 +118,18 @@ if($query->execute()){
 	        echo '    <option value="9">Modular K Rank</option>';
 	        echo '    <option value="10">Modular Mean Exp Rank</option>';
 	        echo '    <option value="11">Connections</option>';
+		}else{
+	        echo '    <option value="1">Adjacency Value</option>';
+	        echo '    <option value="2">Mean Exp</option>';
+	        echo '    <option value="3">Mean Exp Rank</option>';
+	        echo '    <option value="4">K</option>';
+	        echo '    <option value="5">K Rank</option>';
+	        echo '    <option value="6">Module</option>';
+	        echo '    <option value="7">Modular K</option>';
+	        echo '    <option value="8">Modular K Rank</option>';
+	        echo '    <option value="9">Modular Mean Exp Rank</option>';
+	        echo '    <option value="10">Connections</option>';
+		}
 	        echo '    </select></td>';
 	        echo '    <td>Minimum: </td>';
 	        echo '    <td><input type="text" id="min" name="min"></td>';

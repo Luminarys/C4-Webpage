@@ -81,7 +81,12 @@ $(document).ready(function() {
 	$('*').keyup( function() {
 		console.log("key released");
         	table.draw();
+    		//addPopups();
     	} );
+	$(document).click(function() {
+  		//do something
+    		addPopups();
+  	});
 
 	$('#singleGeneQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
