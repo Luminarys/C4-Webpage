@@ -110,7 +110,6 @@ if($query->execute()){
 			}
 		}
 	if(!$csv && !$graph){
-		echo "<form id='geneSelections'>";
 		//Pre table search forms
 		echo '<table border="0" cellspacing="5" cellpadding="5">';
 	        echo '<tbody><tr>';
@@ -127,7 +126,6 @@ if($query->execute()){
 	       	 	echo '    <option value="8">Modular K</option>';
 	       	 	echo '    <option value="9">Modular K Rank</option>';
 	       	 	echo '    <option value="10">Modular Mean Exp Rank</option>';
-	       	 	echo '    <option value="11">Connections</option>';
 	       	 }else{
 	       	 	echo '    <option value="1">Adjacency Value</option>';
 	       	 	echo '    <option value="2">Mean Exp</option>';
@@ -138,18 +136,19 @@ if($query->execute()){
 	       	 	echo '    <option value="7">Modular K</option>';
 	       	 	echo '    <option value="8">Modular K Rank</option>';
 	       	 	echo '    <option value="9">Modular Mean Exp Rank</option>';
-	       	 	echo '    <option value="10">Connections</option>';
 		}
 	        echo '    </select></td>';
 	        echo '    <td>Minimum: </td>';
 	        echo '    <td><input type="text" id="min" name="min"></td>';
 	        echo '    <td>Maximum: </td>';
 	        echo '    <td><input type="text" id="max" name="max"></td>';
+	        echo '    <td><button id="networkGraph" onclick="">Create network graph based on filtering settings</button></td>';
 	        echo '</tr>';
 	    	echo ' </tbody></table>	';
 	
 		echo "<a id='getCSV' href='" .$_SERVER["REQUEST_URI"] ."&csv=true' download='kek.csv'>Download table as CSV with annotations</a>";
 		//Initialize table
+		echo "<form id='geneSelections'>";
 		echo "<table id='basicQueryTable' style='width:100%'>";
 	    		echo "<thead>";
 	    		echo "<th>Gene</th>";
@@ -251,9 +250,9 @@ if($query->execute()){
 		}
 		$eindex = 0;
 		//Filtering parameters, derived from the Network Query Table
-		$filterMax = .6;
-		$filterMin = .3;
-		$filterTarget = "adjacency";
+		$filterMax = $_GET["max"];
+		$filterMin = $_GET["min"];
+		$filterTarget = $_GET["field"];
 
 		foreach ($results as $row){
 			if($row[$filterTarget] > $filterMax || $row[$filterTarget] < $filterMin){

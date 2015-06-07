@@ -1,17 +1,13 @@
-function generateGraph(spec, genes, field, min, max){
+function generateGraph(spec, genes){
 	var gnum = genes.length;
-	var fieldRef = {"Adjacency Value":"adjacency","Mean Exp":"mean_exp","Mean Exp Rank":"mean_exp_rank","K":"k","K Rank":"k_rank","Module":"module","Modular K":"modular_k","Modular Mean Exp Rank":"modular_mean_exp_rank","Modular K Rank":"modular_k_rank"};
-	var reqField = fieldRef[field];
 	//Create the URL to use
 	var req = "php/gene_query.php?network=true&spec=" + spec;
 	for (var i = 0; i < genes.length; i++){
 		req += "&g" + i + "=" + genes[i];
 	}
-	req+="&field=" + reqField + "&min=" + min + "&max=" + max;
-	console.log(req);
 	$('#lower-rect').removeAttr('style');
 	var width = 900;
-    	var height = gnum*320;
+    	var height = 1400;
 
 	var color = d3.scale.category20();
 	
@@ -70,7 +66,7 @@ function generateGraph(spec, genes, field, min, max){
 			//source 2 at 2/4, and source 3 at 3/4. This will ensure nice placement overall
 			var seg = height/(gnum+1);
 			for (var i = 0; i < gnum;i++){
-				graph.nodes[i].y = (i+1) * seg - 25;
+				graph.nodes[i].y = (i+1) * seg + 75;
 		   		graph.nodes[i].x = width / 2;
 			}
 		});
@@ -125,7 +121,7 @@ function generateGraph(spec, genes, field, min, max){
 
 $(document).ready(function() {
 	//These will be function inputs
-	//var spec = "Zmays";
-	//var genes = ["GRMZM2G152470","GRMZM2G004528","GRMZM2G403620","GRMZM2G149272"];
-	//generateGraph(spec, genes);
+	var spec = "Zmays";
+	var genes = ["GRMZM2G152470","GRMZM2G004528","GRMZM2G403620","GRMZM2G149272"];
+	generateGraph(spec, genes);
 });

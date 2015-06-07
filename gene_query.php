@@ -14,6 +14,10 @@
 
 	<!-- Shared Query Functions JS file -->
 	<script type="text/javascript" charset="utf8" src="js/query_shared.js"></script>
+	<script type="text/javascript" charset="utf8" src="js/force_layout.js"></script>
+
+	<!-- D3JS -->
+	<script src="http://d3js.org/d3.v3.min.js"></script>	
 
 	<!--qTip-->
 	<script type="text/javascript" charset="utf8" src="js/popup.js"></script>

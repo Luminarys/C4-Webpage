@@ -1,3 +1,14 @@
+function debounce(fn, delay) {
+  var timer = null;
+  return function () {
+    var context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      fn.apply(context, args);
+    }, delay);
+  };
+}
+
 $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
         var min = parseFloat( $('#min').val(), 10 );
@@ -25,7 +36,6 @@ function getQueryVar(variable){
 }
 
 $(document).ready(function() {
-
     	var table;
 	$("#MultiGeneQueryExpression").hide();
 	if (getQueryVar("netlink")){
@@ -34,12 +44,15 @@ $(document).ready(function() {
        		var vars = query.split("&");
 		var first = true;
 		var cont = 0
+		var spec;
+		var genes = [];
        		for (var i = 0;i < vars.length;i++) {
                		var pair = vars[i].split("=");
 			if(i != 0){
 				req+="&";
 			}
 			if(pair[0].charAt(0) == "g"){
+				genes.push(pair[1]);
 				if(i != 0){
 					req+="&";
 				}
@@ -52,6 +65,7 @@ $(document).ready(function() {
 					$('#multiGeneInputArea').val($('#multiGeneInputArea').val() + '\n' + pair[1])
 				}
 			}else if(pair[0] == "spec"){
+				spec = pair[1];
 				if(i != 0){
 					req+="&";
 				}
@@ -78,10 +92,16 @@ $(document).ready(function() {
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
 				$("#MultiGeneQueryExpression").show();
-				$('#basicQueryTable').on( 'draw.dt', function () {
-					addPopups();
-				});
+				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
 				}
+			});
+			$("#networkGraph").click(function() {
+				$("#qTable").empty();
+				$("#MultiGeneQueryExpression").hide();
+				$("#multiGeneForm").hide();
+				$("#goBack").show();
+				$('#lower-rect').removeAttr('style');
+				generateGraph(spec, genes);
 			});
 		});
 	}
@@ -107,6 +127,7 @@ $(document).ready(function() {
 	//Handles the filtering
 	$('*').keyup( function() {
         	table.draw();
+    		//addPopups();
     	} );
 	//Handles readding in popups whenever the table is adjusted
 	$(document).click(function() {
@@ -118,6 +139,8 @@ $(document).ready(function() {
 		e.preventDefault();
 		var gene = $("#singleGeneInput").val();
 		var species = $(".speciesSelect").val();
+		var spec = species;
+		var genes = [gene];
 		$.get("php/gene_query.php?g0=" + gene + "&spec=" + species, function(data) {
 			$('#qTable').empty()
 			.html(data)
@@ -136,10 +159,16 @@ $(document).ready(function() {
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
 				$("#MultiGeneQueryExpression").show();
-				$('#basicQueryTable').on( 'draw.dt', function () {
-					addPopups();
-				});
+				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
 				}
+			});
+			$("#networkGraph").click(function() {
+				$("#qTable").empty();
+				$("#MultiGeneQueryExpression").hide();
+				$("#multiGeneForm").hide();
+				$("#goBack").show();
+				$('#lower-rect').removeAttr('style');
+				generateGraph(spec, genes);
 			});
 		});
 		table.draw();
@@ -169,6 +198,8 @@ $(document).ready(function() {
            	}
 		console.log(texts);
 		console.log(vals);
+		var spec;
+		var genes = [];
 		req = "php/gene_query.php?";
 		//Build the GET request by looping through the inputs
 		for(i = 0;i < texts.length;i++){
@@ -176,6 +207,7 @@ $(document).ready(function() {
 				req+="&";
 			}
 			req+=("g" + i + "="+texts[i]);	
+			genes.push(texts[i]);
 		}
 		if (document.getElementById('ANDButton').checked){
 			req+=("&type=" + "AND");
@@ -184,6 +216,7 @@ $(document).ready(function() {
 		}
 		//Append on the species DB to access
 		req+=("&spec=" + vals[2]);
+		spec = vals[2];
 		console.log(req);
 		$.get(req, function(data) {
 			$('#qTable').empty()
@@ -202,12 +235,24 @@ $(document).ready(function() {
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
 				$("#MultiGeneQueryExpression").show();
-				$('#basicQueryTable').on( 'draw.dt', function () {
-					addPopups();
-				});
+				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
 				}
 			});
+			$("#networkGraph").click(function() {
+				var field = $("#filterChoice option:selected").text();
+				var min	= $("#min").val();
+				var max = $("#max").val();
+				if(min != "" && max != ""){
+					$("#qTable").empty();
+					$("#MultiGeneQueryExpression").hide();
+					$("#multiGeneForm").hide();
+					$("#goBack").show();
+					$('#lower-rect').removeAttr('style');
+					generateGraph(spec, genes, field, min, max);
+				}
+			});
+			table.draw();
 		});
-		table.draw();
 	});
+	
 });
