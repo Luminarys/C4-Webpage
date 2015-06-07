@@ -43,11 +43,13 @@ if(array_key_exists("annot", $_GET)){
 }
 $alt_specs = array();
 $query = $db->prepare("SELECT * FROM MapReference");
+$prefix_name = array();
 if($query->execute()){
 	$result = $query->fetchAll();
 	foreach ($result as $spec){
 		if($spec['prefix'] != $species){
 			array_push($alt_specs, $spec["prefix"]);
+			$prefix_name[$spec["prefix"]] = $spec["display_name"];
 		}
 	}
 }else{
@@ -62,7 +64,11 @@ if($query->execute(array($_GET["gene"]))){
 	$rows = $query->rowCount();
 	echo "<p>ID: " . $results[0]['locus'] . ", ";
 	echo "Name: " . $results[0]['name'] . "</p>";
+	if($results[0]['description'] == ""){
+	echo "<p>Description: None</p>"; 
+	}else{
 	echo "<p>Description: " . $results[0]['description'] . "</p>"; 
+	}
 }
 //SELECT * FROM (SELECT * FROM Zmays_Genes WHERE Zmays_Genes.name='GRMZM2G001272') res LEFT JOIN Zmays_Metrics ON Zmays_Metrics.id = res.id;
 $query = $db->prepare("SELECT * FROM (SELECT * FROM " . $species . "_Genes WHERE " . $species . "_Genes.name  = ? ) res LEFT JOIN " . $species . "_Metrics ON " . $species . "_Metrics.id = res.id");
@@ -70,14 +76,14 @@ if($query->execute(array($_GET["gene"]))){
 	if(!$annotation){
 		$results = $query->fetchAll();
 		foreach ($results as $row) {
-	    		echo "<p>Mean Exp: " . $row['mean_exp'] . ", ";
-	    		echo "Mean Exp Rank:" . $row['mean_exp_rank'] . ", ";
-	    		echo "K: " . $row['k'] . ", ";
-	    		echo "K Rank:" . $row['k_rank'] . "</p>";
-	    		echo "<p>Module: " . $row['module'] . ", ";
-	    		echo "Modular K:" . $row['modular_k'] . ", ";
-	    		echo "Modular K Rank:" . $row['modular_k_rank'] . ", ";
-	    		echo "Modular Mean Exp rank:" . $row['modular_mean_exp_rank'] . "</p> ";
+	    		echo "<p>Mean Exp: " . $row['mean_exp'] . "</p>";
+	    		echo "<p>Mean Exp Rank:" . $row['mean_exp_rank'] . "</p>";
+	    		echo "<p>K: " . $row['k'] . "</p>";
+	    		echo "<p>K Rank:" . $row['k_rank'] . "</p>";
+	    		echo "<p><p>Module: " . $row['module'] . "</p>";
+	    		echo "<p>Modular K:" . $row['modular_k'] . "</p>";
+	    		echo "<p>Modular K Rank:" . $row['modular_k_rank'] . "</p>";
+	    		echo "<p>Modular Mean Exp rank:" . $row['modular_mean_exp_rank'] . "</p> ";
 		}
 	}else{
 
@@ -98,9 +104,12 @@ foreach ($alt_specs as $ortho){
 	if($query->execute(array($_GET["gene"]))){
 		$results = $query->fetchAll();
 		if(array_key_exists(0, $results)){
-			echo "<p> Ortholog for species " . $ortho . ": " . $results[0]['ortho'] . "</p>";
+			echo "<p>" . $prefix_name[$ortho]  . " Ortholog: " . $results[0]['ortho'] . "</p>";
+			echo "<p><a href='/annotation_query.php?anlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Annotation Query</a></p>";
+			echo "<p><a href='/gene_set_query.php?netlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Network Query</a></p>";
+			echo "<p><a href='/expression_query.php?exlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Expression Query</a></p>";
 		}else{
-			echo "<p> Ortholog for species " . $ortho . ": Not available</p>";
+			echo "<p> Ortholog for species " . $prefix_name[$ortho] . ": None</p>";
 		}
 	}
 }

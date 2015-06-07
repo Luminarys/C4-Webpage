@@ -60,9 +60,28 @@ $query = $db->prepare("SELECT * FROM " . $species . "_Annotation WHERE locus = ?
 if($query->execute(array($_GET["gene"]))){
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
-	echo "<p> Gene ID: " . $results[0]['locus'] . "</p>";
-	echo "<p> Gene Name: " . $results[0]['name'] . "</p>";
-	echo "<p> Gene Description: " . $results[0]['description'] . "</p>"; 
+	if(array_key_exists("0", $results)){
+		if(!array_key_exists("locus",$results[0])) {
+			echo "<p>ID: None</p>"; 
+		}else{
+			echo "<p>ID: " . $results[0]['locus'] . "</p>"; 
+		}
+		if(!array_key_exists("name",$results[0])) {
+			echo "<p>Name: None</p>"; 
+		}else{
+			echo "<p>Name: " . $results[0]['name'] . "</p>"; 
+		}
+		if($results[0]['description'] == "" || !array_key_exists("description",$results[0])) {
+			echo "<p>Description: None</p>"; 
+		}else{
+			echo "<p>Description: " . $results[0]['description'] . "</p>"; 
+		}
+	}else{
+		echo "<p>ID: None</p>"; 
+		echo "<p>Name: None</p>"; 
+		echo "<p>Description: None</p>"; 
+
+	}
 }
 //SELECT * FROM (SELECT * FROM Zmays_Genes WHERE Zmays_Genes.name='GRMZM2G001272') res LEFT JOIN Zmays_Metrics ON Zmays_Metrics.id = res.id;
 $query = $db->prepare("SELECT * FROM (SELECT * FROM " . $species . "_Genes WHERE " . $species . "_Genes.name  = ? ) res LEFT JOIN " . $species . "_Metrics ON " . $species . "_Metrics.id = res.id");

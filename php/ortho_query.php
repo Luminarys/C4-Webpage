@@ -95,7 +95,7 @@ if($query->execute()){
 	    		echo "<tr>";
 	    		echo "<td>" . $row['gene'] . "</td>";
 	    		echo "<td>" . $row['ortho'] . "</td>";
-			echo "<td><a href='gene_set_query.php?link=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
+			echo "<td><a href='gene_set_query.php?netlink=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
 			echo "<td><input type='checkbox' value=" . $row['ortho'] . "></td>";
 	    		echo "</tr>";
 			}

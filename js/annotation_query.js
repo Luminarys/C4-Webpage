@@ -26,7 +26,7 @@ function insertData(gene, species) {
 			$("#goBack").css("height","136px");	
     			var mtable = $('#metricQueryTable').DataTable();
 		});
-	$.get("php/expression_query.php?g0=" + gene + "&spec=" + species, function(data) {
+	$.get("php/expression_query.php?noex=true&g0=" + gene + "&spec=" + species, function(data) {
 		$('#qTable').append("<p>Gene Plot:</p>");
 		texts = [gene];
 		console.log(data);
@@ -39,7 +39,7 @@ function insertData(gene, species) {
 	});
 	});
 
-	$.get("php/gene_query.php?g0=" + gene + "&spec=" + species, function(data) {
+	$.get("php/gene_query.php?noex=true&g0=" + gene + "&spec=" + species, function(data) {
 		$('#qTable').append("<p>Network Query Table:</p>");
 		$('#qTable')
 		.append(data)
@@ -72,7 +72,7 @@ $(document).ready(function() {
 	});
     	table = $('#basicQueryTable').DataTable();
 	//What to do when we do an AJAX query to load a popup
-	if (getQueryVar("link")){
+	if (getQueryVar("anlink")){
 		var gene = getQueryVar("gene");
 		var species = getQueryVar("spec");
 		insertData(gene, species);

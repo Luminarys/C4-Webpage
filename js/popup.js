@@ -1,9 +1,3 @@
-$(
-function() {
-		$(".popup").click(function() {
-			document.location.href = "/annotation_query.php" + $(this).attr("value");
-		});
-});
 $(document).ready( function() {
 	addPopups();
 });
@@ -24,14 +18,38 @@ $(".popup").qtip({
 		}
 	},	
 	hide: {
-		fixed: true,
-		//event: false,
-		//inactive: 3000,
-		delay: 500
-	},
+		event: 'unfocus'
+	}, 
 	show: {
+		solo: true,
+		event: 'click'
+	}
+});
+console.log("Added in popups");
+}
+
+function addGraphPopups(){
+$(".node").qtip({
+	content: {
+		text: function(event, api){
+			$.ajax({
+				url: "php/annotation_popup.php" + $(this).attr("value")
+			})
+			.then(function(content){
+				api.set('content.text', content);
+			}, function(xhr, status, error) {
+				api.set('content.text', status + ': ' + error);	
+			});
+			return 'Loading...';
+		}
+	},	
+	hide: {
+		event: 'unfocus'
+	}, 
+	show: {
+		event: 'click',
 		solo: true
 	}
 });
-
+console.log("Added in popups");
 }

@@ -36,6 +36,10 @@ if($query->execute()){
 $validGenes = "/" . substr($validGenes, 0, -1) . "/";
 
 $species = $_GET['spec'];
+$expressionOption = true;
+if(array_key_exists("noex", $_GET)){
+	$expressionOption = false;
+}
 $csv;
 
 if(in_array($species,$validSpecies)){
@@ -59,6 +63,8 @@ if(in_array($species,$validSpecies)){
 //Should this be loaded as a CSV or not?
 $csv = false;
 $gn = 0;
+$graph = false;
+$sources = array();
 foreach ($_GET as $key => $value) {
 	if($key[0] == "g"){
 		if(!preg_match($validGenes,$value,$match)){
@@ -67,12 +73,15 @@ foreach ($_GET as $key => $value) {
 		}
 		$pre_query.=("'" . $match[0] . "',");
 		$gn++;		
+		array_push($sources, $match[0]);
 	}else if($key == "type"){
 		if($value == "AND"){
 			$AND = True;
 		}
 	}else if($key == "csv"){
 		$csv = true;
+	}else if($key == "network"){
+		$graph = true;
 	}
 }
 //Prepare and execute query, concatenating the pre-query strings
@@ -100,7 +109,7 @@ if($query->execute()){
 				$seen[$row['id']] = $seen[$row['id']] + 1;
 			}
 		}
-	if(!$csv){
+	if(!$csv && !$graph){
 		echo "<form id='geneSelections'>";
 		//Pre table search forms
 		echo '<table border="0" cellspacing="5" cellpadding="5">';
@@ -109,27 +118,27 @@ if($query->execute()){
 	        echo '    <td>Column: </td>';
 	        echo '    <td><select id="filterChoice">';
 		if ($gn > 1){
-	        echo '    <option value="2">Adjacency Value</option>';
-	        echo '    <option value="3">Mean Exp</option>';
-	        echo '    <option value="4">Mean Exp Rank</option>';
-	        echo '    <option value="5">K</option>';
-	        echo '    <option value="6">K Rank</option>';
-	        echo '    <option value="7">Module</option>';
-	        echo '    <option value="8">Modular K</option>';
-	        echo '    <option value="9">Modular K Rank</option>';
-	        echo '    <option value="10">Modular Mean Exp Rank</option>';
-	        echo '    <option value="11">Connections</option>';
-		}else{
-	        echo '    <option value="1">Adjacency Value</option>';
-	        echo '    <option value="2">Mean Exp</option>';
-	        echo '    <option value="3">Mean Exp Rank</option>';
-	        echo '    <option value="4">K</option>';
-	        echo '    <option value="5">K Rank</option>';
-	        echo '    <option value="6">Module</option>';
-	        echo '    <option value="7">Modular K</option>';
-	        echo '    <option value="8">Modular K Rank</option>';
-	        echo '    <option value="9">Modular Mean Exp Rank</option>';
-	        echo '    <option value="10">Connections</option>';
+	      		echo '    <option value="2">Adjacency Value</option>';
+	       	 	echo '    <option value="3">Mean Exp</option>';
+	       	 	echo '    <option value="4">Mean Exp Rank</option>';
+	       	 	echo '    <option value="5">K</option>';
+	       	 	echo '    <option value="6">K Rank</option>';
+	       	 	echo '    <option value="7">Module</option>';
+	       	 	echo '    <option value="8">Modular K</option>';
+	       	 	echo '    <option value="9">Modular K Rank</option>';
+	       	 	echo '    <option value="10">Modular Mean Exp Rank</option>';
+	       	 	echo '    <option value="11">Connections</option>';
+	       	 }else{
+	       	 	echo '    <option value="1">Adjacency Value</option>';
+	       	 	echo '    <option value="2">Mean Exp</option>';
+	       	 	echo '    <option value="3">Mean Exp Rank</option>';
+	       	 	echo '    <option value="4">K</option>';
+	       	 	echo '    <option value="5">K Rank</option>';
+	       	 	echo '    <option value="6">Module</option>';
+	       	 	echo '    <option value="7">Modular K</option>';
+	       	 	echo '    <option value="8">Modular K Rank</option>';
+	       	 	echo '    <option value="9">Modular Mean Exp Rank</option>';
+	       	 	echo '    <option value="10">Connections</option>';
 		}
 	        echo '    </select></td>';
 	        echo '    <td>Minimum: </td>';
@@ -145,7 +154,7 @@ if($query->execute()){
 	    		echo "<thead>";
 	    		echo "<th>Gene</th>";
 			if ($gn > 1){
-	    		echo "<th>Source</th>";
+	    			echo "<th>Source</th>";
 			}
 	    		echo "<th>Adjacency Value</th>";
 	    		echo "<th>Mean Exp</th>";
@@ -157,9 +166,11 @@ if($query->execute()){
 	    		echo "<th>Modular K Rank</th>";
 	    		echo "<th>Modular Mean Exp Rank</th>";
 			if ($gn > 1){
-	    		echo "<th>Connections</th>";
+	    			echo "<th>Connections</th>";
 			}
-	    		echo "<th>Expression Selection</th>";
+			if($expressionOption){
+	    			echo "<th>Expression Selection</th>";
+			}
 	    		echo "</tr>";
 	    		echo "</thead>";
 			echo "<tfoot></tfoot>";
@@ -178,7 +189,7 @@ if($query->execute()){
 	    		echo "<tr>";
 	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
 			if ($gn > 1){
-	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['source'] . ">" . $row['source'] . "</td>";
+	    			echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['source'] . ">" . $row['source'] . "</td>";
 			}
 	    		echo "<td>" . $row['adjacency'] . "</td>";
 	    		echo "<td>" . $row['mean_exp'] . "</td>";
@@ -190,15 +201,17 @@ if($query->execute()){
 	    		echo "<td>" . $row['modular_k_rank'] . "</td>";
 	    		echo "<td>" . $row['modular_mean_exp_rank'] . "</td>";
 			if ($gn > 1){
-	    		echo "<td>" . $seen[$row['id']] . "</td>";
+	    			echo "<td>" . $seen[$row['id']] . "</td>";
 			}
-			echo "<td><input type='checkbox' value=" . $row['name'] . "></td>";
+			if($expressionOption){
+				echo "<td><input type='checkbox' value=" . $row['name'] . "></td>";
+			}
 	    		echo "</tr>";
 			}
 	    	echo "</tbody>";
 		echo "</table>";
 		echo "</form>";
-	}else{
+	}else if($csv){
 		//Generate a CSV file
 		header( 'Content-Type: text/csv' );
            	header( 'Content-Disposition: attachment;filename=result.csv');
@@ -217,6 +230,42 @@ if($query->execute()){
 		
 		}
 		fclose($fp);
+	}else if($graph){
+		$ret = array();
+		//Nodes will have info about the gene
+		$ret["nodes"] = array();
+		//Edges will list all edges
+		$ret["edges"] = array(); 
+		
+		//Links a gene name with an position
+		$indeces = array();
+		$index = 0;
+		//Insert in the sources
+		foreach ($sources as $source){
+			$indeces[$source] = $index;
+			array_push($ret["nodes"],array("name"=>$source, "group"=>0));
+			$index++;
+		}
+		$eindex = 0;
+		foreach ($results as $row){
+			$increment = false;
+			if(!array_key_exists($row["name"], $indeces)){
+				$indeces[$row["name"]] = $index;
+				array_push($ret["nodes"],array("name"=>$row["name"], "group"=>1));
+				$increment = true;
+			}else{
+				//Keep the Source nodes the same color, everything else should be incremented to indicate how many connections a node has
+				if(!in_array($row["name"], $sources)){
+					$ret["nodes"][$indeces[$row["name"]]]["group"]++;
+				}
+			}
+			array_push($ret["edges"], array("source"=>$indeces[$row["source"]], "target"=>$indeces[$row["name"]], "value"=> $row['adjacency']));
+			if($increment){
+				$index++;
+			}
+			$eindex++;
+		}
+		echo json_encode($ret);
 	}
 }
 

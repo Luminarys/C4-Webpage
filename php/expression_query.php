@@ -35,7 +35,7 @@ if($query->execute()){
 	}
 }else{
 	echo "Warning, no MapReference table defined, exiting";
-	exit();
+	e/xit();
 }
 $validGenes = "/" . substr($validGenes, 0, -1) . "/";
 

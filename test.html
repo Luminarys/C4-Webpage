@@ -11,11 +11,27 @@
 	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css">
 
 	<!-- Index JS file -->
-	<script type="text/javascript" charset="utf8" src="js/popup.js"></script>
-	<script type="text/javascript" charset="utf8" src="js/annotation_query.js"></script>
+	<script type="text/javascript" charset="utf8" src="js/force_layout.js"></script>
+
+	<!-- D3JS -->
+	<script src="http://d3js.org/d3.v3.min.js"></script>	
+
 	
 	<!-- Local CSS -->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<style>
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+</style>
 	
 
 </head>
@@ -33,17 +49,6 @@
 		</div>
 		<div id="content">
 			<div id="querySelection">
-				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
-				<div class="messagepop pop">
-				</div>
-				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
-				<a href="javascript:void(0)" class="popup" value="?link=true&spec=Zmays&gene=GRMZM2G001272">Gene</a><br>
-				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
-				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
-				<a href="javascript:void(0)" class="popup" value="?link=true&spec=Zmays&gene=GRMZM2G001272">Gene</a><br>
-				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
-				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
-				<a href="javascript:void(0)" class="popup" value="?link=true&spec=Zmays&gene=GRMZM2G001272">Gene</a><br>
 				<p>Welcome to the C4 project at the Mockler and Brutnell Labs, please select a query below to interrogate the networks:</p>
 			</div>
 			<div id="bottomCombo">	

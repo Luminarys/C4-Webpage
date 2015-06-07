@@ -482,9 +482,6 @@ function dotPlot(info, texts){
         	.attr("text-anchor", "middle")  
         	.style("font-size", "18px") 
 		.attr("class", "popup")
-		.on("click", function() {
-			document.location.href = "/annotation_query.php" + $(this).attr("value");
-		})
 		.attr("value", "?link=true&spec=" + spec + "&gene=" + texts[i])
                 .text(texts[i]);
 		
@@ -631,9 +628,6 @@ function linePlot(info, texts){
         		.attr("text-anchor", "middle")  
         		.style("font-size", "18px") 
 			.attr("class", "popup")
-			.on("click", function() {
-				document.location.href = "/annotation_query.php" + $(this).attr("value");
-			})
 			.attr("value", "?link=true&spec=" + spec + "&gene=" + texts[i])
                 	.text(texts[i]);
 		}
@@ -672,15 +666,6 @@ function linePlot(info, texts){
 			.attr("class", "legend popup")
 			.attr("value", "?link=true&spec="+spec + "&gene=" + texts[i])
 			.style("fill", function() { return colors[i]; })
-			.on("click", function() {
-				var active = inactiveLines[$(this).text()] ? false : true,
-				newOpacity = active ? 0 : 1;
-				console.log($(this).text());
-				d3.select("#tag" + $(this).text().replace(/\s+/g, ''))
-					.transition().duration(100)
-					.style("opacity", newOpacity);
-				inactiveLines[$(this).text()] = active;
-			})
 			.text(texts[i]);
 		}
 	}
@@ -898,24 +883,44 @@ $(document).ready(function() {
 	});
 	$("#inGraphOpts").hide();
 
-	if (getQueryVar("link")){
+	if (getQueryVar("exlink")){
 		console.log("Linked in");
        		var query = window.location.search.substring(1);
        		var vars = query.split("&");
 		var first = true;
+		var skip = false;
        		for (var i = 0;i < vars.length;i++) {
                		var pair = vars[i].split("=");
 			if(pair[0].charAt(0) == "g"){
 				if (first){
-					$('#expressionInputArea').val($('#expressionInputArea').val() + pair[1])
+					if(!$("#expressionInputArea").val()){
+						$('#expressionInputArea').val($('#expressionInputArea').val() + pair[1])
+					}else{
+						skip = true;	
+					}
 					first = false;
-				}else{
+				}else if(!skip){
 					$('#expressionInputArea').val($('#expressionInputArea').val() + '\n' + pair[1])
 				}
 			}else if(pair[0] == "spec"){
 				$(".speciesSelect").val(pair[1]);
 			}
        		}
+		plot = "line"; 
+		norm = "mean";
+		qRes = genReq();
+		req = qRes[0];
+		texts = qRes[1];
+		$("#expressionForm").hide();
+		$("#goBack").show();
+		$("#goBack").css("height","136px");	
+		$("#normalization").val(plot);
+		$("#normalizationLP").val(norm);
+		$.get(req, function (data) {
+			handleInitData(data,texts);
+			$('#lower-rect').removeAttr('style');
+		});
+		
 	}
 	//Handle the expression query
 	$('#expressionQueryForm').submit(function(e) {

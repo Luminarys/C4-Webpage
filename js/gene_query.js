@@ -28,7 +28,7 @@ $(document).ready(function() {
 
     	var table;
 	$("#MultiGeneQueryExpression").hide();
-	if (getQueryVar("link")){
+	if (getQueryVar("netlink")){
 		req = "php/gene_query.php?";
        		var query = window.location.search.substring(1);
        		var vars = query.split("&");
@@ -72,11 +72,17 @@ $(document).ready(function() {
 				}else{
 					$("#goBack").css("height","136px");	
 				}
+				if(data == "Invalid gene used, please try again"){
+					return 0;
+				}else{
     				table = $('#basicQueryTable').DataTable();
+				addPopups();
 				$("#MultiGeneQueryExpression").show();
+				$('#basicQueryTable').on( 'draw.dt', function () {
+					addPopups();
+				});
+				}
 			});
-			table.draw();
-			addPopups();
 		});
 	}
 
@@ -85,7 +91,7 @@ $(document).ready(function() {
       			return $(this).val();
     		}).get(); // <----
     		console.log(genes);
-		req = "expression_query.php?link=true";
+		req = "expression_query.php?exlink=true";
 		if (!genes.length > 0){
 			return false;
 		}
@@ -104,7 +110,7 @@ $(document).ready(function() {
     	} );
 	//Handles readding in popups whenever the table is adjusted
 	$(document).click(function() {
-    		addPopups();
+    		//addPopups();
   	});
 
 	$('#singleGeneQueryForm').submit(function(e) {
@@ -124,9 +130,16 @@ $(document).ready(function() {
 					$("#goBack").css("height","136px");	
 				}
 
+				if(data == "Invalid gene used, please try again"){
+					return 0;
+				}else{
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
 				$("#MultiGeneQueryExpression").show();
+				$('#basicQueryTable').on( 'draw.dt', function () {
+					addPopups();
+				});
+				}
 			});
 		});
 		table.draw();
@@ -183,9 +196,16 @@ $(document).ready(function() {
 				}else{
 					$("#goBack").css("height","136px");	
 				}
+				if(data == "Invalid gene used, please try again"){
+					return 0;
+				}else{
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
 				$("#MultiGeneQueryExpression").show();
+				$('#basicQueryTable').on( 'draw.dt', function () {
+					addPopups();
+				});
+				}
 			});
 		});
 		table.draw();
