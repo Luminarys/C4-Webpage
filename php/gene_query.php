@@ -231,6 +231,9 @@ if($query->execute()){
 		}
 		fclose($fp);
 	}else if($graph){
+		//Track the maximum number of edges any one node has
+		//This will be used for generating the legend
+		$max = 1;
 		$ret = array();
 		//Nodes will have info about the gene
 		$ret["nodes"] = array();
@@ -257,6 +260,10 @@ if($query->execute()){
 				//Keep the Source nodes the same color, everything else should be incremented to indicate how many connections a node has
 				if(!in_array($row["name"], $sources)){
 					$ret["nodes"][$indeces[$row["name"]]]["group"]++;
+					//update maximum
+					if($ret["nodes"][$indeces[$row["name"]]]["group"] > $max){
+						$max = $ret["nodes"][$indeces[$row["name"]]]["group"];
+					}
 				}
 			}
 			array_push($ret["edges"], array("source"=>$indeces[$row["source"]], "target"=>$indeces[$row["name"]], "value"=> $row['adjacency']));
@@ -265,6 +272,7 @@ if($query->execute()){
 			}
 			$eindex++;
 		}
+		$ret['max'] = $max;
 		echo json_encode($ret);
 	}
 }
