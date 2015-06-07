@@ -743,7 +743,13 @@ function handleReData(data, texts){
 	var info = JSON.parse(data);
 	test = JSON.stringify(info);
 	multiColor = $("#geneColor-in").val();
-	normMeth = $("#normalization-in").val();
+	var normOpts = ["mean","max","log","raw"];
+	if (normOpts.indexOf($("#normalization-in").val()) > -1){
+		normMeth = $("#normalization-in").val();
+	}else{
+		normMeth = "mean";
+		$("#normalization-in").val(normMeth);
+	}
 	normMethLP = $("#normalizationLP-in").val();
 	if(plot == "box"){
 		boxPlot(info, texts);
@@ -751,6 +757,7 @@ function handleReData(data, texts){
 		$("#combinePlotsDiv-in").hide();
 		$("#normalizationPlotsDiv-in").show();
 		$("#geneColorDiv-in").hide();
+		$("#normalizationLPDiv-in").hide();
 	}else if(plot == "line"){
 		if ($("#combinePlots-in").val() == "combine"){
 			combine = true;
@@ -919,6 +926,8 @@ $(document).ready(function() {
 		$.get(req, function (data) {
 			handleInitData(data,texts);
 			$('#lower-rect').removeAttr('style');
+			$("#goBack").show();
+			$("#goBack").css("height","50px");	
 		});
 		
 	}
@@ -929,7 +938,7 @@ $(document).ready(function() {
 
 		$("#expressionForm").hide();
 		$("#goBack").show();
-		$("#goBack").css("height","136px");	
+		$("#goBack").css("height","50px");	
 
 		//Handle the GET request
 		//$.get(req, handleData(data));

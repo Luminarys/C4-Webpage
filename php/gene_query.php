@@ -250,7 +250,15 @@ if($query->execute()){
 			$index++;
 		}
 		$eindex = 0;
+		//Filtering parameters, derived from the Network Query Table
+		$filterMax = .6;
+		$filterMin = .3;
+		$filterTarget = "adjacency";
+
 		foreach ($results as $row){
+			if($row[$filterTarget] > $filterMax || $row[$filterTarget] < $filterMin){
+				continue;
+			}
 			$increment = false;
 			if(!array_key_exists($row["name"], $indeces)){
 				$indeces[$row["name"]] = $index;
