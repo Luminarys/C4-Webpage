@@ -77,9 +77,9 @@ function generateGraph(spec, genes, field, min, max){
 		//Add in legend
 		var colors = [];
 		colors.push(["Source Node", color(0)]);
-		colors.push(["1 Connection", color(1)]);
+		colors.push(["1 Edge", color(1)]);
 		for(var i = 2; i <= maxConn; i++){
-			colors.push([ i + " Connections", color(i)]);
+			colors.push([ i + " Edges", color(i)]);
 		}
 		console.log(colors);
 

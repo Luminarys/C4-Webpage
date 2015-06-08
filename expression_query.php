@@ -21,7 +21,7 @@
 	<script type="text/javascript" charset="utf8" src="js/popup.js"></script>
 
 	<!-- Local CSS -->
-	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/query.css">
 	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css">
 	
 
@@ -30,15 +30,11 @@
 <body class="Site">
 	<div id="wrapper" class="Site-content">
 		<div id="header">
-			<p id="upper-rect"> C4 @ the DDPSC</p>
 		</div>
-		<form id="issue" action="https://github.com/Luminarys/C4-Webpage/issues">
-    			<input type="submit" value="Report issue/Make Suggestion">
-		</form>
-		<div id="leftside">
-			<p id="left-rect">Home</p>	
-		</div>
-		<div id="content">
+		<div id="contents">
+			<form id="issue" action="https://github.com/Luminarys/C4-Webpage/issues">
+    				<input type="submit" value="Report issue/Make Suggestion">
+			</form><br>
 			<div id="entryForm">
 				<div id="goBack">
 					<button class="backToQuery">back to query selection</button>
@@ -169,17 +165,11 @@
 					</form>
 				</div>
 			</div>
-			<div id="bottomCombo">	
-				<div id="bottomFiller"></div>
-				<div id="qTable"></div>
-			
-				<div id="footer" class="footer">
-					<p id="lower-rect" style="margin-top: 450px;">
-						Copyright ...<br>
-					</p>
-				</div>
-			</div>
+			<div id="qTable"></div>
 		</div>
+		<div id="footer" class="footer">
+		</div>
+			</div>
 	</div>
 
 </body>

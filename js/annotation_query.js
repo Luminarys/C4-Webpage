@@ -23,7 +23,7 @@ function insertData(gene, species) {
 		.ready(function(){
 			$("#annotationForm").hide();
 			$("#goBack").removeAttr('style').show();
-			$("#goBack").css("height","136px");	
+			$("#goBack").css("height","50px");	
     			var mtable = $('#metricQueryTable').DataTable();
 		});
 	$.get("php/expression_query.php?noex=true&g0=" + gene + "&spec=" + species, function(data) {

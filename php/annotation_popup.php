@@ -62,12 +62,12 @@ $query = $db->prepare("SELECT * FROM " . $species . "_Annotation WHERE locus = ?
 if($query->execute(array($_GET["gene"]))){
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
-	echo "<p>ID: " . $results[0]['locus'] . ", ";
+	echo "<p id='qtp'>ID: " . $results[0]['locus'] . ", ";
 	echo "Name: " . $results[0]['name'] . "</p>";
 	if($results[0]['description'] == ""){
-	echo "<p>Description: None</p>"; 
+	echo "<p id='qtp'>Description: None</p>"; 
 	}else{
-	echo "<p>Description: " . $results[0]['description'] . "</p>"; 
+	echo "<p id='qtp'>Description: " . $results[0]['description'] . "</p>"; 
 	}
 }
 //SELECT * FROM (SELECT * FROM Zmays_Genes WHERE Zmays_Genes.name='GRMZM2G001272') res LEFT JOIN Zmays_Metrics ON Zmays_Metrics.id = res.id;
@@ -76,14 +76,14 @@ if($query->execute(array($_GET["gene"]))){
 	if(!$annotation){
 		$results = $query->fetchAll();
 		foreach ($results as $row) {
-	    		echo "<p>Mean Exp: " . $row['mean_exp'] . "</p>";
-	    		echo "<p>Mean Exp Rank:" . $row['mean_exp_rank'] . "</p>";
-	    		echo "<p>K: " . $row['k'] . "</p>";
-	    		echo "<p>K Rank:" . $row['k_rank'] . "</p>";
-	    		echo "<p><p>Module: " . $row['module'] . "</p>";
-	    		echo "<p>Modular K:" . $row['modular_k'] . "</p>";
-	    		echo "<p>Modular K Rank:" . $row['modular_k_rank'] . "</p>";
-	    		echo "<p>Modular Mean Exp rank:" . $row['modular_mean_exp_rank'] . "</p> ";
+	    		echo "<p id='qtp'>Mean Exp: " . $row['mean_exp'] . "</p>";
+	    		echo "<p id='qtp'>Mean Exp Rank:" . $row['mean_exp_rank'] . "</p>";
+	    		echo "<p id='qtp'>K: " . $row['k'] . "</p>";
+	    		echo "<p id='qtp'>K Rank:" . $row['k_rank'] . "</p>";
+	    		echo "<p id='qtp'><p id='qtp'>Module: " . $row['module'] . "</p>";
+	    		echo "<p id='qtp'>Modular K:" . $row['modular_k'] . "</p>";
+	    		echo "<p id='qtp'>Modular K Rank:" . $row['modular_k_rank'] . "</p>";
+	    		echo "<p id='qtp'>Modular Mean Exp rank:" . $row['modular_mean_exp_rank'] . "</p> ";
 		}
 	}else{
 
@@ -104,12 +104,12 @@ foreach ($alt_specs as $ortho){
 	if($query->execute(array($_GET["gene"]))){
 		$results = $query->fetchAll();
 		if(array_key_exists(0, $results)){
-			echo "<p>" . $prefix_name[$ortho]  . " Ortholog: " . $results[0]['ortho'] . "</p>";
-			echo "<p><a href='/annotation_query.php?anlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Annotation Query</a></p>";
-			echo "<p><a href='/gene_set_query.php?netlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Network Query</a></p>";
-			echo "<p><a href='/expression_query.php?exlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Expression Query</a></p>";
+			echo "<p id='qtp'>" . $prefix_name[$ortho]  . " Ortholog: " . $results[0]['ortho'] . "</p>";
+			echo "<p id='qtp'><a href='/annotation_query.php?anlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Annotation Query</a></p>";
+			echo "<p id='qtp'><a href='/gene_set_query.php?netlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Network Query</a></p>";
+			echo "<p id='qtp'><a href='/expression_query.php?exlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Expression Query</a></p>";
 		}else{
-			echo "<p> Ortholog for species " . $prefix_name[$ortho] . ": None</p>";
+			echo "<p id='qtp'> Ortholog for species " . $prefix_name[$ortho] . ": None</p>";
 		}
 	}
 }

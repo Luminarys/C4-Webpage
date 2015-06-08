@@ -85,7 +85,7 @@ if($query->execute(array($_GET["module"]))){
 	foreach ($results as $row) {
 		//Echo the table 
     		echo "<tr>";
-    		echo "<td>" . $row['name'] . "</td>";
+    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
     		echo "<td>" . $row['mean_exp'] . "</td>";
     		echo "<td>" . $row['mean_exp_rank'] . "</td>";
     		echo "<td>" . $row['k'] . "</td>";

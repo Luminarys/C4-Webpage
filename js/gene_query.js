@@ -1,13 +1,3 @@
-function debounce(fn, delay) {
-  var timer = null;
-  return function () {
-    var context = this, args = arguments;
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-      fn.apply(context, args);
-    }, delay);
-  };
-}
 
 $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
@@ -96,12 +86,27 @@ $(document).ready(function() {
 				}
 			});
 			$("#networkGraph").click(function() {
-				$("#qTable").empty();
-				$("#MultiGeneQueryExpression").hide();
-				$("#multiGeneForm").hide();
-				$("#goBack").show();
-				$('#lower-rect').removeAttr('style');
-				generateGraph(spec, genes);
+				var field = $("#filterChoice option:selected").text();
+				var min	= $("#min").val();
+				var max = $("#max").val();
+				console.log(typeof min);
+				if(min in window && max in window){
+					$("#qTable").empty();
+					$("#MultiGeneQueryExpression").hide();
+					$("#multiGeneForm").hide();
+					$("#goBack").show();
+					$('#lower-rect').removeAttr('style');
+					generateGraph(spec, genes, field, min, max);
+				}else if(field == "Adjacency Value"){
+					//Default to this
+					console.log("defaulting to adjacency -2/2");
+					$("#qTable").empty();
+					$("#MultiGeneQueryExpression").hide();
+					$("#multiGeneForm").hide();
+					$("#goBack").show();
+					$('#lower-rect').removeAttr('style');
+					generateGraph(spec, genes, "Adjacency Value", -2, 2);
+				}
 			});
 		});
 	}
@@ -163,12 +168,27 @@ $(document).ready(function() {
 				}
 			});
 			$("#networkGraph").click(function() {
-				$("#qTable").empty();
-				$("#MultiGeneQueryExpression").hide();
-				$("#multiGeneForm").hide();
-				$("#goBack").show();
-				$('#lower-rect').removeAttr('style');
-				generateGraph(spec, genes);
+				var field = $("#filterChoice option:selected").text();
+				var min	= $("#min").val();
+				var max = $("#max").val();
+				console.log(typeof min);
+				if(min in window && max in window){
+					$("#qTable").empty();
+					$("#MultiGeneQueryExpression").hide();
+					$("#multiGeneForm").hide();
+					$("#goBack").show();
+					$('#lower-rect').removeAttr('style');
+					generateGraph(spec, genes, field, min, max);
+				}else if(field == "Adjacency Value"){
+					//Default to this
+					console.log("defaulting to adjacency -2/2");
+					$("#qTable").empty();
+					$("#MultiGeneQueryExpression").hide();
+					$("#multiGeneForm").hide();
+					$("#goBack").show();
+					$('#lower-rect').removeAttr('style');
+					generateGraph(spec, genes, "Adjacency Value", -2, 2);
+				}
 			});
 		});
 		table.draw();
@@ -242,13 +262,23 @@ $(document).ready(function() {
 				var field = $("#filterChoice option:selected").text();
 				var min	= $("#min").val();
 				var max = $("#max").val();
-				if(min != "" && max != ""){
+				console.log(typeof min);
+				if(min in window && max in window){
 					$("#qTable").empty();
 					$("#MultiGeneQueryExpression").hide();
 					$("#multiGeneForm").hide();
 					$("#goBack").show();
 					$('#lower-rect').removeAttr('style');
 					generateGraph(spec, genes, field, min, max);
+				}else if(field == "Adjacency Value"){
+					//Default to this
+					console.log("defaulting to adjacency -2/2");
+					$("#qTable").empty();
+					$("#MultiGeneQueryExpression").hide();
+					$("#multiGeneForm").hide();
+					$("#goBack").show();
+					$('#lower-rect').removeAttr('style');
+					generateGraph(spec, genes, "Adjacency Value", -2, 2);
 				}
 			});
 			table.draw();

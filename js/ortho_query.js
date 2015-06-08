@@ -109,7 +109,7 @@ $(document).ready(function() {
 				if($('#orthoQueryTable tr').length > 9){
 					$('#lower-rect').removeAttr('style');
 				}else{
-					$("#goBack").css("height","136px");	
+					$("#goBack").css("height","50px");	
 				}
     				table = $('#orthoQueryTable').DataTable();
 			});

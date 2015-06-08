@@ -111,42 +111,43 @@ if($query->execute()){
 		}
 	if(!$csv && !$graph){
 		//Pre table search forms
-		echo '<table border="0" cellspacing="5" cellpadding="5">';
-	        echo '<tbody><tr>';
-	        echo '    <td><b>Filtering: </b></td>';
-	        echo '    <td>Column: </td>';
-	        echo '    <td><select id="filterChoice">';
-		if ($gn > 1){
-	      		echo '    <option value="2">Adjacency Value</option>';
-	       	 	echo '    <option value="3">Mean Exp</option>';
-	       	 	echo '    <option value="4">Mean Exp Rank</option>';
-	       	 	echo '    <option value="5">K</option>';
-	       	 	echo '    <option value="6">K Rank</option>';
-	       	 	echo '    <option value="7">Module</option>';
-	       	 	echo '    <option value="8">Modular K</option>';
-	       	 	echo '    <option value="9">Modular K Rank</option>';
-	       	 	echo '    <option value="10">Modular Mean Exp Rank</option>';
-	       	 }else{
-	       	 	echo '    <option value="1">Adjacency Value</option>';
-	       	 	echo '    <option value="2">Mean Exp</option>';
-	       	 	echo '    <option value="3">Mean Exp Rank</option>';
-	       	 	echo '    <option value="4">K</option>';
-	       	 	echo '    <option value="5">K Rank</option>';
-	       	 	echo '    <option value="6">Module</option>';
-	       	 	echo '    <option value="7">Modular K</option>';
-	       	 	echo '    <option value="8">Modular K Rank</option>';
-	       	 	echo '    <option value="9">Modular Mean Exp Rank</option>';
+		if($expressionOption){
+			echo '<table border="0" cellspacing="5" cellpadding="5">';
+		        echo '<tbody><tr>';
+		        echo '    <td><b>Filtering: </b></td>';
+		        echo '    <td>Column: </td>';
+		        echo '    <td><select id="filterChoice">';
+			if ($gn > 1){
+		      		echo '    <option value="2">Adjacency Value</option>';
+		       	 	echo '    <option value="3">Mean Exp</option>';
+		       	 	echo '    <option value="4">Mean Exp Rank</option>';
+		       	 	echo '    <option value="5">K</option>';
+		       	 	echo '    <option value="6">K Rank</option>';
+		       	 	echo '    <option value="7">Module</option>';
+		       	 	echo '    <option value="8">Modular K</option>';
+		       	 	echo '    <option value="9">Modular K Rank</option>';
+		       	 	echo '    <option value="10">Modular Mean Exp Rank</option>';
+		       	 }else{
+		       	 	echo '    <option value="1">Adjacency Value</option>';
+		       	 	echo '    <option value="2">Mean Exp</option>';
+		       	 	echo '    <option value="3">Mean Exp Rank</option>';
+		       	 	echo '    <option value="4">K</option>';
+		       	 	echo '    <option value="5">K Rank</option>';
+		       	 	echo '    <option value="6">Module</option>';
+		       	 	echo '    <option value="7">Modular K</option>';
+		       	 	echo '    <option value="8">Modular K Rank</option>';
+		       	 	echo '    <option value="9">Modular Mean Exp Rank</option>';
+			}
+		        echo '    </select></td>';
+		        echo '    <td>Minimum: </td>';
+		        echo '    <td><input type="text" id="min" name="min"></td>';
+		        echo '    <td>Maximum: </td>';
+		        echo '    <td><input type="text" id="max" name="max"></td>';
+		        echo '    <td><button id="networkGraph" onclick="">Create network graph based on filtering settings</button></td>';
+		        echo '</tr>';
+		    	echo ' </tbody></table>	';
+			echo "<a id='getCSV' href='" .$_SERVER["REQUEST_URI"] ."&csv=true' download='kek.csv'>Download table as CSV with annotations</a>";
 		}
-	        echo '    </select></td>';
-	        echo '    <td>Minimum: </td>';
-	        echo '    <td><input type="text" id="min" name="min"></td>';
-	        echo '    <td>Maximum: </td>';
-	        echo '    <td><input type="text" id="max" name="max"></td>';
-	        echo '    <td><button id="networkGraph" onclick="">Create network graph based on filtering settings</button></td>';
-	        echo '</tr>';
-	    	echo ' </tbody></table>	';
-	
-		echo "<a id='getCSV' href='" .$_SERVER["REQUEST_URI"] ."&csv=true' download='kek.csv'>Download table as CSV with annotations</a>";
 		//Initialize table
 		echo "<form id='geneSelections'>";
 		echo "<table id='basicQueryTable' style='width:100%'>";

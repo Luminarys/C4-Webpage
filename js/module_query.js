@@ -41,6 +41,8 @@ $(document).ready( function() {
 				}else{
 					$("#goBack").css("height","136px");	
 				}
+				addPopups();
+				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
 
     				table = $('#basicQueryTable').DataTable();
 			});
