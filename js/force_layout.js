@@ -1,3 +1,9 @@
+function getName(spec, id){
+	$.get("php/name_conversion.php?spec=" + spec + "&gene=" + id, function(data) {
+		return data;
+	});
+}
+
 function generateGraph(spec, genes, field, min, max){
 	var gnum = genes.length;
 	var fieldRef = {"Adjacency Value":"adjacency","Mean Exp":"mean_exp","Mean Exp Rank":"mean_exp_rank","K":"k","K Rank":"k_rank","Module":"module","Modular K":"modular_k","Modular Mean Exp Rank":"modular_mean_exp_rank","Modular K Rank":"modular_k_rank"};
@@ -10,8 +16,12 @@ function generateGraph(spec, genes, field, min, max){
 	req+="&field=" + reqField + "&min=" + min + "&max=" + max;
 	console.log(req);
 	$('#lower-rect').removeAttr('style');
-	var width = 900;
+	var width = 1300;
+	if (gnum < 4){
     	var height = gnum*320;
+	}else{
+		var height = 1300;
+	}
 
 	var color = d3.scale.category20();
 	
@@ -45,7 +55,13 @@ function generateGraph(spec, genes, field, min, max){
 		var node = svg.selectAll(".node")
 			.data(graph.nodes)
 			.enter().append("circle")
-			.attr("class", "node")
+			.attr("class", function(d) { 
+				if(d.group == 0){
+					return "node source";
+				}else{
+					return "node";
+				}
+			})
 			.attr("value", function(d) {return "?link=true&spec=" + spec + "&gene=" + d.name;})
 			.attr("r", 5)
 			.style("fill", function(d) { return color(d.group); });
@@ -68,12 +84,24 @@ function generateGraph(spec, genes, field, min, max){
 			
 			//Position vertically based on the number of sources. For 3 sources, put source 1 at 1/4 the way down,
 			//source 2 at 2/4, and source 3 at 3/4. This will ensure nice placement overall
-			var seg = height/(gnum+1);
-			for (var i = 0; i < gnum;i++){
-				graph.nodes[i].y = (i+1) * seg - 25;
-		   		graph.nodes[i].x = width / 2;
+			
+			//For less than 4 nodes, utilize a vertical linear layout, otherwise utilize circular
+			console.log(gnum);
+			if (gnum < 4){
+				var seg = height/(gnum+1);
+				for (var i = 0; i < gnum;i++){
+					graph.nodes[i].y = (i+1) * seg - 25;
+			   		graph.nodes[i].x = width / 2;
+				}
+			}else{
+				for (var i = 0; i < gnum;i++){
+			   		graph.nodes[i].y = 350 * Math.sin((i * 2 * Math.PI)/gnum) + height/2 + 25;
+			   		graph.nodes[i].x = 350 * Math.cos((i * 2 * Math.PI)/gnum) + width/2;
+				}
+
 			}
 		});
+
 		//Add in legend
 		var colors = [];
 		colors.push(["Source Node", color(0)]);
@@ -119,6 +147,21 @@ function generateGraph(spec, genes, field, min, max){
 
 		//Add in qTip popups
 		addGraphPopups();
+		//Add in text to the source nodes
+		setTimeout(function() {
+		var sources = svg.selectAll('source').data(graph.nodes.slice(0,gnum));
+		sources.enter()
+			.append("text")
+			.attr("x", function (d) {return d.x + 10;})
+			.attr("y", function (d) {return d.y;})
+		sources.text(function(d) { 
+			return	$.ajax({
+				type: "GET",
+				url: "php/name_conversion.php?spec=" + spec + "&gene=" + d.name,	
+				async: false
+			}).responseText;
+		});
+		}, 200);
 	});
 
 }
