@@ -1,8 +1,8 @@
 <?php 
 
 //Set debugging on
-ini_set('display_errors', 'On');
-error_reporting(E_ALL | E_STRICT);
+//ini_set('display_errors', 'On');
+//error_reporting(E_ALL | E_STRICT);
 
 //Load the authentication into an array
 $auth = file("DB.auth");
@@ -185,6 +185,9 @@ if($query->execute()){
 					continue;
 				}
 			}
+			if($row['name'] == ""){
+				continue;
+			}
 			//Echo the table 
 	    		echo "<tr>";
 	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
@@ -207,7 +210,7 @@ if($query->execute()){
 				echo "<td><input type='checkbox' value=" . $row['name'] . "></td>";
 			}
 	    		echo "</tr>";
-			}
+		}
 	    	echo "</tbody>";
 		echo "</table>";
 		echo "</form>";
@@ -226,7 +229,10 @@ if($query->execute()){
 				}
 			}
 			//Write the actual info for each line
-			fputcsv($fp, array($row['name'],$row['source'],$row['adjacency'],$row['mean_exp'],$row['mean_exp_rank'],$row['k'],$row['k_rank'],$row['module'],$row['modular_k'],$row['modular_k_rank'],$row['modular_mean_exp_rank'],$seen[$row['id']],$row["name"],$row["description"]));
+			//Ensure that only genes which have data are returned.
+			if(!$row['name'] == ""){
+				fputcsv($fp, array($row['name'],$row['source'],$row['adjacency'],$row['mean_exp'],$row['mean_exp_rank'],$row['k'],$row['k_rank'],$row['module'],$row['modular_k'],$row['modular_k_rank'],$row['modular_mean_exp_rank'],$seen[$row['id']],$row["name"],$row["description"]));
+			}
 		
 		}
 		fclose($fp);
@@ -254,7 +260,10 @@ if($query->execute()){
 		$filterMax = $_GET["max"];
 		$filterMin = $_GET["min"];
 		$filterTarget = $_GET["field"];
-
+		//Generate a JSON which has 3 dicts - nodes, edges, and max
+		//Nodes will consist of a list of nodes with fields [Name(the gene ID), and Group(number of edges)
+		//Edges will consist of a list with the Source ID, target ID, and adjacency value
+		//Max will be the node with the maximum number of edges, used to generate the legend in the Network Graph
 		foreach ($results as $row){
 			if($row[$filterTarget] > $filterMax || $row[$filterTarget] < $filterMin){
 				continue;
@@ -289,5 +298,3 @@ if($query->execute()){
 //Close connection
 $db=null;
 ?>
-
-

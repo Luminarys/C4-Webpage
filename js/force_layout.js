@@ -161,7 +161,7 @@ function generateGraph(spec, genes, field, min, max){
 				async: false
 			}).responseText;
 		});
-		}, 200);
+		}, 400);
 	});
 
 }

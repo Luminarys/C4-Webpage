@@ -460,9 +460,9 @@ p a {
 }
 #qTable {
 	text-align:center;
-	/*height: 500px;/**/
+	/*height: 500px;/*
 	margin-left: 200px;
-	margin-right: 200px;
+	margin-right: 200px;*/
 }
 
 #info {
@@ -558,6 +558,22 @@ p a {
   stroke: #999;
   stroke-opacity: .6;
 }
+#eq {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
+    /*background-color: #b0e0e6;/**/
+    height:300px;
+}
 
-#bottomBuffer {
+#eq > span {
+    float:left; 
+    margin:24px;
+}
+#eq > .slider {
+    height:225px;
+    margin:25px;
+}
+table {
+	table-layout: fixed;
 }
