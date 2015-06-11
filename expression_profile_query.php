@@ -88,6 +88,8 @@
 						<table style="width:100%;">
 							<tr id="samples">
 							</tr>
+							<tr id="values">
+							</tr>
 						</table>
 					</div>
 				</div>

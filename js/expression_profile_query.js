@@ -4,18 +4,22 @@ function drawBars(){
 		$('.slider').remove();
 		$('.sample').remove();
 		for(var i = info.length-1; i > 0; i--){
-			$("#eq").prepend("<span class='slider' val=" + info[i] +">50</span>");
+			$("#eq").prepend("<span class='slider' id=" + info[i] +">50</span>");
 		}
 		var s = $(".slider").length;
 		$("#eq").css("width",s * 66.5);
 		$( ".slider" ).each(function() {
-			$("#samples").append("<td class='sample'><span>" + $(this).attr("val")+"</span></td>");
+			$("#samples").append("<td class='sample'><span>" + $(this).attr("id")+"</span></td>");
+			$("#values").append("<td class='value'><span id='sample" + $(this).attr("id") + "'>50%</span></td>");
 			var value = parseInt( $( this ).text(), 10 );
 			$( this ).empty().slider({
 				value: value,
 				range: "min",
 				animate: true,
-				orientation: "vertical"
+				orientation: "vertical",
+				slide: function( event, ui ) {
+        				$( "#sample" + $(this).attr("id") ).text( ui.value + "%" );
+      				} 
 			});
 		});
 		
