@@ -62,14 +62,20 @@ foreach ($_GET as $key => $value) {
 }
 $sd = sd($samples);
 $mean = array_sum($samples)/count($samples);
-$cutoff = 10;
-$correlation = .7;
+$cutoff = intval($_GET['maxres']);
+$correlation = intval($_GET['r']);
+if (!ctype_digit($_GET['emin']) || !ctype_digit($_GET['emin'])){
+	echo "Invalid parameters used, please try again";
+	exit();
+}
+$emin = intval($_GET['emin']);
+$emax = intval($_GET['emax']);
 $species = $_GET['spec'];
 if(!in_array($species,$validSpecies)){
 	echo "Invalid SQL Query used, please try again";
 	exit();
 }else{
-	$pre_query = sprintf("SELECT * FROM %s_Genes as genes INNER JOIN %s_Expression as expr ON expr.id = genes.id LEFT JOIN %s_Metrics as metrics on metrics.id = genes.id WHERE metrics.mean_exp >= %d AND metrics.mean_exp <= %d", $species, $species, $species, 10, 20);
+	$pre_query = sprintf("SELECT * FROM %s_Genes as genes INNER JOIN %s_Expression as expr ON expr.id = genes.id LEFT JOIN %s_Metrics as metrics on metrics.id = genes.id WHERE metrics.mean_exp >= %d AND metrics.mean_exp <= %d", $species, $species, $species, $emin, $emax);
 }
 //Prepare and execute query, concatenating the pre-query strings
 //The substr is used to remove the final ','

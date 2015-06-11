@@ -50,6 +50,10 @@
 					<button class="backToQuery">Back to query selection</button>
 					<p>Query by Expression Profile:</p>
 					<form id='expressionProfileForm'>
+							<input type="text" id="r-val" placeholder="Minimum R">
+							<input type="text" id="resnum" placeholder="# of results">
+							<input type="text" id="minexp" placeholder="Maximum Mean Expression">
+							<input type="text" id="maxexp" placeholder="Minimum Mean Expression"><br><br>
 							<select class="speciesSelect" id="spec">
 							<?php
 
@@ -81,7 +85,7 @@
 						<input type="submit">
 					</form>
 				</div>
-				<div id="eq">
+				<div id="eq" class="entryform">
 					<br>
 					<div>
 						<br>

@@ -3,7 +3,8 @@ function drawBars(){
 		var info = JSON.parse(data);
 		$('.slider').remove();
 		$('.sample').remove();
-		for(var i = info.length-1; i > 0; i--){
+		$('.value').remove();
+		for(var i = info.length-1; i >= 0; i--){
 			$("#eq").prepend("<span class='slider' id=" + info[i] +">50</span>");
 		}
 		var s = $(".slider").length;
@@ -47,6 +48,24 @@ $(document).ready(function() {
 		for(var i = 0; i < vals.length; i++){
 			req+="&s" + i + "=" + vals[i];
 		}
+		req+="&emin=" + $("#minexp").val();
+		req+="&emax=" + $("#maxexp").val();
+		req+="&r=" + $("#r-val").val();
+		req+="&maxres=" + $("#resnum").val();
 		console.log(req);
+		$.get(req, function(data) {
+			$('#qTable').empty()
+			.html(data)
+			.ready(function(){
+				$("#expressionProfileForm").hide();
+				$("#eq").hide();
+				$("#goBack").show();
+				addPopups();
+				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
+
+    				table = $('#basicQueryTable').DataTable();
+				table.draw();
+			});
+		});
 	});
 });

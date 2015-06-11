@@ -25,7 +25,6 @@ $(document).ready(function() {
 		$("#info").hide();
 		$("#qTable").empty();
 		$(".entryForm").show();
-		$('#lower-rect').removeAttr('style').css("margin-top", "450px");
 		$("#inGraphOpts").hide();
 	});
 	console.log("Shared functions are ready");
