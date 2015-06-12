@@ -152,24 +152,24 @@ if($query->execute()){
 		echo "<form id='geneSelections'>";
 		echo "<table id='basicQueryTable' style='width:100%'>";
 	    		echo "<thead>";
-	    		echo "<th>Gene</th>";
+	    		echo "<th class='minfo' value='A node that was found in a resulting edge from the query.'>Gene</th>";
 			if ($gn > 1){
-	    			echo "<th>Source</th>";
+	    			echo "<th class='minfo' value='The other node in the edge query(will always be in the queried genes list).'>Source</th>";
 			}
-	    		echo "<th>Adjacency Value</th>";
-	    		echo "<th>Mean Exp</th>";
-	    		echo "<th>Mean Exp Rank</th>";
-	    		echo "<th>K</th>";
-	    		echo "<th>K Rank</th>";
-	    		echo "<th>Module</th>";
-	    		echo "<th>Modular K</th>";
-	    		echo "<th>Modular K Rank</th>";
-	    		echo "<th>Modular Mean Exp Rank</th>";
+	    		echo "<th class='minfo' value='The Pearson correlation value between the two nodes of the edge.'>Adjacency Value</th>";
+	    		echo "<th class='minfo' value='The average within-dataset expression for the Target Node. This value is computed directly from the input expression values.'>Mean Exp</th>";
+	    		echo "<th class='minfo' value='The rank (highest first) of the Target Node's mean  expression, in a list of all genes in the data background.'>Mean Exp Rank</th>";
+	    		echo "<th class='minfo' value='The connectivity of the Target Node in the entire GCN of the given data background. This is the sum of the edge strengths in the network which involve the Target Node.'>K</th>";
+	    		echo "<th class='minfo' value='The rank (highest first) of the connectivity (K) of the Target Node, among all nodes in the given data background.'>K Rank</th>";
+	    		echo "<th class='minfo' value='The Module of which the Target Node is a member. For each GCN and data background, all nodes are members of zero or one Modules.'>Module</th>";
+	    		echo "<th class='minfo' value='The connectivity of the Target Node when only edges in which the non-Target Node is a member of the same module as the Target Node are included in the edge strength summation.'>Modular K</th>";
+	    		echo "<th class='minfo' value='The rank (highest first) of a Target Node's Modular K, among all of the genes of the given Module.  It has been shown that Nodes which are high ranking in Modular Connectivity often play critical roles in the function assigned to that module via functional term enrichment analysis.'>Modular K Rank</th>";
+	    		echo "<th class='minfo' value='The  rank (highest first) of the mean expression of the Target Node, among nodes which are members of the same module as the Target Node. Utilization of this value,in conjunction with functional term enrichment analysis, has been shown to increase the hit rate of a targeted gene candidate screen by as much as 48-fold'>Modular Mean Exp Rank</th>";
 			if ($gn > 1){
-	    			echo "<th>Connections</th>";
+	    			echo "<th class='minfo' value='Gene'>Connections</th>";
 			}
 			if($expressionOption){
-	    			echo "<th>Expression Selection</th>";
+	    			echo "<th class='minfo' value='Gene'>Expression Selection</th>";
 			}
 	    		echo "</tr>";
 	    		echo "</thead>";

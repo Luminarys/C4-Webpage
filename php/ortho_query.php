@@ -35,6 +35,7 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 $gene = $_GET['orig'];
+$species = $_GET['orig'];
 $ortho = $_GET['ortho'];
 
 //Check if we're returning results for an annotation query
@@ -93,9 +94,9 @@ if($query->execute()){
 			//In the case of an intersection, just skip the row in the table	
 			//Echo the table 
 	    		echo "<tr>";
-	    		echo "<td>" . $row['gene'] . "</td>";
+	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['gene'] . ">" . $row['gene'] . "</td>";
 	    		echo "<td>" . $row['ortho'] . "</td>";
-			echo "<td><a href='gene_set_query.php?netlink=true&spec=". $ortho . "&g0=" . $row['ortho'] . "'>Query</a></td>";
+	    		echo "<td class=popup value=?link=true&spec=". $ortho ."&gene=". $row['ortho'] . ">" . $row['ortho'] . "</td>";
 			echo "<td><input type='checkbox' value=" . $row['ortho'] . "></td>";
 	    		echo "</tr>";
 			}

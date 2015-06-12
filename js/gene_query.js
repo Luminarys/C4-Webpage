@@ -81,8 +81,10 @@ $(document).ready(function() {
 				}else{
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
+				addMetricPopups();
 				$("#MultiGeneQueryExpression").show();
 				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
+				$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
 				}
 			});
 			$("#networkGraph").click(function() {
@@ -138,61 +140,6 @@ $(document).ready(function() {
 	$(document).click(function() {
     		//addPopups();
   	});
-
-	$('#singleGeneQueryForm').submit(function(e) {
-		//Prevents the webpage from directing to the GET url
-		e.preventDefault();
-		var gene = $("#singleGeneInput").val();
-		var species = $(".speciesSelect").val();
-		var spec = species;
-		var genes = [gene];
-		$.get("php/gene_query.php?g0=" + gene + "&spec=" + species, function(data) {
-			$('#qTable').empty()
-			.html(data)
-			.ready(function(){
-				$("#singleGeneForm").hide();
-				$("#goBack").removeAttr('style').show();
-				if($('#basicQueryTable tr').length > 9){
-					$('#lower-rect').removeAttr('style');
-				}else{
-					$("#goBack").css("height","136px");	
-				}
-
-				if(data == "Invalid gene used, please try again"){
-					return 0;
-				}else{
-    				table = $('#basicQueryTable').DataTable();
-				addPopups();
-				$("#MultiGeneQueryExpression").show();
-				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
-				}
-			});
-			$("#networkGraph").click(function() {
-				var field = $("#filterChoice option:selected").text();
-				var min	= $("#min").val();
-				var max = $("#max").val();
-				console.log(typeof min);
-				if(min in window && max in window){
-					$("#qTable").empty();
-					$("#MultiGeneQueryExpression").hide();
-					$("#multiGeneForm").hide();
-					$("#goBack").show();
-					$('#lower-rect').removeAttr('style');
-					generateGraph(spec, genes, field, min, max);
-				}else if(field == "Adjacency Value"){
-					//Default to this
-					console.log("defaulting to adjacency -2/2");
-					$("#qTable").empty();
-					$("#MultiGeneQueryExpression").hide();
-					$("#multiGeneForm").hide();
-					$("#goBack").show();
-					$('#lower-rect').removeAttr('style');
-					generateGraph(spec, genes, "Adjacency Value", -2, 2);
-				}
-			});
-		});
-		table.draw();
-	});
 
 	//Handle the multi-gene query
 	$('#multiGeneQueryForm').submit(function(e) {
@@ -254,8 +201,10 @@ $(document).ready(function() {
 				}else{
     				table = $('#basicQueryTable').DataTable();
 				addPopups();
+				addMetricPopups();
 				$("#MultiGeneQueryExpression").show();
 				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
+				$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
 				}
 			});
 			$("#networkGraph").click(function() {

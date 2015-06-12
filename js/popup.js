@@ -53,3 +53,17 @@ $(".node").qtip({
 });
 console.log("Added in popups");
 }
+
+function addMetricPopups(){
+	$(".minfo").qtip({
+		content: {
+			text: function(even, api){
+				return $(this).attr("value");
+			}
+		},
+		show: {
+			solo: true
+		}
+	});
+	console.log("Added metrics in popups");
+}

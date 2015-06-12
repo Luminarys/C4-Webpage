@@ -64,7 +64,9 @@ $(document).ready(function() {
 					$("#eq").hide();
 					$("#goBack").show();
 					addPopups();
+					addMetricPopups();
 					$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
+					$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
 
     					table = $('#basicQueryTable').DataTable();
 					table.draw();

@@ -42,7 +42,9 @@ $(document).ready( function() {
 					$("#goBack").css("height","136px");	
 				}
 				addPopups();
+				addMetricPopups();
 				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
+				$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
 
     				table = $('#basicQueryTable').DataTable();
 			});
