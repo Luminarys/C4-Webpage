@@ -50,6 +50,7 @@ img {
 	background-color: #eee;
 	border-bottom: 1px solid #e6e6e6;
 	padding: 27px 0;
+	text-align: center;
 }
 #header > div, #footer > div {
 	width: 920px;

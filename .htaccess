@@ -1,4 +1,4 @@
-<Files "DB.auth">
+<Files "settings.ini">
      Order allow,deny
      Deny from all
 </Files>

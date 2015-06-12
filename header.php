@@ -3,9 +3,9 @@
 	$settings = parse_ini_file("settings.ini");	
 	?>
 	<div>
-		<div class="logo">
+		<div id="name">
 			<?php
-			echo "<a href='index.php'>" . $settings["name"] . "</a>";
+			echo $settings["name"];
 			?>
 		</div>
 		<div id="cssmenu1">
@@ -16,19 +16,34 @@
 			<li class='has-sub'>
 				<a href="#"><span>Queries</span></a>
 				<div class="submenu">
-					<a href="gene_set_query.php" id="multiGeneQuery">Gene Set Query</a>
-					<a href="module_query.php" id="modMemberQuery">Module Query</a>
-					<a href="expression_query.php" id="expressionQuery">View Expression</a>
-					<a href="expression_profile_query.php" id="expressionQuery">Query by Expression</a>
-					<a href="ortho_query.php" id="orthQuery">Ortholog Query</a>
-					<a href="annotation_query.php" id="annoQuery">Annotation Query</a>
+					<?php
+					if($settings['gene_set']){
+						echo '<a href="gene_set_query.php" id="multiGeneQuery">Gene Set Query</a>';
+					}
+					if($settings['module']){
+						echo '<a href="module_query.php" id="modMemberQuery">Module Query</a>';
+					}
+					if($settings['expression']){
+						echo '<a href="expression_query.php" id="expressionQuery">View Expression</a>';
+					}
+					if($settings['expression_prof']){
+						echo '<a href="expression_profile_query.php" id="expressionQuery">Query by Expression</a>';
+					}
+					if($settings['ortholog']){
+						echo '<a href="ortho_query.php" id="orthQuery">Ortholog Query</a>';
+					}
+					if($settings['annotation']){
+						echo '<a href="annotation_query.php" id="annoQuery">Annotation Query</a>';
+					}
+					?>
 				</div>
 			</li>
 			<li>
-				<a href="https://github.com/Luminarys/C4-Webpage/">Github</a>
+				
+				<a href="<?php echo $settings["github"]; ?>">Github</a>
 			</li>
 			<li>
-				<a href="about.php">Readme</a>
+				<a href="manual.php">Readme</a>
 			</li>
 			<li class='last'>
 				<a href="contact.php">Contact</a>

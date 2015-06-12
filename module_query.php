@@ -35,7 +35,7 @@
 		<div id="contents">
 			<form id="issue" action="https://github.com/Luminarys/C4-Webpage/issues">
     				<input type="submit" value="Report issue/Make Suggestion">
-			</form>
+			</form><br>
 			<div id="entryForm">
 				<div id="goBack">
 					<button class="backToQuery">Back to query selection</button>
