@@ -10,13 +10,10 @@ function debounce(fn, delay) {
 }
 
 $(document).ready(function() {
-      	$("#header").load("../header.html"); 
-      	$("#footer").load("../footer.html"); 
-
 	$("#goBack").hide();
 
 	$(".backToQuery").click(function() {
-		window.location.href='index.html';
+		window.location.href='index.php';
 	});
 
 	$("#backToInput").click(function() {

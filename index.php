@@ -10,13 +10,9 @@
 	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 </head>
 <body>
-	<div id="header">
-	</div>
-	<script> 
-    		$(function(){
-      			$("#header").load("header.html"); 
-    		});
-    	</script> 
+	<?php
+	include_once "header.php";
+	?>
 	<div id="contents">
 			<div id="querySelection">
 				<h3>Welcome to the C4 project, please select a query to interrogate the networks:</h3>
@@ -31,12 +27,8 @@
 			<div id="qTable">
 			</div>
 	</div>
-	<div id="footer">
-	</div>
-	<script> 
-    		$(function(){
-      			$("#footer").load("footer.html"); 
-    		});
-    	</script> 
+	<?php
+	include_once "footer.php";
+	?>
 </body>
 </html>

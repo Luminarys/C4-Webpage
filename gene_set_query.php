@@ -34,8 +34,9 @@
 
 <body class="Site">
 	<div id="wrapper" class="Site-content">
-		<div id="header">
-		</div>
+		<?php
+		include_once "header.php";
+		?>
 		<div id="contents">
 			<form id="issue" action="https://github.com/Luminarys/C4-Webpage/issues">
     				<input type="submit" value="Report issue/Make Suggestion">
@@ -49,8 +50,8 @@
 					<button class="backToQuery">Back to query selection</button>
 					<p>Gene Set Query:</p>
 					<form id='multiGeneQueryForm'>
-							<input type="radio" name="multiGeneOption" checked="checked">Include all genes which have at least one adjacent edge</option><br>
-							<input type="radio" name="multiGeneOption" id="ANDButton">Include only genes with at least two adjacent edges</option><br>
+							<input type="radio" name="multiGeneOption" checked="checked">Include edges in which one node is in the Target Node list</option><br>
+							<input type="radio" name="multiGeneOption" id="ANDButton">Include edges in which both nodes are in the Target Node list</option><br>
 							<select class="speciesSelect">
 							<?php
 
@@ -94,8 +95,9 @@
 			<div id="qTable"></div>
 			
 		</div>
-		<div id="footer" class="footer">
-		</div>
+		<?php
+		include_once "footer.php";
+		?>
 	</div>
 
 </body>

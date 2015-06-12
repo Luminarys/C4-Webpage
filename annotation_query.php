@@ -34,8 +34,9 @@
 
 <body class="Site">
 	<div id="wrapper" class="Site-content">
-		<div id="header">
-		</div>
+		<?php
+		include_once "header.php";
+		?>
 		<div id="contents">
 			<form id="issue" action="https://github.com/Luminarys/C4-Webpage/issues">
     				<input type="submit" value="Report issue/Make Suggestion">
@@ -57,12 +58,12 @@
 							ini_set('display_errors', 'On');
 							error_reporting(E_ALL | E_STRICT);
 							
-							//Load the authentication into an array
-							$auth = file("php/DB.auth");
+							//Load the settings
+							$settings = parse_ini_file("../settings.ini");	
 							
-							//Initialize Server, loading the file auth
-							$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=' . substr($auth[3],0,-1) .';charset=utf8';
-							$db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
+							//Initialize Server, using settings
+							$dbInit = 'mysql:host=' . $settings["server"] . ';dbname=' . $settings["maindb"] .';charset=utf8';
+							$db = new PDO($dbInit, $settings["user"], $settings["password"]);
 							$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 							$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 							//Build valid species and genes from MapReference table
@@ -86,7 +87,9 @@
 			<div id="qTable"></div>
 		</div>
 			
-		<div id="footer" class="footer"></div>
+		<?php
+		include_once "footer.php";
+		?>
 	</div>
 
 </body>

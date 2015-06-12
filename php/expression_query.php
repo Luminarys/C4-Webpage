@@ -4,12 +4,12 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
 
-//Load the authentication into an array
-$auth = file("DB.auth");
+//Load the settings
+$settings = parse_ini_file("../settings.ini");	
 
-//Initialize Server, loading the file auth
-$dbInit = 'mysql:host=' . substr($auth[0],0,-1) . ';dbname=' . substr($auth[3],0,-1) .';charset=utf8';
-$db = new PDO($dbInit, substr($auth[1],0,-1), substr($auth[2],0,-1));
+//Initialize Server, using settings
+$dbInit = 'mysql:host=' . $settings["server"] . ';dbname=' . $settings["maindb"] .';charset=utf8';
+$db = new PDO($dbInit, $settings["user"], $settings["password"]);
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 

@@ -54,18 +54,22 @@ $(document).ready(function() {
 		req+="&maxres=" + $("#resnum").val();
 		console.log(req);
 		$.get(req, function(data) {
-			$('#qTable').empty()
-			.html(data)
-			.ready(function(){
-				$("#expressionProfileForm").hide();
-				$("#eq").hide();
-				$("#goBack").show();
-				addPopups();
-				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
+			if($(data).has( "table" ).length == 0){
+				alert("Warning, your mean expression range was outside of the acceptable boundaries, or you did not modify the sliders properly. Please try again.");	
+			}else{
+				$('#qTable').empty()
+				.html(data)
+				.ready(function(){
+					$("#expressionProfileForm").hide();
+					$("#eq").hide();
+					$("#goBack").show();
+					addPopups();
+					$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
 
-    				table = $('#basicQueryTable').DataTable();
-				table.draw();
-			});
+    					table = $('#basicQueryTable').DataTable();
+					table.draw();
+				});
+			}
 		});
 	});
 });

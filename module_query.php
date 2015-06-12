@@ -29,8 +29,9 @@
 
 <body class="Site">
 	<div id="wrapper" class="Site-content">
-		<div id="header">
-		</div>
+		<?php
+		include_once "header.php";
+		?>
 		<div id="contents">
 			<form id="issue" action="https://github.com/Luminarys/C4-Webpage/issues">
     				<input type="submit" value="Report issue/Make Suggestion">
@@ -79,7 +80,9 @@
 			</div>
 			<div id="qTable"></div>
 		</div>
-		<div id="footer" class="footer"></div>
+		<?php
+		include_once "footer.php";
+		?>
 	</div>
 
 </body>
