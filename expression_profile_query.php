@@ -59,7 +59,7 @@
 							<?php
 							include_once "load_species_options.php";
 							?>
-						</select>
+							</select>
 						<input type="submit">
 					</form>
 				</div>
