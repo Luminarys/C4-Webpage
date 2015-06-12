@@ -1,4 +1,6 @@
 <?php
+	//Uses the MapReference table to generate options within a select block. Include this within <select> </select> to have it generate all the available species
+
 	//Set debugging on
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL | E_STRICT);
