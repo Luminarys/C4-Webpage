@@ -10,6 +10,8 @@ function debounce(fn, delay) {
 }
 
 $(document).ready(function() {
+	var height = $(document).height();
+	$("#contents").css("min-height", height - 400);
 	$("#goBack").hide();
 
 	$(".backToQuery").click(function() {

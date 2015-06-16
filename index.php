@@ -8,6 +8,13 @@
 
 	<!-- jQuery -->
 	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+	
+	<script>
+	$(document).ready(function (){
+		var height = $(document).height();
+		$("#contents").css("min-height", height - 400);
+	});
+	</script>
 </head>
 <body>
 	<?php

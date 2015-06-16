@@ -168,7 +168,7 @@ img {
 /*------------------------------ CONTENTS ------------------------------*/
 #contents {
 	text-align:center;
-	min-height: 510px;
+	min-height: 600px;
 	margin: 0 auto;
 	padding: 54px 40px;
 }
@@ -423,38 +423,6 @@ p a {
 }
 #connect a.pinterest:hover {
 	background-position: -40px -120px;
-}
-#upper-rect {
-	text-align:center;
-	border-radius: 30px 30px 30px 30px;
-	background: #66cd7d;
-	padding: 15px;
-	height: 100px;
-	margin-left: 250px;
-	margin-right: 250px;
-	margin-top: 30px;
-}
-#lower-rect {
-	position: relative;
-	bottom: 0;
-	border-radius: 30px 30px 30px 30px;
-	background: #66cd7d;/**/
-	padding: 15px;
-	height: 100px;
-	margin-left: 250px;
-	margin-right: 250px;
-}
-#left-rect {
-	top: 200px;
-  	left: 40px;
-  	width: 100px;
-	height: 500px;
-	position: fixed;
-	border-radius: 30px 30px 30px 30px;
-	margin-left: 0px;
-	margin-top: 0px;
-	background: #66cd7d;
-	padding: 15px;
 }
 #issue{
 	text-align:center;
