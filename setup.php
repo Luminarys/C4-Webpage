@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$annotation = test_input($_POST["annotation"]);
 	$server = test_input($_POST["server"]);
 	$user = test_input($_POST["user"]);
-	$pssword = test_input($_POST["password"]);
+	$password = test_input($_POST["password"]);
 	$maindb = test_input($_POST["maindb"]);
 	$orthodb = test_input($_POST["orthodb"]);
 
