@@ -152,10 +152,10 @@ if($query->execute()){
 		echo "<form id='geneSelections'>";
 		echo "<table id='basicQueryTable' style='width:100%'>";
 	    		echo "<thead>";
-	    		echo "<th class='minfo' value='A node that was found in a resulting edge from the query.'>Gene</th>";
 			if ($gn > 1){
-	    			echo "<th class='minfo' value='The other node in the edge query(will always be in the queried genes list).'>Source</th>";
+	    			echo "<th class='minfo' value='A node that was found in a resulting edge from the query.'>Source</th>";
 			}
+	    		echo "<th class='minfo' value='The other node in the edge query(will always be in the queried genes list).'>Gene</th>";
 	    		echo "<th class='minfo' value='The Pearson correlation value between the two nodes of the edge.'>Adjacency Value</th>";
 	    		echo "<th class='minfo' value='The average within-dataset expression for the Target Node. This value is computed directly from the input expression values.'>Mean Exp</th>";
 	    		echo "<th class='minfo' value='The rank (highest first) of the Target Node's mean  expression, in a list of all genes in the data background.'>Mean Exp Rank</th>";
@@ -190,10 +190,10 @@ if($query->execute()){
 			}
 			//Echo the table 
 	    		echo "<tr>";
-	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
 			if ($gn > 1){
 	    			echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['source'] . ">" . $row['source'] . "</td>";
 			}
+	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
 	    		echo "<td>" . $row['adjacency'] . "</td>";
 	    		echo "<td>" . $row['mean_exp'] . "</td>";
 	    		echo "<td>" . $row['mean_exp_rank'] . "</td>";
