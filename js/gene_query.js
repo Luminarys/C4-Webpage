@@ -79,7 +79,9 @@ $(document).ready(function() {
 				if(data == "Invalid gene used, please try again"){
 					return 0;
 				}else{
-    				table = $('#basicQueryTable').DataTable();
+    				table = $('#basicQueryTable').DataTable({
+					"scrollX": true
+				});
 				addPopups();
 				addMetricPopups();
 				$("#MultiGeneQueryExpression").show();
@@ -199,12 +201,15 @@ $(document).ready(function() {
 				if(data == "Invalid gene used, please try again"){
 					return 0;
 				}else{
-    				table = $('#basicQueryTable').DataTable();
+    				table = $('#basicQueryTable').DataTable({
+					"scrollX": true
+				});
 				addPopups();
 				addMetricPopups();
 				$("#MultiGeneQueryExpression").show();
 				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
 				$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
+				table.draw();
 				}
 			});
 			$("#networkGraph").click(function() {

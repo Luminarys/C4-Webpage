@@ -543,6 +543,10 @@ p a {
     height:225px;
     margin:25px;
 }
-table {
+#expProfTab {
 	table-layout: fixed;
 }
+th, td { white-space: nowrap; }
+    div.dataTables_wrapper {
+        margin: 0 auto;
+    }
