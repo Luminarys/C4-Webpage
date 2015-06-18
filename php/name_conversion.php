@@ -62,7 +62,15 @@ $query = $db->prepare("SELECT * FROM " . $species . "_Annotation WHERE locus = ?
 if($query->execute(array($_GET["gene"]))){
 	$results = $query->fetchAll();
 	$rows = $query->rowCount();
-	echo $results[0]['name'];
+	if(array_key_exists(0, $results){
+		if(array_key_exists('name', $results[0]){
+			echo $results[0]['name'];
+		}else{
+			echo "";
+		}
+	}else{
+		echo "";
+	}
 }
 //Close connection
 $db=null;
