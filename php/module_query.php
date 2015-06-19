@@ -48,7 +48,7 @@ if($query->execute(array($_GET["module"]))){
         echo '    <td>Column: </td>';
         echo '    <td><select id="filterChoice">';
         echo '    <option value="1">Mean Exp</option>';
-        echo '    <option value="2>Mean Exp Rank</option>';
+        echo '    <option value="2">Mean Exp Rank</option>';
         echo '    <option value="3">K</option>';
         echo '    <option value="4">K Rank</option>';
         echo '    <option value="5">Modular K</option>';
