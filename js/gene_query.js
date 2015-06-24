@@ -54,65 +54,8 @@ $(document).ready(function() {
 				}else{
 					$('#multiGeneInputArea').val($('#multiGeneInputArea').val() + '\n' + pair[1])
 				}
-			}else if(pair[0] == "spec"){
-				spec = pair[1];
-				if(i != 0){
-					req+="&";
-				}
-				req+=("spec="+pair[1]);
-				$(".speciesSelect").val(pair[1]);
-			}
-       		}
-		req+=("&type=" + "OR");
-		console.log(req);
-		$.get(req, function(data) {
-			$('#qTable').empty()
-			.html(data)
-			.ready(function(){
-				$("#multiGeneForm").hide();
-				$("#goBack").show();
-				if($('#basicQueryTable tr').length > 9){
-					$('#lower-rect').removeAttr('style');
-				}else{
-					$("#goBack").css("height","136px");	
-				}
-				if(data == "Invalid gene used, please try again"){
-					return 0;
-				}else{
-    				table = $('#basicQueryTable').DataTable({
-					"scrollX": true
-				});
-				addPopups();
-				addMetricPopups();
-				$("#MultiGeneQueryExpression").show();
-				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
-				$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
-				}
-			});
-			$("#networkGraph").click(function() {
-				var field = $("#filterChoice option:selected").text();
-				var min	= $("#min").val();
-				var max = $("#max").val();
-				console.log(typeof min);
-				if(min in window && max in window){
-					$("#qTable").empty();
-					$("#MultiGeneQueryExpression").hide();
-					$("#multiGeneForm").hide();
-					$("#goBack").show();
-					$('#lower-rect').removeAttr('style');
-					generateGraph(spec, genes, field, min, max);
-				}else if(field == "Adjacency Value"){
-					//Default to this
-					console.log("defaulting to adjacency -2/2");
-					$("#qTable").empty();
-					$("#MultiGeneQueryExpression").hide();
-					$("#multiGeneForm").hide();
-					$("#goBack").show();
-					$('#lower-rect').removeAttr('style');
-					generateGraph(spec, genes, "Adjacency Value", -2, 2);
-				}
-			});
-		});
+       			}
+		}
 	}
 
 	$("#MultiGeneQueryExpression").click(function() {

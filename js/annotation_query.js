@@ -74,8 +74,7 @@ $(document).ready(function() {
 	//What to do when we do an AJAX query to load a popup
 	if (getQueryVar("anlink")){
 		var gene = getQueryVar("gene");
-		var species = getQueryVar("spec");
-		insertData(gene, species);
+		$("#annotationInput").val(gene);
 	}
 
 	$('*').keyup( function() {

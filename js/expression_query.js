@@ -908,28 +908,10 @@ $(document).ready(function() {
 					first = false;
 				}else if(!skip){
 					$('#expressionInputArea').val($('#expressionInputArea').val() + '\n' + pair[1])
+			
 				}
-			}else if(pair[0] == "spec"){
-				$(".speciesSelect").val(pair[1]);
 			}
        		}
-		plot = "line"; 
-		norm = "mean";
-		qRes = genReq();
-		req = qRes[0];
-		texts = qRes[1];
-		$("#expressionForm").hide();
-		$("#goBack").show();
-		$("#goBack").css("height","136px");	
-		$("#normalization").val(plot);
-		$("#normalizationLP").val(norm);
-		$.get(req, function (data) {
-			handleInitData(data,texts);
-			$('#lower-rect').removeAttr('style');
-			$("#goBack").show();
-			$("#goBack").css("height","50px");	
-		});
-		
 	}
 	//Handle the expression query
 	$('#expressionQueryForm').submit(function(e) {
