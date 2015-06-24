@@ -24,14 +24,11 @@ if($query->execute()){
 	exit();
 }
 //SELECT ortho_prefix FROM OrthoMapOut WHERE network_prefix = ;
-$query = $db->prepare("SELECT * FROM OrthoMapOut");
+$query = $db->prepare("SELECT ortho_prefix FROM OrthoMapOut WHERE network_prefix = ?");
 $species = $_GET["spec"];
-$dataSet = array();
-if($query->execute()){
+if($query->execute(array($species))){
 	$result = $query->fetchAll();
-	foreach($result as $spec){
-		$dataSet[$spec['network_prefix']] = $spec['ortho_prefix'];
-	}
+	$dataSet = $result[0][0];
 }else{
 	echo "Warning, no MapReference table defined, exiting";
 	exit();
@@ -132,41 +129,6 @@ if($query->execute(array($_GET["gene"]))){
 
 	}
 }
-//Do Ortho Queries
-$dbInit = 'mysql:host=' . $settings["server"] . ';dbname=' . $settings["orthodb"] .';charset=utf8';
-$db = new PDO($dbInit, $settings["user"], $settings["password"]);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-$species = $dataSet[$species];
-$alt_data = array();
-foreach ($alt_specs as $ortho){
-	array_push($alt_data, $dataSet[$ortho]);
-}
-$alt_specs = array_unique($alt_data);
-foreach ($alt_specs as $ortho){
-	$oortho = $ortho;
-	//$ortho = $dataSet[$ortho];
-	$gene = $species;
-	$inp = array($gene."_Genes.name",$ortho."_Genes.name",$gene."_Genes",$gene."_Ortho",$gene."_Ortho.id",$gene."_Genes.id",$ortho."_Ortho",$ortho."_Ortho.orth_id",$gene."_Ortho.orth_id",$ortho."_Genes",$ortho."_Genes.id",$ortho."_Ortho.id",$gene."_Genes.name");
-	$oquery = "SELECT " . $inp[0] . " AS gene, " . $inp[1] . " AS ortho FROM " . $inp[2] . " INNER JOIN " . $inp[3] . " ON " . $inp[4] . " = " . $inp[5] . " INNER JOIN " . $inp[6] . " ON " . $inp[7] . " = " . $inp[8] . " INNER JOIN " . $inp[9] . " ON " . $inp[10] . " = " . $inp[11] . " WHERE " . $inp[12] . " = ?";
-	
-	$query = $db->prepare($oquery);
-	if($query->execute(array($_GET["gene"]))){
-		$results = $query->fetchAll();
-		if(array_key_exists(0, $results)){
-			echo "<p id='qtp'>" . $ortho  . " Ortholog: " . $results[0]['ortho'] . "</p>";
-			echo "<p id='qtp'><a href='/annotation_query.php?anlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Annotation Query</a></p>";
-			echo "<p id='qtp'><a href='/gene_set_query.php?netlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Network Query</a></p>";
-			echo "<p id='qtp'><a href='/expression_query.php?exlink=True&spec=". $ortho . "&gene=" . $results[0]['ortho'] . "' target='_blank'>Expression Query</a></p>";
-		}else{
-			echo "<p id='qtp'> Ortholog for species " . $ortho . ": None</p>";
-		}
-	}
-}
-
-
-
 //Close connection
 $db=null;
 ?>

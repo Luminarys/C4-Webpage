@@ -15,15 +15,38 @@ $.fn.dataTable.ext.search.push(
     }
 );
 
+function loadiDataSets(){
+	var ispec = $("#inputSpec").val();
+	$.get("load_network_options.php?spec=" + ispec, function(data) {
+		$('#inputDataSel').empty()
+		.html(data);
+	});
+}
+function loadoDataSets(){
+	var ospec = $("#orthoSpec").val();
+	$.get("load_network_options.php?spec=" + ospec, function(data) {
+		$('#orthoDataSel').empty()
+		.html(data);
+	});
+}
+
 $(document).ready(function() {
 	$('*').keyup( function() {
 		console.log("key released");
         	table.draw();
     	} );
+	loadiDataSets();
+	loadoDataSets();
     	var table = $('#orthoQueryTable').DataTable();
 	$("#MultiGeneQueryExpression").hide();
 	$("#MultiGeneQueryNetwork").hide();
-
+	$("#inputSpec").change(function() {
+		loadiDataSets();
+	});
+	$("#orthoSpec").change(function() {
+		loadoDataSets();
+	});
+	
 	$("#MultiGeneQueryNetwork").click(function() {
 		var genes = $("#geneSelections input:checkbox:checked").map(function(){
       			return $(this).val();
@@ -38,7 +61,7 @@ $(document).ready(function() {
 			req+="&";
 			req+=("g" + i + "="+genes[i]);	
 		}
-		req+=("&spec=" + $("#orthoSpec").val());
+		req+=("&spec=" + $('#orthoDataSel').val());
 		window.location.href = req;
 	});
 
@@ -56,7 +79,7 @@ $(document).ready(function() {
 			req+="&";
 			req+=("g" + i + "="+genes[i]);	
 		}
-		req+=("&spec=" + $("#orthoSpec").val());
+		req+=("&spec=" + $("#orthoDataSel").val());
 		window.location.href = req;
 	});
 	$("#backToInput" ).click(function() {
@@ -66,15 +89,6 @@ $(document).ready(function() {
 	$('#orthoQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
-		var $inputs = $('#orthoQueryForm :input');
-		var vals = {};
-
-		ind = 0;
-		$inputs.each(function() {
-			vals[ind] = $(this).val();	
-			ind++;
-		});
-
 		var lines = $('#orthoInputArea').val().split(/\n/);
 		var texts = [];
 
@@ -85,7 +99,6 @@ $(document).ready(function() {
   			 }
            	}
 		console.log(texts);
-		console.log(vals);
 		req = "php/ortho_query.php?";
 		//Build the GET request by looping through the inputs
 		for(i = 0;i < texts.length;i++){
@@ -95,14 +108,16 @@ $(document).ready(function() {
 			req+=("g" + i + "="+texts[i]);	
 		}
 		//Append on the species DB to access
-		req+=("&orig=" + vals[0]);
-		req+=("&ortho=" + vals[1]);
+		req+=("&orig=" + $("#inputSpec").val());
+		req+=("&idata=" + $("#inputDataSel").val());
+		req+=("&ortho=" + $("#orthoSpec").val());
+		req+=("&odata=" + $("#orthoDataSel").val());
 		console.log(req);
 		$.get(req, function(data) {
 			$('#qTable').empty()
 			.html(data)
 			.ready(function(){
-				$("#orthoForm").hide();
+				$("#orthoQueryForm").hide();
 				$("#goBack").show();
 				$("#MultiGeneQueryExpression").show();
 				$("#MultiGeneQueryNetwork").show();
@@ -112,6 +127,7 @@ $(document).ready(function() {
 					$("#goBack").css("height","50px");	
 				}
     				table = $('#orthoQueryTable').DataTable();
+				addOrthoPopups();
 			});
 		});
 		table.draw();

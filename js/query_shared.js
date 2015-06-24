@@ -22,8 +22,10 @@ $(document).ready(function() {
 		$("#goBack").hide();
 		$("#MultiGeneQueryExpression").hide();
 		$("#info").hide();
+		$("#orthoQueryForm").show();
 		$("#qTable").empty();
 		$(".entryForm").show();
+		$("#entryForm").show();
 		$("#inGraphOpts").hide();
 	});
 	console.log("Shared functions are ready");

@@ -28,6 +28,32 @@ $(".popup").qtip({
 console.log("Added in popups");
 }
 
+function addOrthoPopups(){
+$(".popup").qtip({
+	content: {
+		text: function(event, api){
+			$.ajax({
+				url: "php/ortho_popup.php" + $(this).attr("value")
+			})
+			.then(function(content){
+				api.set('content.text', content);
+			}, function(xhr, status, error) {
+				api.set('content.text', status + ': ' + error);	
+			});
+			return 'Loading...';
+		}
+	},	
+	hide: {
+		event: 'unfocus'
+	}, 
+	show: {
+		solo: true,
+		event: 'click'
+	}
+});
+console.log("Added in popups");
+}
+
 function addGraphPopups(){
 $(".node").qtip({
 	content: {

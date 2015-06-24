@@ -13,6 +13,12 @@
 
 	<!-- Shared Query Functions JS file -->
 	<script type="text/javascript" charset="utf8" src="js/query_shared.js"></script>
+	<script type="text/javascript" charset="utf8" src="js/popup.js"></script>
+
+	<!--qTip-->
+	<script type="text/javascript" charset="utf8" src="js/popup.js"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css">
 
 	<!-- DataTables CSS -->
 	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
@@ -32,24 +38,30 @@
 			<form id="issue" action=<?php echo $settings['github'] ?>>
     				<input type="submit" value="Report issue/Make Suggestion">
 			</form><br>
-			<div id="entryForm">
+			<div id="entryForm" class="entryForm">
 				<div id="goBack">
 					<button class="backToQuery">Back to query selection</button>
 					<button id="backToInput">Back to data entry</button>
 				</div>
-				<div id="orthoForm" class="entryForm">
-					<button class="backToQuery">Back to query selection</button>
-					<p>Gene Ortholog Query:</p>
 					<form id='orthoQueryForm'>
-						Given Species: <select>
+						Given Species: <select id="inputSpec">
 						<?php
-						include "load_species_options.php";
+						include "load_ortho_options.php";
 						?>
-						</select><br>
+						</select>
+						Dataset for species:
+						<select id='inputDataSel'>
+
+						</select>
+						<br>
 						Ortholog Species: <select id="orthoSpec">
 						<?php
-						include "load_species_options.php";
+						include "load_ortho_options.php";
 						?>
+						</select>
+						Dataset for species:
+						<select id='orthoDataSel'>
+
 						</select>
 						<br><br>
 						<div>
@@ -57,7 +69,6 @@
 						</div>
 						<input type="submit">
 					</form>
-				</div>
 				<button id="MultiGeneQueryNetwork">Network Query using selected Genes</button>
 				<button id="MultiGeneQueryExpression">Expression Query using selected Genes</button>
 			</div>

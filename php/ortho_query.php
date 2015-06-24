@@ -34,9 +34,26 @@ $db = new PDO($dbInit, $settings["user"], $settings["password"]);
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+$query = $db->prepare("SELECT * FROM OrthoMapReference");
+$validSpecies = array();
+$validGenes = "";
+if($query->execute()){
+	$result = $query->fetchAll();
+	foreach ($result as $spec){
+		array_push($validSpecies, $spec["prefix"]);
+	}
+}else{
+	echo "Warning, no MapReference table defined, exiting";
+	exit();
+}
+
 $gene = $_GET['orig'];
 $species = $_GET['orig'];
 $ortho = $_GET['ortho'];
+
+//Actual data backgrounds for the species
+$odata = $_GET['odata'];
+$idata = $_GET['idata'];
 
 //Check if we're returning results for an annotation query
 $annotation = false;
@@ -48,7 +65,7 @@ if(in_array($gene,$validSpecies) && in_array($ortho,$validSpecies)){
 
 	$inp = array($gene."_Genes.name",$ortho."_Genes.name",$gene."_Genes",$gene."_Ortho",$gene."_Ortho.id",$gene."_Genes.id",$ortho."_Ortho",$ortho."_Ortho.orth_id",$gene."_Ortho.orth_id",$ortho."_Genes",$ortho."_Genes.id",$ortho."_Ortho.id",$gene."_Genes.name");
 
-	$pre_query = "SELECT " . $inp[0] . " AS gene, " . $inp[1] . " AS ortho FROM " . $inp[2] . " INNER JOIN " . $inp[3] . " ON " . $inp[4] . " = " . $inp[5] . " INNER JOIN " . $inp[6] . " ON " . $inp[7] . " = " . $inp[8] . " INNER JOIN " . $inp[9] . " ON " . $inp[10] . " = " . $inp[11] . " WHERE " . $inp[12] . " IN (";
+	$pre_query = "SELECT DISTINCT " . $inp[1] . " AS ortho, " . $inp[0] . " AS gene FROM " . $inp[2] . " INNER JOIN " . $inp[3] . " ON " . $inp[4] . " = " . $inp[5] . " INNER JOIN " . $inp[6] . " ON " . $inp[7] . " = " . $inp[8] . " INNER JOIN " . $inp[9] . " ON " . $inp[10] . " = " . $inp[11] . " WHERE " . $inp[12] . " IN (";
 
 }else{
 	echo "Invalid species used, please try again";	
@@ -79,7 +96,6 @@ if($query->execute()){
 	    		echo "<thead>";
 	    		echo "<th>Gene</th>";
 	    		echo "<th>Ortholog</th>";
-	    		echo "<th>Network Query</th>";
 	    		echo "<th>Multigene Query Selection</th>";
 	    		echo "</tr>";
 	    		echo "</thead>";
@@ -94,9 +110,8 @@ if($query->execute()){
 			//In the case of an intersection, just skip the row in the table	
 			//Echo the table 
 	    		echo "<tr>";
-	    		echo "<td class=popup value=?link=true&spec=". $species ."&gene=". $row['gene'] . ">" . $row['gene'] . "</td>";
-	    		echo "<td>" . $row['ortho'] . "</td>";
-	    		echo "<td class=popup value=?link=true&spec=". $ortho ."&gene=". $row['ortho'] . ">" . $row['ortho'] . "</td>";
+	    		echo "<td class=popup value=?link=true&spec=". $idata ."&gene=". $row['gene'] . ">" . $row['gene'] . "</td>";
+	    		echo "<td class=popup value=?link=true&spec=". $odata ."&gene=". $row['ortho'] . ">" . $row['ortho'] . "</td>";
 			echo "<td><input type='checkbox' value=" . $row['ortho'] . "></td>";
 	    		echo "</tr>";
 			}
