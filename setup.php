@@ -59,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	$name = test_input($_POST["name"]);
 	$github = test_input($_POST["github"]);
+	$github_home = test_input($_POST["github-home"]);
 	$copyright = test_input($_POST["copyright"]);
 	$gene_set = test_input($_POST["gene_set"]);
 	$module = test_input($_POST["module"]);
@@ -76,6 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	"Header" => array(
    		"name" => $name,
 		"github" => $github
+		"github-home" => $github_home
 	),
 	"Footer" => array(
    		"copyright" => $copyright
@@ -107,7 +109,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 		Site Name(used for the header title): <input type="text" name="name">
 		<br><br>
-		Github URL: <input type="text" name="github">
+		Github URL: <input type="text" name="github-home">
+		<br><br>
+		Github Issues URL: <input type="text" name="github">
 		<br><br>
 		Copyright Holder: <input type="text" name="copyright">
 		<br><br>

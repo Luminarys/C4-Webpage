@@ -15,6 +15,8 @@
 	include_once "header.php";
 	?>
 	<div id="contents">
+		<a href="/manual.pdf" download>Download PDF</a>
+		<br><br>
 		<object data="manual.pdf" type="application/pdf" width="1200" height="800">
 		</object>
 	</div>

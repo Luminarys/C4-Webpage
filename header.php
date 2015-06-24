@@ -40,7 +40,7 @@
 			</li>
 			<li>
 				
-				<a href="<?php echo $settings["github"]; ?>">Github</a>
+				<a href="<?php echo $settings["github-home"]; ?>">Github</a>
 			</li>
 			<li>
 				<a href="manual.php">Readme</a>
