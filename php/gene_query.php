@@ -143,6 +143,7 @@ if($query->execute()){
 		        echo '    <td><input type="text" id="min" name="min"></td>';
 		        echo '    <td>Maximum: </td>';
 		        echo '    <td><input type="text" id="max" name="max"></td>';
+			echo ' 	  <td><select id="invertChoice"><option value="false">Within Range</option><option value="true">Outside of Range</option></select></td>';
 		        echo '    <td><button id="networkGraph" onclick="">Create network graph based on filtering settings</button></td>';
 		        echo '</tr>';
 		    	echo ' </tbody></table>	';
