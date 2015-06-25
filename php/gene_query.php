@@ -27,7 +27,11 @@ if($query->execute()){
 	$result = $query->fetchAll();
 	foreach ($result as $spec){
 		array_push($validSpecies, $spec["prefix"]);
-		$validGenes .= $spec["regex"] . "|";
+		if($spec["regex"][0] == "(" && $spec["regex"][strlen($spec["regex"]) - 1] != ")"){
+			$validGenes .= $spec["regex"] . ")|";
+		}else{
+			$validGenes .= $spec["regex"] . "|";
+		}
 	}
 }else{
 	echo "Warning, no MapReference table defined, exiting";
