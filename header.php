@@ -35,6 +35,9 @@
 					if($settings['annotation']){
 						echo '<a href="annotation_query.php" id="annoQuery">Annotation Query</a>';
 					}
+					if($settings['functional']){
+						echo '<a href="functional_query.php" id="funcQuery">Functional Enrichment Query</a>';
+					}
 					?>
 				</div>
 			</li>

@@ -42,6 +42,9 @@
 				if($settings['annotation']){
 				 	echo '<a href="annotation_query.php" id="annoQuery">Query Annotation</a><br>';
 				}
+				if($settings['functional']){
+					echo '<a href="functional_query.php" id="funcQuery">View Functional Enrichment</a>';
+				}
 				?>
 			</div>
 			<div id="qTable">
