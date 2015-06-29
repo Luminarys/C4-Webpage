@@ -43,7 +43,10 @@
 				 	echo '<a href="annotation_query.php" id="annoQuery">Query Annotation</a><br>';
 				}
 				if($settings['functional']){
-					echo '<a href="functional_query.php" id="funcQuery">View Functional Enrichment</a>';
+					echo '<a href="functional_query.php" id="funcQuery">View Functional Enrichment</a><br>';
+				}
+				if($settings['plasticity']){
+					echo '<a href="gene_plasticity_query.php" id="plasticityQuery">Query Genes by Plasticity</a>';
 				}
 				?>
 			</div>

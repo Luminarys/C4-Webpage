@@ -38,6 +38,9 @@
 					if($settings['functional']){
 						echo '<a href="functional_query.php" id="funcQuery">Functional Enrichment Query</a>';
 					}
+					if($settings['plasticity']){
+						echo '<a href="gene_plasticity_query.php" id="plasticityQuery">Plasticity Query</a>';
+					}
 					?>
 				</div>
 			</li>
