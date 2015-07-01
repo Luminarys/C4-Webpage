@@ -1,3 +1,6 @@
+//Offset for the X labels in the graphs - Must be customized depending on the length of the Samples
+var xOffset = "-2.3em";
+
 function average(d) {
 	var sum = 0;
 	var counter = 0;
@@ -7,9 +10,6 @@ function average(d) {
 	}
 	return sum/counter;
 }
-$(
-function() {
-});
 
 function cMax(d) {
 	var max = 0;
@@ -307,7 +307,7 @@ function meanNormalizeLPData(info, genes){
 function boxPlot(info, genes){
 	var labels = false; // show the text labels beside individual boxplots?
 
-	var margin = {top: 30, right: 50, bottom: 90, left: 50};
+	var margin = {top: 30, right: 50, bottom: 110, left: 50};
 	var  width = 1000 - margin.left - margin.right;
 	var height = 500 - margin.top - margin.bottom;
 	var min = 0;
@@ -387,6 +387,7 @@ function boxPlot(info, genes){
 
 	svg.append("g")
       		.attr("class", "x axis")
+      		.attr("id", "x-axis")
       		.attr("transform", "translate(0," + (height  + margin.top + 10) + ")")
       		.call(xAxis)
 	  	.append("text")             // text label for the x axis
@@ -395,7 +396,12 @@ function boxPlot(info, genes){
 		.attr("dy", ".71em")
         	.style("text-anchor", "middle")
 		.style("font-size", "16px") 
-        	.text("Sample"); 
+        	//.text("Sample")
+		.selectAll("text");
+		//.attr("transform", function(d) {
+               // 	return "rotate(-65)" 
+                //});
+       svg.selectAll("#x-axis .tick text").attr("transform","rotate(-70)").attr("dx", xOffset).attr("dy", 0);
 
 		$("normalizationDiv").show();	
 }
@@ -468,6 +474,7 @@ function dotPlot(info, texts){
 
 		vis.append("svg:g")
 		.attr("class","axis")
+		.attr("id","x-axis")
     		.attr("transform", "translate(0," + (height - MARGINS.bottom) + ")")
     		.call(xAxis);	
 
@@ -500,6 +507,8 @@ function dotPlot(info, texts){
 			}
 			cpos++;
 		}
+       		vis.selectAll("#x-axis .tick text").attr("transform","rotate(-70)").attr("dx", xOffset).attr("dy", 0)
+
 	}
 
 
@@ -599,6 +608,7 @@ function linePlot(info, texts){
                 	
 			vis.append("svg:g")
 			.attr("class","axis")
+			.attr("id","x-axis")
     			.attr("transform", "translate(0," + (height - MARGINS.bottom) + ")")
     			.call(xAxis);	
                 	
@@ -646,6 +656,7 @@ function linePlot(info, texts){
   			.attr('fill', 'none');
 		}
 	}
+       	vis.selectAll("#x-axis .tick text").attr("transform","rotate(-70)").attr("dx", xOffset).attr("dy", 0)
 	if (badGenes.length > 0) {
 		console.log("Bad Genes:" + badGenes);
 		$("#qTable").append("<p>Invalid/Missing Genes: " + badGenes + "</p>");
@@ -662,7 +673,8 @@ function linePlot(info, texts){
 			console.log((lspace/2 + (i % 5)*lspace) - 40);
 			vis.append("text")
 			.attr("x", (lspace/2 + (i % 5)*lspace) - 40)
-			.attr("y", height - (MARGINS.bottom/2) + 15 + (25 * crow))
+			//.attr("y", height - (MARGINS.bottom/2) + 15 + (25 * crow))
+			.attr("y", 20)	
 			.attr("class", "legend popup")
 			.attr("value", "?link=true&spec="+spec + "&gene=" + texts[i])
 			.style("fill", function() { return colors[i]; })
