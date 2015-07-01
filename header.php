@@ -40,6 +40,7 @@
 					}
 					if($settings['plasticity']){
 						echo '<a href="gene_plasticity_query.php" id="plasticityQuery">Plasticity Query</a>';
+						echo '<a href="compare_expression.php" id="plasticityComp">Compare Expression</a>';
 					}
 					?>
 				</div>

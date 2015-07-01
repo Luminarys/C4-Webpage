@@ -46,7 +46,8 @@
 					echo '<a href="functional_query.php" id="funcQuery">View Functional Enrichment</a><br>';
 				}
 				if($settings['plasticity']){
-					echo '<a href="gene_plasticity_query.php" id="plasticityQuery">Query Genes by Plasticity</a>';
+					echo '<a href="gene_plasticity_query.php" id="plasticityQuery">Query Genes by Plasticity</a><br>';
+					echo '<a href="compare_expression.php" id="plasticityComp">Compare Gene Expression</a>';
 				}
 				?>
 			</div>
