@@ -152,8 +152,9 @@ $(document).ready(function() {
 			req+=("&type=" + "OR");
 		}
 		//Append on the species DB to access
-		req += "&orig=" + $(".speciesSelect").val()
-		req += "&target=" + $("#compareSelect").val()
+		req += "&orig=" + $(".speciesSelect").val();
+		req += "&target=" + $("#compareSelect").val();
+		req += "&comp=" + $("#compareSelect option:selected").attr("prefix");
 		spec = vals[2];
 		console.log(req);
 		$.get(req, function(data) {
@@ -179,29 +180,6 @@ $(document).ready(function() {
 				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
 				$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
 				table.draw();
-				}
-			});
-			$("#networkGraph").click(function() {
-				var field = $("#filterChoice option:selected").text();
-				var min	= $("#min").val();
-				var max = $("#max").val();
-				console.log(typeof min);
-				if(min in window && max in window){
-					$("#qTable").empty();
-					$("#MultiGeneQueryExpression").hide();
-					$("#multiGeneForm").hide();
-					$("#goBack").show();
-					$('#lower-rect').removeAttr('style');
-					generateGraph(spec, genes, field, min, max);
-				}else if(field == "Adjacency Value"){
-					//Default to this
-					console.log("defaulting to adjacency -2/2");
-					$("#qTable").empty();
-					$("#MultiGeneQueryExpression").hide();
-					$("#multiGeneForm").hide();
-					$("#goBack").show();
-					$('#lower-rect').removeAttr('style');
-					generateGraph(spec, genes, "Adjacency Value", -2, 2);
 				}
 			});
 			table.draw();

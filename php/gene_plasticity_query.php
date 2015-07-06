@@ -39,14 +39,25 @@ if($query->execute()){
 }
 $validGenes = "/" . substr($validGenes, 0, -1) . "/";
 
+$query = $db->prepare("SELECT * FROM MapCompare");
+if($query->execute()){
+	$result = $query->fetchAll();
+	foreach ($result as $spec){
+		array_push($validSpecies, $spec["prefix"]);
+	}
+}else{
+	echo "Warning, no MapCompare table defined, exiting";
+	exit();
+}
 $orig = $_GET['orig'];
 $target = $_GET['target'];
+$comp = $_GET['comp'];
 $expressionOption = true;
 if(array_key_exists("noex", $_GET)){
 	$expressionOption = false;
 }
 $csv;
-if(in_array($orig,$validSpecies) && in_array($target,$validSpecies)){
+if(in_array($orig,$validSpecies) && in_array($target,$validSpecies) && in_array($comp, $validSpecies)){
 	//This is pretty complex - Basically the query utilizes a UNION and a lot of LEFT JOINs to jam a bunch of tables together and select proper value.
 	//Most important is the () res section which essentially finds the gene id and adjacency value for all edges attached to the input gene
 	//The UNION is used because there are cases in which node1 = input gene and others where node2 = input gene. We need those instances to be filtered
@@ -83,11 +94,11 @@ if(in_array($orig,$validSpecies) && in_array($target,$validSpecies)){
 	M.exp_rank_1,
 	M.exp_rank_2 
 	FROM " . $orig . "_Genes AS G 
-	LEFT JOIN " . $orig . $target . "_Adjacency AS A 
+	LEFT JOIN " . $comp . "_Adjacency AS A 
 	ON A.id = G.id 
-	LEFT JOIN " . $orig . $target . "_Edges AS E 
+	LEFT JOIN " . $comp . "_Edges AS E 
 	ON E.edgeId = A.edgeId 
-	LEFT JOIN " . $orig . $target . "_Metrics AS M 
+	LEFT JOIN " . $comp . "_Metrics AS M 
 	ON M.id = 
 	CASE WHEN E.node1 = G.id THEN E.node2 
 	ELSE E.node1 END 
@@ -130,14 +141,8 @@ foreach ($_GET as $key => $value) {
 		$pre_query.=("'" . $match[0] . "',");
 		$gn++;		
 		array_push($sources, $match[0]);
-	}else if($key == "type"){
-		if($value == "AND"){
-			$AND = True;
-		}
 	}else if($key == "csv"){
 		$csv = true;
-	}else if($key == "network"){
-		$graph = true;
 	}
 }
 //Prepare and execute query, concatenating the pre-query strings
@@ -294,61 +299,6 @@ if($query->execute()){
 		
 		}
 		fclose($fp);
-	}else if($graph){
-		//Track the maximum number of edges any one node has
-		//This will be used for generating the legend
-		$max = 1;
-		$ret = array();
-		//Nodes will have info about the gene
-		$ret["nodes"] = array();
-		//Edges will list all edges
-		$ret["edges"] = array(); 
-		
-		//Links a gene name with an position
-		$indeces = array();
-		$index = 0;
-		//Insert in the sources
-		foreach ($sources as $source){
-			$indeces[$source] = $index;
-			array_push($ret["nodes"],array("name"=>$source, "group"=>0));
-			$index++;
-		}
-		$eindex = 0;
-		//Filtering parameters, derived from the Network Query Table
-		$filterMax = $_GET["max"];
-		$filterMin = $_GET["min"];
-		$filterTarget = $_GET["field"];
-		//Generate a JSON which has 3 dicts - nodes, edges, and max
-		//Nodes will consist of a list of nodes with fields [Name(the gene ID), and Group(number of edges)
-		//Edges will consist of a list with the Source ID, target ID, and adjacency value
-		//Max will be the node with the maximum number of edges, used to generate the legend in the Network Graph
-		foreach ($results as $row){
-			if($row[$filterTarget] > $filterMax || $row[$filterTarget] < $filterMin){
-				continue;
-			}
-			$increment = false;
-			if(!array_key_exists($row["name"], $indeces)){
-				$indeces[$row["name"]] = $index;
-				array_push($ret["nodes"],array("name"=>$row["name"], "group"=>1));
-				$increment = true;
-			}else{
-				//Keep the Source nodes the same color, everything else should be incremented to indicate how many connections a node has
-				if(!in_array($row["name"], $sources)){
-					$ret["nodes"][$indeces[$row["name"]]]["group"]++;
-					//update maximum
-					if($ret["nodes"][$indeces[$row["name"]]]["group"] > $max){
-						$max = $ret["nodes"][$indeces[$row["name"]]]["group"];
-					}
-				}
-			}
-			array_push($ret["edges"], array("source"=>$indeces[$row["source"]], "target"=>$indeces[$row["name"]], "value"=> $row['adjacency']));
-			if($increment){
-				$index++;
-			}
-			$eindex++;
-		}
-		$ret['max'] = $max;
-		echo json_encode($ret);
 	}
 }
 

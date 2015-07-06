@@ -50,8 +50,6 @@
 					<button class="backToQuery">Back to query selection</button>
 					<p>Gene Plasticity Query:</p>
 					<form id='plasticityQueryForm'>
-							<input type="radio" name="multiGeneOption" checked="checked">Include edges in which one node is in the Target Node list</option><br>
-							<input type="radio" name="multiGeneOption" id="ANDButton">Include edges in which both nodes are in the Target Node list</option><br>
 							Control Species: 
 							<select class="speciesSelect">
 							<?php
