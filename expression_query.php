@@ -33,7 +33,7 @@
 		include_once "header.php";
 		?>
 		<div id="contents">
-			<form id="issue" action=<?php echo $settings['github'] ?>>
+			<form id="issue" target="_blank" action=<?php echo $settings['github'] ?>>
     				<input type="submit" value="Report issue/Make Suggestion">
 			</form><br>
 			<div id="entryForm">
