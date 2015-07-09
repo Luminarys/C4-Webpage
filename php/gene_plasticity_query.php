@@ -52,7 +52,7 @@ if($query->execute()){
 $orig = $_GET['orig'];
 $target = $_GET['target'];
 $comp = $_GET['comp'];
-$expressionOption = true;
+$expressionOption = false;
 if(array_key_exists("noex", $_GET)){
 	$expressionOption = false;
 }
@@ -172,40 +172,30 @@ if($query->execute()){
 		}
 	if(!$csv && !$graph){
 		//Pre table search forms
-		if($expressionOption){
-			echo '<table border="0" cellspacing="5" cellpadding="5">';
-		        echo '<tbody><tr>';
-		        echo '    <td><b>Filtering: </b></td>';
-		        echo '    <td>Column: </td>';
-		        echo '    <td><select id="filterChoice">';
-			if ($gn > 1){
-		      		echo '    <option value="2">Adjacency Value</option>';
-		       	 	echo '    <option value="5">K</option>';
-		       	 	echo '    <option value="6">K Rank</option>';
-		       	 }else{
-		       	 	echo '    <option value="1">Adjacency Value</option>';
-		       	 	echo '    <option value="2">K</option>';
-		       	 	echo '    <option value="3">K Rank</option>';
-			}
-		        echo '    </select></td>';
-		        echo '    <td>Minimum: </td>';
-		        echo '    <td><input type="text" id="min" name="min"></td>';
-		        echo '    <td>Maximum: </td>';
-		        echo '    <td><input type="text" id="max" name="max"></td>';
-			echo ' 	  <td><select id="invertChoice"><option value="false">Within Range</option><option value="true">Outside of Range</option></select></td>';
-		        echo '    <td><button id="networkGraph" onclick="">Create network graph based on filtering settings</button></td>';
-		        echo '</tr>';
-		    	echo ' </tbody></table>	';
-			echo "<a id='getCSV' href='" .$_SERVER["REQUEST_URI"] ."&csv=true' download='result.csv'>Download table as CSV with annotations</a>";
-		}
+		echo '<table border="0" cellspacing="5" cellpadding="5">';
+		echo '<tbody><tr>';
+		echo '    <td><b>Filtering: </b></td>';
+		echo '    <td>Column: </td>';
+		echo '    <td><select id="filterChoice">';
+		echo '    <option value="4">Adjacency Value</option>';
+		echo '    <option value="5">K</option>';
+		echo '    <option value="6">K Rank</option>';
+		echo '    </select></td>';
+		echo '    <td>Minimum: </td>';
+		echo '    <td><input type="text" id="min" name="min"></td>';
+		echo '    <td>Maximum: </td>';
+		echo '    <td><input type="text" id="max" name="max"></td>';
+		echo ' 	  <td><select id="invertChoice"><option value="false">Within Range</option><option value="true">Outside of Range</option></select></td>';
+		echo '</tr>';
+		echo ' </tbody></table>	';
 		//Initialize table
 		echo "<form id='geneSelections'>";
 		echo "<table id='basicQueryTable' style='width:100%'>";
 	    		echo "<thead>";
-			if ($gn > 1){
-	    			echo "<th class='minfo' value='A node that was found in a resulting edge from the query.'>Source</th>";
-			}
+	    		echo "<th class='minfo' value='A node that was found in a resulting edge from the query.'>Source</th>";
+	    		echo "<th class='minfo' value='A node that was found in a resulting edge from the query.'>Alt Source</th>";
 	    		echo "<th class='minfo' value='The other node in the edge query(will always be in the queried genes list).'>Gene</th>";
+	    		echo "<th class='minfo' value='The other node in the edge query(will always be in the queried genes list).'>Alt Gene</th>";
 	    		echo "<th class='minfo' value='The Pearson correlation value between the two nodes of the edge.'>Adjacency Value</th>";
 	    		echo "<th class='minfo' value='The connectivity of the Target Node in the entire GCN of the given data background. This is the sum of the edge strengths in the network which involve the Target Node.'>K</th>";
 	    		echo "<th class='minfo' value='The rank (highest first) of the connectivity (K) of the Target Node, among all nodes in the given data background.'>K Rank</th>";
@@ -245,10 +235,10 @@ if($query->execute()){
 			}
 			//Echo the table 
 	    		echo "<tr>";
-			if ($gn > 1){
-	    			echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['source'] . ">" . $row['source'] . "</td>";
-			}
+	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['source'] . ">" . $row['source'] . "</td>";
+	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['alt_source_name'] . ">" . $row['alt_source_name'] . "</td>";
 	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
+	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['alt_name'] . ">" . $row['alt_name'] . "</td>";
 	    		echo "<td>" . $row['adjacency'] . "</td>";
 	    		echo "<td>" . $row['k'] . "</td>";
 	    		echo "<td>" . $row['k_rank'] . "</td>";
@@ -266,9 +256,6 @@ if($query->execute()){
 	    		echo "<td>" . $row['exp_mean_2'] . "</td>";
 	    		echo "<td>" . $row['exp_rank_1'] . "</td>";
 	    		echo "<td>" . $row['exp_rank_2'] . "</td>";
-			if ($gn > 1){
-	    			echo "<td>" . $seen[$row['id']] . "</td>";
-			}
 			if($expressionOption){
 				echo "<td><input type='checkbox' value=" . $row['name'] . "></td>";
 			}
