@@ -146,11 +146,6 @@ $(document).ready(function() {
 			req+=("g" + i + "="+texts[i]);	
 			genes.push(texts[i]);
 		}
-		if (document.getElementById('ANDButton').checked){
-			req+=("&type=" + "AND");
-		}else{
-			req+=("&type=" + "OR");
-		}
 		//Append on the species DB to access
 		req += "&orig=" + $(".speciesSelect").val();
 		req += "&target=" + $("#compareSelect").val();
