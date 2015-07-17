@@ -20,6 +20,7 @@ $(document).ready(function() {
 
 	$("#backToInput").click(function() {
 		$("#goBack").hide();
+		$("#toggleNames").remove();
 		$("#MultiGeneQueryExpression").hide();
 		$("#info").hide();
 		$("#orthoQueryForm").show();

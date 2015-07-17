@@ -4,6 +4,8 @@ function getName(spec, id){
 	});
 }
 
+var showNames = false;
+
 function generateGraph(spec, genes, field, min, max){
 	var gnum = genes.length;
 	var fieldRef = {"Adjacency Value":"adjacency","Mean Exp":"mean_exp","Mean Exp Rank":"mean_exp_rank","K":"k","K Rank":"k_rank","Module":"module","Modular K":"modular_k","Modular Mean Exp Rank":"modular_mean_exp_rank","Modular K Rank":"modular_k_rank"};
@@ -17,8 +19,8 @@ function generateGraph(spec, genes, field, min, max){
 	console.log(req);
 	$('#lower-rect').removeAttr('style');
 	var width = 1300;
-	if (gnum < 4){
-    	var height = gnum*320;
+	if (gnum < 3){
+    		var height = gnum*600;
 	}else{
 		var height = 1300;
 	}
@@ -149,21 +151,45 @@ function generateGraph(spec, genes, field, min, max){
 		addGraphPopups();
 		//Add in text to the source nodes
 		setTimeout(function() {
-		var sources = svg.selectAll('source').data(graph.nodes.slice(0,gnum));
-		sources.enter()
-			.append("text")
-			.attr("x", function (d) {return d.x + 10;})
-			.attr("y", function (d) {return d.y;})
-		sources.text(function(d) { 
-			return	$.ajax({
-				type: "GET",
-				url: "php/name_conversion.php?spec=" + spec + "&gene=" + d.name,	
-				async: false
-			}).responseText;
-		});
-		}, 400);
-	});
+			var data = graph.nodes.slice(0,gnum)
+			loadNames(svg, data, spec);
+			removeNames();
+		}, 600);
 
+	});
+	$("#entryForm").append("<br><button id='toggleNames'>Toggle Gene Names</button>");
+	$("#toggleNames").click(function() {
+		if(showNames) {
+			removeNames();
+		}else{
+			dispNames();
+		}
+		showNames = !showNames;
+	});
+}
+
+function removeNames() {
+	$(".gene-label").hide();
+}
+
+function dispNames() {
+	$(".gene-label").show();
+}
+
+function loadNames(svg, data, spec) {
+	var sources = svg.selectAll('source').data(data);
+	sources.enter()
+		.append("text")
+		.attr("class","gene-label")
+		.attr("x", function (d) {return d.x + 10;})
+		.attr("y", function (d) {return d.y;});
+	sources.text(function(d) { 
+		return	$.ajax({
+			type: "GET",
+			url: "php/name_conversion.php?spec=" + spec + "&gene=" + d.name,	
+			async: false
+		}).responseText;
+	});
 }
 
 $(document).ready(function() {
