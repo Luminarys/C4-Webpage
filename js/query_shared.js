@@ -30,4 +30,19 @@ $(document).ready(function() {
 		$("#inGraphOpts").hide();
 	});
 	console.log("Shared functions are ready");
+
+	$("#entryForm input[type='submit']").parent().append("<br><img src='images/loading.gif' id='loading-img'>");
+	$("#loading-img").hide();
+	$(document)
+  	.ajaxStart(function () {
+    		$("#loading-img").show();
+  	})
+  	.ajaxStop(function () {
+    		$("#loading-img").hide();
+  	});
+	$('#loading-img').bind('ajaxStart', function(){
+    		$(this).show();
+	}).bind('ajaxStop', function(){
+    		$(this).hide();
+	});
 });
