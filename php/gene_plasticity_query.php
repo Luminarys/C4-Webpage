@@ -147,7 +147,7 @@ foreach ($_GET as $key => $value) {
 }
 //Prepare and execute query, concatenating the pre-query strings
 //The substr is used to remove the final ','
-$query = $db->prepare(substr($pre_query,0,-1) . ")");
+$query = $db->prepare(substr($pre_query,0,-1) . ") ORDER BY E.adjacency LIMIT 5000");
 if($query->execute()){
 
 	//Get the results
@@ -160,16 +160,21 @@ if($query->execute()){
 	$seenTwice = array();
 	$indeces = array();
 	$pos = 0;
+	$count = 0;
 	//Generate an index list of valid rows which will be displayed in the table
-		foreach ($results as $row){
-			//If the gene has appeared at least once, but
-			//no more than twice then we will add it to the indeces table and to the seenTwice table so it isn't readded
-			if(!array_key_exists($row['id'],$seen)){
-				$seen[$row['id']] = 1;
-			}else{
-				$seen[$row['id']] = $seen[$row['id']] + 1;
-			}
+	foreach ($results as $row){
+		//If the gene has appeared at least once, but
+		//no more than twice then we will add it to the indeces table and to the seenTwice table so it isn't readded
+		if(!array_key_exists($row['id'],$seen)){
+			$seen[$row['id']] = 1;
+		}else{
+			$seen[$row['id']] = $seen[$row['id']] + 1;
 		}
+		$count++;
+	}
+	if($count > 4999){
+		echo "<br><h3>The result set was very large and has been capped to 5000 entries.</h3>";
+	}
 	if(!$csv && !$graph){
 		//Pre table search forms
 		echo '<table border="0" cellspacing="5" cellpadding="5">';

@@ -85,7 +85,7 @@ foreach ($_GET as $key => $value) {
 	}
 }
 
-function outputFilter($num) {
+function outputFilter($num, $gn) {
 	echo '<tr>';
 	echo '    <td>Column: </td>';
 	echo '    <td><select id="filterChoice' . $num . '">';
@@ -120,7 +120,7 @@ function outputFilter($num) {
 }
 //Prepare and execute query, concatenating the pre-query strings
 //The substr is used to remove the final ','
-$query = $db->prepare(substr($pre_query,0,-1) . ")");
+$query = $db->prepare(substr($pre_query,0,-1) . ") ORDER BY E.adjacency DESC LIMIT 5000");
 if($query->execute()){
 
 	//Get the results
@@ -133,6 +133,7 @@ if($query->execute()){
 	$seenTwice = array();
 	$indeces = array();
 	$pos = 0;
+	$count = 0;
 	//Generate an index list of valid rows which will be displayed in the table
 		foreach ($results as $row){
 			//If the gene has appeared at least once, but
@@ -142,17 +143,21 @@ if($query->execute()){
 			}else{
 				$seen[$row['id']] = $seen[$row['id']] + 1;
 			}
+			$count++;
 		}
 	if(!$csv && !$graph){
+		if($count > 4999){
+			echo "<br><h3>The result set was very large and has been capped to 5000 entries.</h3>";
+		}
 		//Pre table search forms
 		if($expressionOption){
 		        echo ' <br>   <b>Filtering: </b><br>';
 		        echo '<button id="networkGraph" onclick="">Create network graph based on filtering settings</button>';
 			echo '<table border="0" cellspacing="5" cellpadding="5" align="center">';
 		        echo '<tbody>';
-			outputFilter("");
-			outputFilter("2");
-			outputFilter("3");
+			outputFilter("", $gn);
+			outputFilter("2", $gn);
+			outputFilter("3", $gn);
 		    	echo ' </tbody></table>	';
 			echo "<button id='getCSV' url='" .$_SERVER["REQUEST_URI"] ."&csv=true'>Download table as CSV with annotations</button>";
 		}
