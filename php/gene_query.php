@@ -27,11 +27,7 @@ if($query->execute()){
 	$result = $query->fetchAll();
 	foreach ($result as $spec){
 		array_push($validSpecies, $spec["prefix"]);
-		if($spec["regex"][0] == "(" && $spec["regex"][strlen($spec["regex"]) - 1] != ")"){
-			$validGenes .= $spec["regex"] . ")|";
-		}else{
-			$validGenes .= $spec["regex"] . "|";
-		}
+		$validGenes .= $spec["regex"] . "|";
 	}
 }else{
 	echo "Warning, no MapReference table defined, exiting";
@@ -88,6 +84,40 @@ foreach ($_GET as $key => $value) {
 		$graph = true;
 	}
 }
+
+function outputFilter($num) {
+	echo '<tr>';
+	echo '    <td>Column: </td>';
+	echo '    <td><select id="filterChoice' . $num . '">';
+	if ($gn > 1){
+		echo '    <option field=' .'"adjacency"' . 'value="2">Adjacency Value</option>';
+	 	echo '    <option field=' . '"mean_exp"' . 'value="3">Mean Exp</option>';
+	 	echo '    <option field=' . '"mean_exp_rank"' . 'value="4">Mean Exp Rank</option>';
+	 	echo '    <option field=' . '"k"' . 'value="5">K</option>';
+	 	echo '    <option field=' . '"k_ranl' . 'value="6">K Rank</option>';
+	 	echo '    <option field=' . '"module"' . 'value="7">Module</option>';
+	 	echo '    <option field=' . '"modular_k"' . 'value="8">Modular K</option>';
+	 	echo '    <option field=' . '"modular_k_rank"' . 'value="9">Modular K Rank</option>';
+	 	echo '    <option field=' . '"modular_mean_exp_rank"' . 'value="10">Modular Mean Exp Rank</option>';
+	 }else{
+	 	echo '    <option field=' . '"adjacency"' . 'value="1">Adjacency Value</option>';
+	 	echo '    <option field=' . '"mean_exp"' . 'value="2">Mean Exp</option>';
+	 	echo '    <option field=' . '"mean_exp_rank"' . 'value="3">Mean Exp Rank</option>';
+	 	echo '    <option field=' . '"k"' . 'value="4">K</option>';
+	 	echo '    <option field=' . '"k_rank"' . 'value="5">K Rank</option>';
+	 	echo '    <option field=' . '"module"' . 'value="6">Module</option>';
+	 	echo '    <option field=' . '"modular_k"' . 'value="7">Modular K</option>';
+	 	echo '    <option field=' . '"modular_k_rank"' . 'value="8">Modular K Rank</option>';
+	 	echo '    <option field=' . '"modular_mean_exp_rank"' . 'value="9">Modular Mean Exp Rank</option>';
+	}
+	echo '    </select></td>';
+	echo '    <td>Minimum: </td>';
+	echo '    <td><input type="text" id="min' . $num . '" name="min"></td>';
+	echo '    <td>Maximum: </td>';
+	echo '    <td><input type="text" id="max' . $num . '" name="max"></td>';
+	//echo ' 	  <td><select id="invertChoice"><option value="false">Within Range</option><option value="true">Outside of Range</option></select></td>';
+	echo '</tr>';
+}
 //Prepare and execute query, concatenating the pre-query strings
 //The substr is used to remove the final ','
 $query = $db->prepare(substr($pre_query,0,-1) . ")");
@@ -116,42 +146,15 @@ if($query->execute()){
 	if(!$csv && !$graph){
 		//Pre table search forms
 		if($expressionOption){
-			echo '<table border="0" cellspacing="5" cellpadding="5">';
-		        echo '<tbody><tr>';
-		        echo '    <td><b>Filtering: </b></td>';
-		        echo '    <td>Column: </td>';
-		        echo '    <td><select id="filterChoice">';
-			if ($gn > 1){
-		      		echo '    <option value="2">Adjacency Value</option>';
-		       	 	echo '    <option value="3">Mean Exp</option>';
-		       	 	echo '    <option value="4">Mean Exp Rank</option>';
-		       	 	echo '    <option value="5">K</option>';
-		       	 	echo '    <option value="6">K Rank</option>';
-		       	 	echo '    <option value="7">Module</option>';
-		       	 	echo '    <option value="8">Modular K</option>';
-		       	 	echo '    <option value="9">Modular K Rank</option>';
-		       	 	echo '    <option value="10">Modular Mean Exp Rank</option>';
-		       	 }else{
-		       	 	echo '    <option value="1">Adjacency Value</option>';
-		       	 	echo '    <option value="2">Mean Exp</option>';
-		       	 	echo '    <option value="3">Mean Exp Rank</option>';
-		       	 	echo '    <option value="4">K</option>';
-		       	 	echo '    <option value="5">K Rank</option>';
-		       	 	echo '    <option value="6">Module</option>';
-		       	 	echo '    <option value="7">Modular K</option>';
-		       	 	echo '    <option value="8">Modular K Rank</option>';
-		       	 	echo '    <option value="9">Modular Mean Exp Rank</option>';
-			}
-		        echo '    </select></td>';
-		        echo '    <td>Minimum: </td>';
-		        echo '    <td><input type="text" id="min" name="min"></td>';
-		        echo '    <td>Maximum: </td>';
-		        echo '    <td><input type="text" id="max" name="max"></td>';
-			echo ' 	  <td><select id="invertChoice"><option value="false">Within Range</option><option value="true">Outside of Range</option></select></td>';
-		        echo '    <td><button id="networkGraph" onclick="">Create network graph based on filtering settings</button></td>';
-		        echo '</tr>';
+		        echo ' <br>   <b>Filtering: </b><br>';
+		        echo '<button id="networkGraph" onclick="">Create network graph based on filtering settings</button>';
+			echo '<table border="0" cellspacing="5" cellpadding="5" align="center">';
+		        echo '<tbody>';
+			outputFilter("");
+			outputFilter("2");
+			outputFilter("3");
 		    	echo ' </tbody></table>	';
-			echo "<a id='getCSV' href='" .$_SERVER["REQUEST_URI"] ."&csv=true' download='kek.csv'>Download table as CSV with annotations</a>";
+			echo "<button id='getCSV' url='" .$_SERVER["REQUEST_URI"] ."&csv=true'>Download table as CSV with annotations</button>";
 		}
 		//Initialize table
 		echo "<form id='geneSelections'>";
@@ -226,6 +229,20 @@ if($query->execute()){
             	$fp = fopen('php://output', 'w');
 		//Write the header column
 		fputcsv($fp, array("target","source","adjacency","mean_exp","mean_exp_rank","k","k_rank","module","modular_k","modular_k_rank","modular_mean_exp_rank","connections","name","description"));
+		if(array_key_exists("max",$_GET)){
+			$filterMax = floatval($_GET["max"]);
+			$filterMin = floatval($_GET["min"]);
+			$filterTarget = $_GET["field"];
+		}
+		if(array_key_exists("max2",$_GET)){ $filterMax2 = floatval($_GET["max2"]);
+			$filterMin2 = floatval($_GET["min2"]);
+			$filterTarget2 = $_GET["field2"];
+		}
+		if(array_key_exists("max3",$_GET)){
+			$filterMax3 = floatval($_GET["max3"]);
+			$filterMin3 = floatval($_GET["min3"]);
+			$filterTarget3 = $_GET["field3"];
+		}
 		foreach ($results as $row) {
 			if($AND){
 				//Skip anything with less than two genes for the AND query
@@ -236,9 +253,23 @@ if($query->execute()){
 			//Write the actual info for each line
 			//Ensure that only genes which have data are returned.
 			if(!$row['name'] == ""){
-				fputcsv($fp, array($row['name'],$row['source'],$row['adjacency'],$row['mean_exp'],$row['mean_exp_rank'],$row['k'],$row['k_rank'],$row['module'],$row['modular_k'],$row['modular_k_rank'],$row['modular_mean_exp_rank'],$seen[$row['id']],$row["name"],$row["description"]));
+				if(array_key_exists("max",$_GET)){
+					if($row[$filterTarget] > $filterMax || $row[$filterTarget] < $filterMin){
+						continue;
+					}
+				}
+				if(array_key_exists("max2",$_GET)){
+					if($row[$filterTarget2] > $filterMax2 || $row[$filterTarget2] < $filterMin2){
+						continue;
+					}
+				}
+				if(array_key_exists("max3",$_GET)){
+					if($row[$filterTarget3] > $filterMax3 || $row[$filterTarget3] < $filterMin3){
+						continue;
+					}
+				}
+				fputcsv($fp, array($row['name'],$row['source'],$row['adjacency'],$row['mean_exp'],$row['mean_exp_rank'],$row['k'],$row['k_rank'],$row['module'],$row['modular_k'],$row['modular_k_rank'],$row['modular_mean_exp_rank'],$seen[$row['id']],$row["aname"],$row["description"]));
 			}
-		
 		}
 		fclose($fp);
 	}else if($graph){
@@ -265,6 +296,15 @@ if($query->execute()){
 		$filterMax = $_GET["max"];
 		$filterMin = $_GET["min"];
 		$filterTarget = $_GET["field"];
+		if(array_key_exists("max2",$_GET)){ $filterMax2 = floatval($_GET["max2"]);
+			$filterMin2 = floatval($_GET["min2"]);
+			$filterTarget2 = $_GET["field2"];
+		}
+		if(array_key_exists("max3",$_GET)){
+			$filterMax3 = floatval($_GET["max3"]);
+			$filterMin3 = floatval($_GET["min3"]);
+			$filterTarget3 = $_GET["field3"];
+		}
 		//Generate a JSON which has 3 dicts - nodes, edges, and max
 		//Nodes will consist of a list of nodes with fields [Name(the gene ID), and Group(number of edges)
 		//Edges will consist of a list with the Source ID, target ID, and adjacency value
@@ -272,6 +312,16 @@ if($query->execute()){
 		foreach ($results as $row){
 			if($row[$filterTarget] > $filterMax || $row[$filterTarget] < $filterMin){
 				continue;
+			}
+			if(array_key_exists("max2",$_GET)){
+				if($row[$filterTarget2] > $filterMax2 || $row[$filterTarget2] < $filterMin2){
+					continue;
+				}
+			}
+			if(array_key_exists("max3",$_GET)){
+				if($row[$filterTarget3] > $filterMax3 || $row[$filterTarget3] < $filterMin3){
+					continue;
+				}
 			}
 			$increment = false;
 			if(!array_key_exists($row["name"], $indeces)){

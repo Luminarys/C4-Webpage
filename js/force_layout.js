@@ -6,7 +6,7 @@ function getName(spec, id){
 
 var showNames = false;
 
-function generateGraph(spec, genes, field, min, max){
+function generateGraph(spec, genes, field, min, max, field2, min2, max2, field3, min3, max3){
 	var gnum = genes.length;
 	var fieldRef = {"Adjacency Value":"adjacency","Mean Exp":"mean_exp","Mean Exp Rank":"mean_exp_rank","K":"k","K Rank":"k_rank","Module":"module","Modular K":"modular_k","Modular Mean Exp Rank":"modular_mean_exp_rank","Modular K Rank":"modular_k_rank"};
 	var reqField = fieldRef[field];
@@ -16,6 +16,14 @@ function generateGraph(spec, genes, field, min, max){
 		req += "&g" + i + "=" + genes[i];
 	}
 	req+="&field=" + reqField + "&min=" + min + "&max=" + max;
+	if(field2 != "None"){
+		var reqField2 = fieldRef[field2];
+		req+="&field2=" + reqField2 + "&min2=" + min2 + "&max2=" + max2;
+	}
+	if(field3 != "None"){
+		var reqField3 = fieldRef[field3];
+		req+="&field3=" + reqField3 + "&min3=" + min3 + "&max3=" + max3;
+	}
 	console.log(req);
 	$('#lower-rect').removeAttr('style');
 	var width = 1300;
