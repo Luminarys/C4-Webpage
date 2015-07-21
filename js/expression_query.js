@@ -691,6 +691,9 @@ var normMethLP = "raw";
 
 function handleInitData(data, texts){
 	$("#qTable").empty();
+	$("#getCSV").click(function() {
+		window.open($("#getCSV").attr("link"), "_blank");
+	});	
 	console.log(data);
 	if (!isJson(data)){
 		alert(data);
@@ -742,7 +745,6 @@ function handleInitData(data, texts){
 	}
 	console.log(multiColor);
 	addPopups();
-
 }
 //Handles changes within the graph
 function handleReData(data, texts){
@@ -939,10 +941,12 @@ $(document).ready(function() {
 		qRes = genReq();
 		req = qRes[0];
 		texts = qRes[1];
+		$("#entryForm").append("<button id='getCSV' link='" + req + "&csv=true'>Download Raw Data as CSV</button>");
 		$.get(req, function (data) {
 			handleInitData(data,texts);
 			$('#lower-rect').removeAttr('style');
 		});
 		console.log(test);
 	});
+	
 });
