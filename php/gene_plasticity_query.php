@@ -292,20 +292,16 @@ if($query->execute()){
 			$filterMin = floatval($_GET["min"]);
 			$filterTarget = $_GET["field"];
 		}
-		if(array_key_exists("max2",$_GET)){ $filterMax2 = floatval($_GET["max2"]);
-			$filterMin2 = floatval($_GET["min2"]);
-			$filterTarget2 = $_GET["field2"];
-		}
-		if(array_key_exists("max3",$_GET)){
-			$filterMax3 = floatval($_GET["max3"]);
-			$filterMin3 = floatval($_GET["min3"]);
-			$filterTarget3 = $_GET["field3"];
-		}
 		foreach ($results as $row) {
 			//Write the actual info for each line
 			//Ensure that only genes which have data are returned.
 			if(!$row['name'] == ""){
 				$csvrow = array();
+				if(array_key_exists("max",$_GET)){
+					if($row[$filterTarget] > $filterMax || $row[$filterTarget] < $filterMin){
+						continue;
+					}
+				}
 				foreach($headers as $col){
 					array_push($csvrow, $row[$col]);
 				}
