@@ -1,4 +1,4 @@
-Table.ext.search.push(
+$.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
         var min = parseFloat( $('#min').val(), 10 );
         var max = parseFloat( $('#max').val(), 10 );
