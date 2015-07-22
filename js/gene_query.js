@@ -128,7 +128,6 @@ $(document).ready(function() {
 	$('#multiGeneQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
-		checkSpec();
 		var $inputs = $('#multiGeneQueryForm :input');
 		var vals = {};
 
