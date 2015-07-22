@@ -177,6 +177,7 @@ if($query->execute()){
 	}
 	if(!$csv && !$graph){
 		//Pre table search forms
+		echo "<br><button id='getCSV' url='" .$_SERVER["REQUEST_URI"] ."&csv=true'>Download table as CSV with annotations</button>";
 		echo '<table border="0" cellspacing="5" cellpadding="5">';
 		echo '<tbody><tr>';
 		echo '    <td><b>Filtering: </b></td>';
@@ -191,6 +192,8 @@ if($query->execute()){
 		echo '    <td>Maximum: </td>';
 		echo '    <td><input type="text" id="max" name="max"></td>';
 		echo ' 	  <td><select id="invertChoice"><option value="false">Within Range</option><option value="true">Outside of Range</option></select></td>';
+		echo '    <td><button id="networkGraph">Create network graph with sources</button></td>';
+		echo '    <td><button id="altNetworkGraph">Create network graph with alt sources</button></td>';
 		echo '</tr>';
 		echo ' </tbody></table>	';
 		//Initialize table
@@ -228,6 +231,8 @@ if($query->execute()){
 	
 		//Loop through initial results, perform subquery for Metrics and create the table
 		$pos = 0;
+		$genes = array();
+		$altGenes = array();
 		foreach ($results as $row) {
 			if($AND){
 				//Skip anything with less than two genes for the AND query
@@ -241,7 +246,9 @@ if($query->execute()){
 			//Echo the table 
 	    		echo "<tr>";
 	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['source'] . ">" . $row['source'] . "</td>";
+			array_push($genes, $row['source']);
 	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['alt_source_name'] . ">" . $row['alt_source_name'] . "</td>";
+			array_push($altGenes, $row['alt_source_name']);
 	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['name'] . ">" . $row['name'] . "</td>";
 	    		echo "<td class=popup value=?link=true&spec=". $orig ."&gene=". $row['alt_name'] . ">" . $row['alt_name'] . "</td>";
 	    		echo "<td>" . $row['adjacency'] . "</td>";
@@ -269,24 +276,40 @@ if($query->execute()){
 	    	echo "</tbody>";
 		echo "</table>";
 		echo "</form>";
+		echo "<div id='genes' val='". json_encode(array_unique($genes)) . "'></div>";
+		echo "<div id='altGenes' val='". json_encode(array_unique($altGenes)) . "'></div>";
 	}else if($csv){
 		//Generate a CSV file
 		header( 'Content-Type: text/csv' );
            	header( 'Content-Disposition: attachment;filename=result.csv');
             	$fp = fopen('php://output', 'w');
+		$headers = array("source","alt_source_name","name","alt_name","adjacency","k","k_rank","k","neg_modular_k","neg_modular_k_rank","pos_modular_k","pos_modular_k_rank","neg_modular_mean_exp_rank_1","neg_modular_mean_exp_rank_2","pos_modular_mean_exp_rank_1","pos_modular_mean_exp_rank_2","neg_module","pos_module","exp_mean_1","exp_mean_2","exp_rank_1","exp_rank_2","aname1","desc1","aname2","desc2","aname3","desc3");
 		//Write the header column
-		fputcsv($fp, array("target","source","adjacency","mean_exp","mean_exp_rank","k","k_rank","module","modular_k","modular_k_rank","modular_mean_exp_rank","connections","name","description"));
+		fputcsv($fp, $headers);
+
+		if(array_key_exists("max",$_GET)){
+			$filterMax = floatval($_GET["max"]);
+			$filterMin = floatval($_GET["min"]);
+			$filterTarget = $_GET["field"];
+		}
+		if(array_key_exists("max2",$_GET)){ $filterMax2 = floatval($_GET["max2"]);
+			$filterMin2 = floatval($_GET["min2"]);
+			$filterTarget2 = $_GET["field2"];
+		}
+		if(array_key_exists("max3",$_GET)){
+			$filterMax3 = floatval($_GET["max3"]);
+			$filterMin3 = floatval($_GET["min3"]);
+			$filterTarget3 = $_GET["field3"];
+		}
 		foreach ($results as $row) {
-			if($AND){
-				//Skip anything with less than two genes for the AND query
-				if (!in_array($row['id'], $sources)){
-					continue;
-				}
-			}
 			//Write the actual info for each line
 			//Ensure that only genes which have data are returned.
 			if(!$row['name'] == ""){
-				fputcsv($fp, array($row['name'],$row['source'],$row['adjacency'],$row['mean_exp'],$row['mean_exp_rank'],$row['k'],$row['k_rank'],$row['module'],$row['modular_k'],$row['modular_k_rank'],$row['modular_mean_exp_rank'],$seen[$row['id']],$row["name"],$row["description"]));
+				$csvrow = array();
+				foreach($headers as $col){
+					array_push($csvrow, $row[$col]);
+				}
+				fputcsv($fp, $csvrow);
 			}
 		
 		}

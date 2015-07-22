@@ -59,7 +59,6 @@ $(document).ready(function() {
        		var vars = query.split("&");
 		var first = true;
 		var cont = 0
-		var spec;
 		var genes = [];
        		for (var i = 0;i < vars.length;i++) {
                		var pair = vars[i].split("=");
@@ -97,7 +96,7 @@ $(document).ready(function() {
 			req+="&";
 			req+=("g" + i + "="+genes[i]);	
 		}
-		req+=("&spec=" + $(".speciesSelect").val());
+		req+=("&spec=" + spec);
 		window.location.href = req;
 	});
 
@@ -111,10 +110,12 @@ $(document).ready(function() {
     		//addPopups();
   	});
 
+
 	//Handle the multi-gene query
 	$('#plasticityQueryForm').submit(function(e) {
 		//Prevents the webpage from directing to the GET url
 		e.preventDefault();
+		checkSpec();
 		var $inputs = $('#plasticityQueryForm :input');
 		var vals = {};
 
@@ -135,7 +136,6 @@ $(document).ready(function() {
            	}
 		console.log(texts);
 		console.log(vals);
-		var spec;
 		var genes = [];
 		req = "php/gene_plasticity_query.php?";
 		//Build the GET request by looping through the inputs
@@ -147,7 +147,9 @@ $(document).ready(function() {
 			genes.push(texts[i]);
 		}
 		//Append on the species DB to access
+		var ospec = $(".speciesSelect").val();
 		req += "&orig=" + $(".speciesSelect").val();
+		var tspec = $("#compareSelect").val();
 		req += "&target=" + $("#compareSelect").val();
 		req += "&comp=" + $("#compareSelect option:selected").attr("prefix");
 		spec = vals[2];
@@ -166,19 +168,79 @@ $(document).ready(function() {
 				if(data == "Invalid gene used, please try again"){
 					return 0;
 				}else{
-    				table = $('#basicQueryTable').DataTable({
-					"scrollX": true
-				});
-				addPopups();
-				addMetricPopups();
-				$("#MultiGeneQueryExpression").show();
-				$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
-				$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
-				table.draw();
+    					table = $('#basicQueryTable').DataTable({
+						"scrollX": true
+					});
+					addPopups();
+					addMetricPopups();
+					$("#MultiGeneQueryExpression").show();
+					$('#basicQueryTable').on( 'draw.dt', debounce(addPopups, 100));
+					$('#basicQueryTable').on( 'draw.dt', debounce(addMetricPopups, 100));
+					table.draw();
 				}
+				$("#networkGraph").click(function() {
+					var field = $("#filterChoice option:selected").text();
+					var min	= $("#min").val();
+					var max = $("#max").val();
+					var genes = JSON.parse($("#genes").attr("val"));
+					console.log(genes);
+					console.log(typeof min);
+					if(min != "" && max != ""){
+						$("#qTable").empty();
+						$("#MultiGeneQueryExpression").hide();
+						$("#multiGeneForm").hide();
+						$("#goBack").show();
+						$('#lower-rect').removeAttr('style');
+						generateGraph(ospec, genes, field, min, max);
+					}else if(field == "Adjacency Value"){
+						//Default to this
+						console.log("defaulting to adjacency 0/2");
+						$("#qTable").empty();
+						$("#MultiGeneQueryExpression").hide();
+						$("#multiGeneForm").hide();
+						$("#goBack").show();
+						$('#lower-rect').removeAttr('style');
+						generateGraph(ospec, genes, "Adjacency Value", 0, 2);
+					}
+				});
+				$("#altNetworkGraph").click(function() {
+					var field = $("#filterChoice option:selected").text();
+					var min	= $("#min").val();
+					var max = $("#max").val();
+					var genes = JSON.parse($("#altGenes").attr("val"));
+					console.log(genes);
+					console.log(typeof min);
+					if(min != "" && max != ""){
+						$("#qTable").empty();
+						$("#MultiGeneQueryExpression").hide();
+						$("#multiGeneForm").hide();
+						$("#goBack").show();
+						$('#lower-rect').removeAttr('style');
+						generateGraph(tspec, genes, field, min, max);
+					}else if(field == "Adjacency Value"){
+						//Default to this
+						console.log("defaulting to adjacency 0/2");
+						$("#qTable").empty();
+						$("#MultiGeneQueryExpression").hide();
+						$("#multiGeneForm").hide();
+						$("#goBack").show();
+						$('#lower-rect').removeAttr('style');
+						generateGraph(tspec, genes, "Adjacency Value", 0, 2);
+					}
+				});
+			});
+			$("#getCSV").click(function() {
+				var url = $("#getCSV").attr("url");
+				var field = $("#filterChoice option:selected").attr("field");
+				var min	= $("#min").val();
+				var max = $("#max").val();
+				if(min != "" && max != ""){
+					url += "&field=" + field + "&min=" + min + "&max=" + max;
+				}
+				window.open(url,'_blank');
+			
 			});
 			table.draw();
 		});
 	});
-	
 });
