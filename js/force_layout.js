@@ -12,9 +12,9 @@ function generateGraph(spec, genes, field, min, max, field2, min2, max2, field3,
 	var reqField = fieldRef[field];
 	//Create the URL to use
 	var req = "php/gene_query.php?network=true&spec=" + spec;
-	for (var i = 0; i < genes.length; i++){
-		req += "&g" + i + "=" + genes[i];
-	}
+	$.each(genes, function(ind, value){
+		req += "&g" + ind + "=" + value;
+	});
 	req+="&field=" + reqField + "&min=" + min + "&max=" + max;
 	if(field2 != "None"){
 		var reqField2 = fieldRef[field2];
