@@ -199,7 +199,7 @@ $(document).ready(function() {
 						$("#multiGeneForm").hide();
 						$("#goBack").show();
 						$('#lower-rect').removeAttr('style');
-						generateGraph(ospec, genes, "Adjacency Value", 0, 2);
+						generateGraph(ospec, genes, "Adjacency Value", 0, 2, "None", 0, 0, "None", 0, 0);
 					}
 				});
 				$("#altNetworkGraph").click(function() {
